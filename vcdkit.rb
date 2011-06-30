@@ -1,4 +1,4 @@
-#######################################################################################
+######################################################################################
 #
 # Copyright 2011 Kaoru Fukumoto All Rights Reserved
 #
@@ -12,11 +12,5 @@
 # QUALITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. 
 #
 #######################################################################################
-require 'vcdkit'
-
-vcd = VCloud::VCD.new
-#vcd.dump(".")
-VMExt::VSphere.new(vcd).dump(".")
-
-
-
+require 'vcloud.rb'
+require 'vmext.rb'
