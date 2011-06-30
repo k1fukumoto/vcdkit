@@ -1,3 +1,17 @@
+######################################################################################
+#
+# Copyright 2011 Kaoru Fukumoto All Rights Reserved
+#
+# You may freely use and redistribute this script as long as this 
+# copyright notice remains intact 
+#
+#
+# DISCLAIMER. THIS SCRIPT IS PROVIDED TO YOU "AS IS" WITHOUT WARRANTIES OR CONDITIONS 
+# OF ANY KIND, WHETHER ORAL OR WRITTEN, EXPRESS OR IMPLIED. THE AUTHOR SPECIFICALLY 
+# DISCLAIMS ANY IMPLIED WARRANTIES OR CONDITIONS OF MERCHANTABILITY, SATISFACTORY 
+# QUALITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. 
+#
+#######################################################################################
 require 'rubygems'
 require 'rest_client'
 require 'rexml/document'
@@ -127,10 +141,26 @@ class Org < XMLElement
   end
 end
 
+class VCenter < XMLElement
+  def initialize(vcd,node)
+    super
+  end
+end
+
 class VSphere
   def initialize(vcd)
     @vcd = vcd
-    puts vcd.get('https://vcd.vhost.ultina.jp/api/v1.0/admin/extension')
+    @xml = vcd.get('https://vcd.vhost.ultina.jp/api/v1.0/admin/extension')
+    @doc = REXML::Document.new(@xml)
+  end
+
+  def each_vcenter
+    vctype='application/vnd.vmware.admin.vmwVimServerReferences+xml'
+
+    REXML::Document.
+      new(@vcd.get(@doc.elements["//vcloud:Link[@type='#{vctype}']"].
+                   attribute('href').to_s)).
+      elements.each("//vmext:VimServerReference") {|n| yield VCenter.new(@vcd,n)}
   end
 end
 
