@@ -12,10 +12,59 @@
 # QUALITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. 
 #
 #######################################################################################
+require 'optparse'
 require 'vcdkit'
 
-vcd = VCloud::VCD.new('vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!')
-vcd.save("../VCDDUMP")
+#
+# Process command args
+#
+ts=Time.now.strftime('%Y-%m-%d_%H-%M-%S')
+options={
+  :dir => "./VCDDUMP/#{ts}",
+  :vcd => 'vcd.vhost.ultina.jp',
+  :org => 'System',
+  :user => 'vcdadminl',
+  :pass => 'Redw00d!',
+}
+
+optparse = OptionParser.new do |opt|
+  opt.banner = "Usage: vcd-dump.rb [options]"
+
+  opt.on('-d','--dir DIR','Specify root directory of the dump data') do |o|
+    options[:dir] = "#{o}/#{ts}"
+  end
+  opt.on('-v','--vcd HOST','Specify hostname or IP address of vCloud Director') do |o|
+    options[:vcd] = o
+  end
+  opt.on('-o','--org ORG','Specify organization name') do |o|
+    options[:org] = o
+  end
+  opt.on('-u','--user USER','Specify user name') do |o|
+    options[:user] = o
+  end
+  opt.on('-p','--pass PASSWORD','Specify password') do |o|
+    options[:pass] = o
+  end
+
+  opt.on('-h','--help','Display this help') do
+    puts opt
+    exit
+  end
+end
+
+begin
+  optparse.parse!
+rescue Exception => e
+  puts e
+  puts optparse
+  exit 1
+end
+
+#
+# MAIN
+#
+vcd = VCloud::VCD.new(options[:vcd],options[:org],options[:user],options[:pass])
+vcd.save(options[:dir])
 #VMExt::VSphere.new(vcd).dump("../VCDDUMP")
 
 
