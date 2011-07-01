@@ -23,7 +23,7 @@ class XMLElement
   attr_accessor(*ATTRS)
   attr_reader :xml, :doc
 
-  def initialize(vcd,node,attrs=[])
+  def init_attrs(node,attrs=[])
     ATTRS.each { |attr|
       s_attr = attr.to_s
       if (node.attributes[s_attr])
@@ -32,12 +32,22 @@ class XMLElement
         eval "@#{s_attr} = node.elements['#{s_attr}'].text"
       end
     }
+  end
 
+  def connect(vcd,node,attrs=[])
+    init_attrs(node,attrs)
     @vcd = vcd
     if(@href)
       @xml = vcd.get(@href)
       @doc = REXML::Document.new(@xml)
     end
+  end
+
+  def load(dir)
+    @dir = dir
+    @doc = REXML::Document.
+      new(File.new("#{dir}/#{self.class.name}.xml"))
+    init_attrs(@doc.root)
   end
 
   def save(dir)
@@ -50,6 +60,17 @@ end
 module VCloud
   class Vm < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.vm+xml'
+    STATUS = {
+      "4" => "Powered On",
+      "8" => "Powered Off",
+    }
+
+    def os
+      @doc.elements["//ovf:OperatingSystemSection/ovf:Description"].text
+    end
+    def status
+      STATUS[@doc.elements["/Vm"].attributes['status']] || "Busy"
+    end
   end
 
   class ControlAccessParams < XMLElement
@@ -74,10 +95,11 @@ EOS
   class VApp < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.vApp+xml'
 
-    def initialize(vcd,node)
+    def connect(vcd,node)
       super(vcd,node)
       n = REXML::XPath.first(@doc, "/VApp/Link[@type='#{ControlAccessParams::TYPE}' and @rel='down']")
-      @cap = ControlAccessParams.new(vcd,n)
+      @cap = ControlAccessParams.new
+      @cap.connect(vcd,n)
     end
 
     def vm(name)
@@ -85,7 +107,15 @@ EOS
     end
 
     def each_vm
-      @doc.elements.each("//Children/Vm"){|n| yield Vm.new(@vcd,n)}
+      @doc.elements.each("//Children/Vm"){|n| 
+        vm = Vm.new
+        if(@vcd)
+          vm.connect(@vcd,n)
+        elsif(@dir)
+          vm.load("#{@dir}/VM/#{n.attributes['name']}")
+        end
+        yield vm
+      }
     end
 
     def save(dir)
@@ -98,16 +128,20 @@ EOS
   class Vdc < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.vdc+xml'
 
-    def initialize(vcd,node)
-      super(vcd,node)
-    end
-
     def vapp(name)
       VApp.new(@vcd,@doc.elements["//ResourceEntity[@type='#{VApp::TYPE}' and @name='#{name}']"])
     end
 
     def each_vapp
-      @doc.elements.each("//ResourceEntity[@type='#{VApp::TYPE}']"){|n| yield VApp.new(@vcd,n)}
+      @doc.elements.each("//ResourceEntity[@type='#{VApp::TYPE}']"){|n|
+        vapp = VApp.new
+        if(@vcd)
+          vapp.connect(@vcd,n)
+        elsif(@dir)
+          vapp.load("#{@dir}/VAPP/#{n.attributes['name']}")
+        end
+        yield vapp
+      }
     end
 
     def save(dir)
@@ -125,16 +159,20 @@ EOS
   class Org < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.org+xml'
 
-    def initialize(vcd,node)
-      super(vcd,node)
-    end
-
     def vdc(name) 
       Vdc.new(@vcd,@doc.elements["//Link[@type='#{Vdc::TYPE}' and @name='#{name}']"])
     end
 
     def each_vdc
-      @doc.elements.each("//Link[@type='#{Vdc::TYPE}']") {|n| yield Vdc.new(@vcd,n)}
+      @doc.elements.each("//Link[@type='#{Vdc::TYPE}']") {|n| 
+        vdc = Vdc.new
+        if(@vcd)
+          vdc.connect(@vcd,n)
+        elsif(@dir)
+          vdc.load("#{@dir}/VDC/#{n.attributes['name']}")
+        end
+        yield vdc
+      }
     end
 
     def save(dir)
@@ -143,8 +181,8 @@ EOS
     end
   end
 
-  class VCD 
-    def initialize(host,org,user,pass)
+  class VCD < XMLElement
+    def connect(host,org,user,pass)
       resp = RestClient::Resource.new("https://#{host}/api/v1.0/login",
                                       :user => "#{user}@#{org}",
                                       :password => pass).post(nil)
@@ -153,12 +191,25 @@ EOS
       @doc = REXML::Document.new(@xml)
     end
 
+    def load(dir)
+      super
+      @auth_token = nil
+    end
+
     def org(name)
       Org.new(self,@doc.elements["//OrgList/Org[@name='#{name}']"])
     end
 
     def each_org
-      @doc.elements.each("//OrgList/Org") {|n| yield Org.new(self,n)}
+      @doc.elements.each("//OrgList/Org") { |n| 
+        org = Org.new
+        if(@auth_token)
+          org.connect(self,n)
+        elsif(@dir)
+          org.load("#{@dir}/ORG/#{n.attributes['name']}")
+        end
+        yield org
+      }
     end
 
     def get(url)
@@ -170,6 +221,7 @@ EOS
     end
 
     def save(dir)
+      super
       self.each_org {|org| org.save("#{dir}/ORG/#{org.name}")}
     end
   end

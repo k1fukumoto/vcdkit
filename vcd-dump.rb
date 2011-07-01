@@ -63,7 +63,8 @@ end
 #
 # MAIN
 #
-vcd = VCloud::VCD.new(options[:vcd],options[:org],options[:user],options[:pass])
+vcd = VCloud::VCD.new
+vcd.connect(options[:vcd],options[:org],options[:user],options[:pass])
 vcd.save(options[:dir])
 #VMExt::VSphere.new(vcd).dump("../VCDDUMP")
 

@@ -1,0 +1,10 @@
+Organization,VDC,vApp,VM,OS,VM Status
+<% vcd.each_org do |org|
+    org.each_vdc do |vdc|
+      vdc.each_vapp do |vapp|
+        vapp.each_vm do |vm| %>
+"<%= org.name %>","<%= vdc.name %>","<%= vapp.name %>","<%= vm.name %>","<%= vm.os %>","<%= vm.status %>"
+<%       end
+      end
+    end
+  end %>

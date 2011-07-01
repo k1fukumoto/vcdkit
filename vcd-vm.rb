@@ -1,3 +1,4 @@
+#!/usr/bin/ruby -I ./lib
 #######################################################################################
 #
 # Copyright 2011 Kaoru Fukumoto All Rights Reserved
@@ -15,16 +16,23 @@
 require 'optparse'
 require 'vcdkit'
 
+#
+# Process command args
+#
 options = {
-  :command => :list
+  :command => nil,
+  :dir => nil,
 }
 
 optparse = OptionParser.new do |opt|
-  opt.banner = "Usage: vcd-vm.rb command [options]"
+  opt.banner = "Usage: vcd-vm.rb CMD [cmd-options]"
   
-  options[:command] = :list
-  opt.on('-l','--list','List all virtual machines (default)') do 
+  opt.on('-l','--list','CMD: List all virtual machines (default)') do 
     options[:command] = :list
+  end
+
+  opt.on('-d','--dir DIR','Specify root directory of the dump data') do |o|
+    options[:dir] = o
   end
 
   opt.on('-h','--help','Display this help') do
@@ -33,11 +41,24 @@ optparse = OptionParser.new do |opt|
   end
 end
 
-optparse.parse!
+begin
+  optparse.parse!
+  raise OptionParser::MissingArgument.new("CMD") if options[:command].nil?
+rescue Exception => e
+  puts e
+  puts optparse
+  exit 1
+end
 
+#
+# MAIN
+#
 vcd = VCloud::VCD.new
-vcd.load("../VCDDUMP")
-#VMExt::VSphere.new(vcd).dump("../VCDDUMP")
+vcd.load(options[:dir])
+
+ERB.new(File.new("template/vcd-vm_csv.erb").read,0,'>').run
+
+
 
 
 
