@@ -1,3 +1,4 @@
+#!/usr/bin/ruby -I ./lib
 #######################################################################################
 #
 # Copyright 2011 Kaoru Fukumoto All Rights Reserved
