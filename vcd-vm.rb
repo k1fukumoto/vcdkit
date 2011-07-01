@@ -12,11 +12,33 @@
 # QUALITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. 
 #
 #######################################################################################
+require 'optparse'
 require 'vcdkit'
 
+options = {
+  :command => :list
+}
+
+optparse = OptionParser.new do |opt|
+  opt.banner = "Usage: vcd-vm.rb command [options]"
+  
+  options[:command] = :list
+  opt.on('-l','--list','List all virtual machines (default)') do 
+    options[:command] = :list
+  end
+
+  opt.on('-h','--help','Display this help') do
+    puts opt
+    exit
+  end
+end
+
+optparse.parse!
+
 vcd = VCloud::VCD.new
-#vcd.dump(".")
-VMExt::VSphere.new(vcd).dump(".")
+vcd.load("../VCDDUMP")
+#VMExt::VSphere.new(vcd).dump("../VCDDUMP")
+
 
 
 

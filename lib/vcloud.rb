@@ -40,11 +40,10 @@ class XMLElement
     end
   end
 
-  def dump(dir)
+  def save(dir)
     FileUtils.mkdir_p(dir) unless File.exists? dir
     path = "#{dir}/#{self.class.name}.xml"
     open(path,'w') {|f| f.puts @xml}
-    puts "Dumping #{path} [#{self.class::TYPE}]\n"
   end
 end
 
@@ -89,10 +88,10 @@ EOS
       @doc.elements.each("//Children/Vm"){|n| yield Vm.new(@vcd,n)}
     end
 
-    def dump(dir)
+    def save(dir)
       super
-      self.each_vm {|vm| vm.dump("#{dir}/VM/#{vm.name}")}
-      @cap.dump(dir)
+      self.each_vm {|vm| vm.save("#{dir}/VM/#{vm.name}")}
+      @cap.save(dir)
     end
   end
 
@@ -111,9 +110,9 @@ EOS
       @doc.elements.each("//ResourceEntity[@type='#{VApp::TYPE}']"){|n| yield VApp.new(@vcd,n)}
     end
 
-    def dump(dir)
+    def save(dir)
       super
-      self.each_vapp {|vapp| vapp.dump("#{dir}/VAPP/#{vapp.name}")}
+      self.each_vapp {|vapp| vapp.save("#{dir}/VAPP/#{vapp.name}")}
     end
 
     def cloneVApp(src,name,desc='')
@@ -138,17 +137,17 @@ EOS
       @doc.elements.each("//Link[@type='#{Vdc::TYPE}']") {|n| yield Vdc.new(@vcd,n)}
     end
 
-    def dump(dir)
+    def save(dir)
       super
-      self.each_vdc {|vdc| vdc.dump("#{dir}/VDC/#{vdc.name}")}
+      self.each_vdc {|vdc| vdc.save("#{dir}/VDC/#{vdc.name}")}
     end
   end
 
   class VCD 
-    def initialize()
-      resp = RestClient::Resource.new('https://vcd.vhost.ultina.jp/api/v1.0/login',
-                                      :user => 'vcdadminl@System',
-                                      :password => 'Redw00d!').post(nil)
+    def initialize(host,org,user,pass)
+      resp = RestClient::Resource.new("https://#{host}/api/v1.0/login",
+                                      :user => "#{user}@#{org}",
+                                      :password => pass).post(nil)
       @auth_token = {:x_vcloud_authorization => resp.headers[:x_vcloud_authorization]}
       @xml = resp.to_s
       @doc = REXML::Document.new(@xml)
@@ -170,8 +169,8 @@ EOS
       return RestClient.post(url,payload,hdrs.update(@auth_token))
     end
 
-    def dump(dir)
-      self.each_org {|org| org.dump("ORG/#{org.name}")}
+    def save(dir)
+      self.each_org {|org| org.save("#{dir}/ORG/#{org.name}")}
     end
   end
 end
