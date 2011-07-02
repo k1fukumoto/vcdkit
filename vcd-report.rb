@@ -19,25 +19,22 @@ require 'vcdkit'
 #
 # Process command args
 #
-ts=Time.now.strftime('%Y-%m-%d_%H-%M-%S')
-options={
-  :dir => "./VCDDUMP/#{ts}",
-  :vcd => ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!'],
-#  :vsp => ['172.16.180.30','vcdadmin','vmware1!']
+options = {
+  :input => nil,
+  :output => nil,
 }
 
 optparse = OptionParser.new do |opt|
-  opt.banner = "Usage: vcd-dump.rb [options]"
+  opt.banner = "Usage: vcd-report.rb [cmd-options]"
+  
+  opt.on('-i','--input DIR','Specify root directory of the vCD dump data') do |o|
+    options[:input] = o
+  end
 
-  opt.on('-d','--dir DIR','Root directory of the dump data') do |o|
-    options[:dir] = "#{o}/#{ts}"
+  opt.on('-o','--output DIR','Specify directory for reports') do |o|
+    options[:output] = o
   end
-  opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD Organization connection parameters') do |o|
-    options[:vcd] = o
-  end
-  opt.on('-V','--vsp HOST,USER,PASS',Array,'vCenter connection parameters') do |o|
-    options[:vsp] = o
-  end
+
   opt.on('-h','--help','Display this help') do
     puts opt
     exit
@@ -46,6 +43,8 @@ end
 
 begin
   optparse.parse!
+  raise OptionParser::MissingArgument.new("--input") if options[:input].nil?
+  raise OptionParser::MissingArgument.new("--output") if options[:output].nil?
 rescue Exception => e
   puts e
   puts optparse
@@ -55,16 +54,20 @@ end
 #
 # MAIN
 #
-
 vcd = VCloud::VCD.new
-vcd.connect(*options[:vcd])
-vcd.save(options[:dir])
+vcd.load(options[:input])
 
-if (options[:vsp])
-  vc = VSphere::VCenter.new
-  vc.connect(*options[:vsp])
-  vc.save(options[:dir])
+vc = VSphere::VCenter.new
+vc.load(options[:input])
+
+FileUtils.mkdir_p(options[:output]) unless File.exists? options[:output]
+Dir.glob("template/vcd-report_*.erb").each do |tmpl|
+  tmpl =~ /vcd-report_(.*)\.erb/
+  open("#{options[:output]}/#{$1}.xml",'w') do |f|
+    f.puts ERB.new(File.new(tmpl).read,0,'>').result(binding)
+  end
 end
+
 
 
 
