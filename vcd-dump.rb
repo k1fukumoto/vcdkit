@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -I ./lib
+#!/usr/bin/ruby -I./lib
 #######################################################################################
 #
 # Copyright 2011 Kaoru Fukumoto All Rights Reserved
@@ -22,31 +22,23 @@ require 'vcdkit'
 ts=Time.now.strftime('%Y-%m-%d_%H-%M-%S')
 options={
   :dir => "./VCDDUMP/#{ts}",
-  :vcd => 'vcd.vhost.ultina.jp',
-  :org => 'System',
-  :user => 'vcdadminl',
-  :pass => 'Redw00d!',
+  :vcd => ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!'],
+  :vsp => ['172.16.180.30','vcdadmin','vmware1!']
 }
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-dump.rb [options]"
 
-  opt.on('-d','--dir DIR','Specify root directory of the dump data') do |o|
-    options[:dir] = "#{o}/#{ts}"
+  opt.on('-d','--dir DIR','Root directory of the dump data') do |o|
+#    options[:dir] = "#{o}/#{ts}"
+    options[:dir] = o
   end
-  opt.on('-v','--vcd HOST','Specify hostname or IP address of vCloud Director') do |o|
+  opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD Organization connection parameters') do |o|
     options[:vcd] = o
   end
-  opt.on('-o','--org ORG','Specify organization name') do |o|
-    options[:org] = o
+  opt.on('-V','--vsp HOST,USER,PASS',Array,'vCenter connection parameters') do |o|
+    options[:vsp] = o
   end
-  opt.on('-u','--user USER','Specify user name') do |o|
-    options[:user] = o
-  end
-  opt.on('-p','--pass PASSWORD','Specify password') do |o|
-    options[:pass] = o
-  end
-
   opt.on('-h','--help','Display this help') do
     puts opt
     exit
@@ -64,10 +56,16 @@ end
 #
 # MAIN
 #
+
 vcd = VCloud::VCD.new
-vcd.connect(options[:vcd],options[:org],options[:user],options[:pass])
+vcd.connect(*options[:vcd])
 vcd.save(options[:dir])
-#VMExt::VSphere.new(vcd).dump("../VCDDUMP")
+
+vc = VSphere::VCenter.new
+vc.connect(*options[:vsp])
+vc.save(options[:dir])
+
+
 
 
 

@@ -66,10 +66,19 @@ module VCloud
     }
 
     def os
-      @doc.elements["//ovf:OperatingSystemSection/ovf:Description"].text
+      @doc.elements["//ovf:OperatingSystemSection/ovf:Description/text()"]
     end
+
     def status
-      STATUS[@doc.elements["/Vm"].attributes['status']] || "Busy"
+      STATUS[@doc.elements["/Vm/@status"].value] || "Busy"
+    end
+
+    def thumbnail
+      @vcd.get(@doc.elements["//Link[@rel='screen:thumbnail']/@href"].value)
+    end
+
+    def moref
+      @doc.elements["//VCloudExtension/vmext:VimObjectRef/vmext:MoRef/text()"]
     end
   end
 

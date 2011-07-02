@@ -1,0 +1,24 @@
+<VSphere>
+  <VCenter name="<%= @name %>"> 
+<% @root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc| %>
+  <Datacenter name="<%=  dc.name %>" moref="<%= dc._ref %>">
+  <% dc.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).each do |c| %>
+    <ComputeResource name="<%= c.name %>" moref="<%= c._ref %>">
+    <% c.host.each do |h| %>
+      <HostSystem name="<%= h.name %>" moref="<%= h._ref %>">
+      <% h.vm.each do |vm| %>
+        <VirtualMachine name="<%= vm.name %>" moref="<%= vm._ref %>">
+        <% vm.datastore.each do |ds| %>
+          <Datastore name="<%= ds.name %>" moref="<%= ds._ref %>"/>
+        <% end  %>
+        </VirtualMachine>
+      <% end %>
+      </HostSystem>
+    <% end %>
+    </ComputeResource>
+  <% end %>
+  </Datacenter>
+<% end %>
+  </VCenter>
+</VSphere>
+

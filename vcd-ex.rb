@@ -19,20 +19,27 @@ require 'vcdkit'
 #
 # Process command args
 #
-options = {
-  :command => nil,
-  :dir => nil,
+options={
+  :vcd => 'vcd.vhost.ultina.jp',
+  :org => 'System',
+  :user => 'vcdadminl',
+  :pass => 'Redw00d!',
 }
 
 optparse = OptionParser.new do |opt|
-  opt.banner = "Usage: vcd-vm.rb CMD [cmd-options]"
-  
-  opt.on('-l','--list','CMD: List all virtual machines (default)') do 
-    options[:command] = :list
-  end
+  opt.banner = "Usage: vcd-ex.rb [options]"
 
-  opt.on('-d','--dir DIR','Specify root directory of the dump data') do |o|
-    options[:dir] = o
+  opt.on('-v','--vcd HOST','Specify hostname or IP address of vCloud Director') do |o|
+    options[:vcd] = o
+  end
+  opt.on('-o','--org ORG','Specify organization name') do |o|
+    options[:org] = o
+  end
+  opt.on('-u','--user USER','Specify user name') do |o|
+    options[:user] = o
+  end
+  opt.on('-p','--pass PASSWORD','Specify password') do |o|
+    options[:pass] = o
   end
 
   opt.on('-h','--help','Display this help') do
@@ -43,7 +50,6 @@ end
 
 begin
   optparse.parse!
-  raise OptionParser::MissingArgument.new("CMD") if options[:command].nil?
 rescue Exception => e
   puts e
   puts optparse
@@ -54,14 +60,9 @@ end
 # MAIN
 #
 vcd = VCloud::VCD.new
-vcd.load(options[:dir])
-
-vc = VSphere::VCenter.new
-vc.load(options[:dir])
-
-ERB.new(File.new("template/vcd-vm_csv.erb").read,0,'>').run
-
-
+vcd.connect(options[:vcd],options[:org],options[:user],options[:pass])
+vcd.save(options[:dir])
+#VMExt::VSphere.new(vcd).dump("../VCDDUMP")
 
 
 
