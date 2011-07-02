@@ -23,14 +23,15 @@ ts=Time.now.strftime('%Y-%m-%d_%H-%M-%S')
 options={
   :dir => "./VCDDUMP/#{ts}",
   :vcd => ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!'],
-#  :vsp => ['172.16.180.30','vcdadmin','vmware1!']
+  :vsp => ['172.16.180.30','vcdadmin','vmware1!']
 }
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-dump.rb [options]"
 
   opt.on('-d','--dir DIR','Root directory of the dump data') do |o|
-    options[:dir] = "#{o}/#{ts}"
+#    options[:dir] = "#{o}/#{ts}"
+    options[:dir] = o
   end
   opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD Organization connection parameters') do |o|
     options[:vcd] = o
@@ -60,11 +61,9 @@ vcd = VCloud::VCD.new
 vcd.connect(*options[:vcd])
 vcd.save(options[:dir])
 
-if (options[:vsp])
-  vc = VSphere::VCenter.new
-  vc.connect(*options[:vsp])
-  vc.save(options[:dir])
-end
+vc = VSphere::VCenter.new
+vc.connect(*options[:vsp])
+vc.save(options[:dir])
 
 
 
