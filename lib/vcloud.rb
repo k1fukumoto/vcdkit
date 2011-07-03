@@ -34,13 +34,19 @@ class XMLElement
     }
   end
 
-  def connect(vcd,node,attrs=[])
+  def connect(vcd,node,attrs=[],method=:get)
     init_attrs(node,attrs)
     @vcd = vcd
     if(@href)
-      @xml = vcd.get(@href)
+      case method
+      when :get
+        @xml = vcd.get(@href)
+      when :post
+        @xml = vcd.post(@href)
+      end
       @doc = REXML::Document.new(@xml)
     end
+    self
   end
 
   def load(dir)
@@ -48,6 +54,7 @@ class XMLElement
     @doc = REXML::Document.
       new(File.new("#{dir}/#{self.class.name}.xml"))
     init_attrs(@doc.root)
+    self
   end
 
   def save(dir)
@@ -58,6 +65,13 @@ class XMLElement
 end
 
 module VCloud
+  class Task < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.task+xml'
+    def status
+      @doc.elements["/Task/@status"].value
+    end
+  end
+
   class Vm < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.vm+xml'
     STATUS = {
@@ -74,11 +88,25 @@ module VCloud
     end
 
     def thumbnail
-      @vcd.get(@doc.elements["//Link[@rel='screen:thumbnail']/@href"].value)
+      @vcd.get(@doc.elements["//Link[@rel='screen:thumbnail']/@href"].value).body
     end
 
     def moref
       @doc.elements["//VCloudExtension/vmext:VimObjectRef/vmext:MoRef/text()"]
+    end
+    
+    def powerOff
+      task = Task.new
+      task.connect(@vcd,
+                   @doc.elements["//Link[@rel='power:powerOff']"],
+                   [], :post)
+    end
+
+    def powerOn
+      task = Task.new
+      task.connect(@vcd,
+                   @doc.elements["//Link[@rel='power:powerOn']"],
+                   [], :post)
     end
   end
 
@@ -109,10 +137,12 @@ EOS
       n = REXML::XPath.first(@doc, "/VApp/Link[@type='#{ControlAccessParams::TYPE}' and @rel='down']")
       @cap = ControlAccessParams.new
       @cap.connect(vcd,n)
+      self
     end
 
     def vm(name)
-      Vm.new(@vcd,@doc.elements["//Children/Vm[@name='#{name}'"])
+      vm = Vm.new
+      vm.connect(@vcd,@doc.elements["//Children/Vm[@name='#{name}']"])
     end
 
     def each_vm
@@ -138,7 +168,8 @@ EOS
     TYPE = 'application/vnd.vmware.vcloud.vdc+xml'
 
     def vapp(name)
-      VApp.new(@vcd,@doc.elements["//ResourceEntity[@type='#{VApp::TYPE}' and @name='#{name}']"])
+      vapp = VApp.new
+      vapp.connect(@vcd,@doc.elements["//ResourceEntity[@type='#{VApp::TYPE}' and @name='#{name}']"])
     end
 
     def each_vapp
@@ -169,7 +200,8 @@ EOS
     TYPE = 'application/vnd.vmware.vcloud.org+xml'
 
     def vdc(name) 
-      Vdc.new(@vcd,@doc.elements["//Link[@type='#{Vdc::TYPE}' and @name='#{name}']"])
+      vdc = Vdc.new
+      vdc.connect(@vcd,@doc.elements["//Link[@type='#{Vdc::TYPE}' and @name='#{name}']"])
     end
 
     def each_vdc
@@ -206,7 +238,8 @@ EOS
     end
 
     def org(name)
-      Org.new(self,@doc.elements["//OrgList/Org[@name='#{name}']"])
+      org = Org.new
+      org.connect(self,@doc.elements["//OrgList/Org[@name='#{name}']"])
     end
 
     def each_org
@@ -225,10 +258,19 @@ EOS
       return RestClient.get(url,@auth_token)
     end
 
-    def post(url,payload,hdrs)
+    def post(url,payload=nil,hdrs={})
       return RestClient.post(url,payload,hdrs.update(@auth_token))
     end
 
+    def wait(task)
+      while task.status == 'running'
+        sleep(3)
+        node = task.doc.root
+        task = Task.new
+        task.connect(self,node)
+      end
+    end
+  
     def save(dir)
       super
       self.each_org {|org| org.save("#{dir}/ORG/#{org.name}")}

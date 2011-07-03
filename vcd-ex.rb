@@ -20,28 +20,15 @@ require 'vcdkit'
 # Process command args
 #
 options={
-  :vcd => 'vcd.vhost.ultina.jp',
-  :org => 'System',
-  :user => 'vcdadminl',
-  :pass => 'Redw00d!',
+  :vcd => ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!'],
 }
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-ex.rb [options]"
 
-  opt.on('-v','--vcd HOST','Specify hostname or IP address of vCloud Director') do |o|
+  opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
     options[:vcd] = o
   end
-  opt.on('-o','--org ORG','Specify organization name') do |o|
-    options[:org] = o
-  end
-  opt.on('-u','--user USER','Specify user name') do |o|
-    options[:user] = o
-  end
-  opt.on('-p','--pass PASSWORD','Specify password') do |o|
-    options[:pass] = o
-  end
-
   opt.on('-h','--help','Display this help') do
     puts opt
     exit
@@ -60,10 +47,28 @@ end
 # MAIN
 #
 vcd = VCloud::VCD.new
-vcd.connect(options[:vcd],options[:org],options[:user],options[:pass])
-vcd.save(options[:dir])
-#VMExt::VSphere.new(vcd).dump("../VCDDUMP")
+vcd.connect(*options[:vcd])
+vapp = vcd.org('Admin').vdc('Admin').vapp('VCDMON-01')
 
+vapp.each_vm do |vm|
+  if(vm.status == "Powered Off")
+    puts "*** Powering on #{vm.name} (#{vm.status}) ***"
+    vcd.wait(vm.powerOn)
+  end
 
+  open("#{vm.name}.png",'w') do |f|
+    f.write vm.thumbnail
+  end
+end
 
+3.times do |i|
+  target = "DUMMY-0#{1 + rand(8)}"
 
+  vm = vapp.vm(target)
+  puts "*** Powering off #{target} (#{vm.status}) ***"
+  vcd.wait(vm.powerOff)
+
+  vm = vapp.vm(target)
+  puts "*** Powering On #{target} (#{vm.status})***"
+  vcd.wait(vm.powerOn)
+end

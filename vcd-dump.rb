@@ -32,10 +32,10 @@ optparse = OptionParser.new do |opt|
   opt.on('-d','--dir DIR','Root directory of the dump data') do |o|
     options[:dir] = "#{o}/#{ts}"
   end
-  opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD Organization connection parameters') do |o|
+  opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
     options[:vcd] = o
   end
-  opt.on('-V','--vsp HOST,USER,PASS',Array,'vCenter connection parameters') do |o|
+  opt.on('-V','--vsp HOST,USER,PASS',Array,'vCenter login parameters') do |o|
     options[:vsp] = o
   end
   opt.on('-h','--help','Display this help') do
@@ -55,7 +55,6 @@ end
 #
 # MAIN
 #
-
 vcd = VCloud::VCD.new
 vcd.connect(*options[:vcd])
 vcd.save(options[:dir])
@@ -65,9 +64,3 @@ if (options[:vsp])
   vc.connect(*options[:vsp])
   vc.save(options[:dir])
 end
-
-
-
-
-
-
