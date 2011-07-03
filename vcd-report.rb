@@ -54,20 +54,35 @@ end
 #
 # MAIN
 #
-vcd = VCloud::VCD.new
-vcd.load(options[:input])
+Dir.glob("#{options[:input]}/*-*-*_*-*-*").each do |d|
+  outdir = "#{options[:output]}/#{File.basename(d)}"
+  next if File.exists? outdir
 
-vc = VSphere::VCenter.new
-vc.load(options[:input])
+  vcd = VCloud::VCD.new
+  vcd.load(d)
+  
+  #vc = VSphere::VCenter.new
+  #vc.load(options[:input])
 
-FileUtils.mkdir_p(options[:output]) unless File.exists? options[:output]
-Dir.glob("template/vcd-report_*.erb").each do |tmpl|
-  tmpl =~ /vcd-report_(.*)\.erb/
-  open("#{options[:output]}/#{$1}.xml",'w') do |f|
-    f.puts ERB.new(File.new(tmpl).read,0,'>').result(binding)
+  FileUtils.mkdir_p(outdir)
+  open("#{outdir}/VMList.xml",'w') do |f|
+    f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
+                   read,0,'>').result(binding)
+  end
+
+  vcd.each_org do |org|
+    org.each_vdc do |vdc|
+      vdc.each_vapp do |vapp|
+        dir = "#{outdir}/ORG/#{org.name}/VDC/#{vdc.name}/VAPP/#{vapp.name}"
+        FileUtils.mkdir_p(dir) unless File.exists? dir
+        open("#{dir}/VAppParams.xml",'w') do |f|
+          f.puts ERB.new(File.new("template/vcd-report/VAppParams.erb").
+                         read,0,'>').result(binding)
+        end
+      end
+    end
   end
 end
-
 
 
 

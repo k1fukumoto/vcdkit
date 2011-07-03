@@ -62,6 +62,10 @@ class XMLElement
     path = "#{dir}/#{self.class.name}.xml"
     open(path,'w') {|f| f.puts @xml}
   end
+
+  def [](xpath)
+    @doc.elements[xpath]
+  end
 end
 
 module VCloud
