@@ -62,7 +62,7 @@ Dir.glob("#{options[:input]}/*-*-*_*-*-*").each do |d|
   vcd.load(d)
   
   vc = VSphere::VCenter.new
-  vc.load(options[:input])
+  vc.load(d)
 
   FileUtils.mkdir_p(outdir)
   open("#{outdir}/VMList.xml",'w') do |f|
