@@ -1,5 +1,7 @@
 <VAppParams>
 <param name="name"><%= vapp["/VApp/@name"].value %></param>
 <param name="description"><%= vapp["/VApp/Description/text()"] %></param>
+<param name="vdc"><%= vdc.name %></param>
+<param name="lease.runtime"><%= vapp["/VApp/LeaseSettingSection/DeploymentLeaseInSecond"]  %></param>
 </VAppParams>
 
