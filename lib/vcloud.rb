@@ -34,7 +34,7 @@ class XMLElement
     }
   end
 
-  def connect(vcd,node,attrs=[],method=:get)
+  def connect(vcd,node,attrs=[],method=:get,payload=nil,hdrs={})
     init_attrs(node,attrs)
     @vcd = vcd
     if(@href)
@@ -42,7 +42,9 @@ class XMLElement
       when :get
         @xml = vcd.get(@href)
       when :post
-        @xml = vcd.post(@href)
+        @xml = vcd.post(@href,payload,hdrs)
+      when :put
+        @xml = vcd.put(@href,payload,hdrs)
       end
       @doc = REXML::Document.new(@xml)
     end
@@ -66,13 +68,53 @@ class XMLElement
   def [](xpath)
     @doc.elements[xpath]
   end
+
+  def compose_xml(node)
+    node.attributes['xmlns'] = 'http://www.vmware.com/vcloud/v1'
+    node.attributes['xmlns:ovf'] ='http://schemas.dmtf.org/ovf/envelope/1'
+    xml = '<?xml version="1.0" encoding="UTF-8"?>'
+    REXML::Formatters::Default.new.write(node,xml)
+    xml
+  end
 end
 
 module VCloud
+  class GuestCustomizationSection < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.guestCustomizationSection+xml'
+  end
+  class NetworkConnectionSection < XMLElement
+
+    TYPE = 'application/vnd.vmware.vcloud.networkConnectionSection+xml'
+  end
+
+  class ControlAccessParams < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.controlAccess+xml'
+  end
+
+  class CloneVAppParams < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.cloneVAppParams+xml'
+    XML =<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<CloneVAppParams name="<%= name %>" xmlns="http://www.vmware.com/vcloud/v1">
+  <Description><%= desc %></Description> 
+  <Source href="<%= src %>"/>
+</CloneVAppParams>
+EOS
+
+    def initialize(src,name,desc)
+      @xml = ERB.new(XML).result(binding)
+    end
+  end
+
   class Task < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.task+xml'
     def status
-      @doc.elements["/Task/@status"].value
+      s = @doc.elements["//Task/@status"]
+      if s.nil?
+        "success"
+      else
+        @doc.elements["//Task/@status"].value
+      end
     end
   end
 
@@ -112,24 +154,32 @@ module VCloud
                    @doc.elements["//Link[@rel='power:powerOn']"],
                    [], :post)
     end
-  end
 
-  class ControlAccessParams < XMLElement
-    TYPE = 'application/vnd.vmware.vcloud.controlAccess+xml'
-  end
+    def connectNetwork(nic,name,mode)
+      ncon = @doc.elements["//NetworkConnection[NetworkConnectionIndex ='#{nic}']"]
+      ncon.attributes['network'] = name
+      ncon.elements["//IsConnected"].text = 'true'
+      ncon.elements["//IpAddressAllocationMode"].text = mode
+      cfg = ncon.elements["../"]
 
-  class CloneVAppParams < XMLElement
-    TYPE = 'application/vnd.vmware.vcloud.cloneVAppParams+xml'
-    XML =<<EOS
-<?xml version="1.0" encoding="UTF-8"?>
-<CloneVAppParams name="<%= name %>" xmlns="http://www.vmware.com/vcloud/v1">
-  <Description><%= desc %></Description> 
-  <Source href="<%= src %>"/>
-</CloneVAppParams>
-EOS
+      task = Task.new
+      task.connect(@vcd,
+                   cfg.elements["//Link[@type='#{NetworkConnectionSection::TYPE}']"],
+                   [], :put,
+                   self.compose_xml(cfg),
+                   :content_type => NetworkConnectionSection::TYPE)
+    end
 
-    def initialize(src,name,desc)
-      @xml = ERB.new(XML).result(binding)
+    def customize(hostname)
+      cfg = @doc.elements["//GuestCustomizationSection"]
+      cfg.elements["ComputerName"].text = hostname
+
+      task = Task.new
+      task.connect(@vcd,
+                   cfg.elements["//Link[@type='#{GuestCustomizationSection::TYPE}']"],
+                   [], :put,
+                   self.compose_xml(cfg),
+                   :content_type => GuestCustomizationSection::TYPE)
     end
   end
 
@@ -159,6 +209,15 @@ EOS
         end
         yield vm
       }
+    end
+
+    def deploy()
+      task = Task.new
+      task.connect(@vcd,
+                   @doc.elements["//Link[@type='#{DeployVAppParams::TYPE}']"],
+                   [], :post,
+                   DeployVAppParams.new().xml,
+                   {:content_type => DeployVAppParams::TYPE})
     end
 
     def save(dir)
@@ -198,6 +257,95 @@ EOS
       xml = CloneVAppParams.new(src.href,name,desc).xml
       resp = @vcd.post(href, xml , :content_type => CloneVAppParams::TYPE)
     end
+
+    def deployVApp(ci,name,ntwk,desc='')
+      task = Task.new
+      task.connect(@vcd,
+                   @doc.elements["//Link[@type='#{InstantiateVAppTemplateParams::TYPE}' and @rel='add']"],
+                   [], :post,
+                   InstantiateVAppTemplateParams.new(ci,name,ntwk,desc).xml,
+                   {:content_type => InstantiateVAppTemplateParams::TYPE})
+    end
+  end
+
+  class DeployVAppParams < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.deployVAppParams+xml'
+    XML =<<EOS
+<DeployVAppParams powerOn="true" xmlns="http://www.vmware.com/vcloud/v1"/>
+EOS
+    def initialize()
+      @xml = ERB.new(XML).result(binding)
+    end
+  end
+
+
+
+  class InstantiateVAppTemplateParams < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml'
+    XML =<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<InstantiateVAppTemplateParams 
+  name="<%= dest %>" 
+  xmlns="http://www.vmware.com/vcloud/v1"
+  xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"> 
+  <Description><%= desc %></Description> 
+
+  <InstantiationParams>
+    <NetworkConfigSection> 
+      <ovf:Info/>
+      <NetworkConfig networkName="<%= ntwk.name %>">
+        <Configuration>
+          <ParentNetwork href="<%= ntwk.href %>"/>
+          <FenceMode>bridged</FenceMode>
+        </Configuration>
+      </NetworkConfig>
+    </NetworkConfigSection>
+  </InstantiationParams>
+
+  <Source href="<%= src.entity_href %>"/>
+</InstantiateVAppTemplateParams>
+EOS
+    def initialize(src,dest,ntwk,desc)
+      @xml = ERB.new(XML).result(binding)
+    end
+  end
+
+  class CatalogItem < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.catalogItem+xml'
+
+    def entity_href
+      @doc.elements["/CatalogItem/Entity/@href"].value
+    end
+  end
+
+  class Catalog < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.catalog+xml'
+
+    def catalogitem(name)
+      ci = CatalogItem.new
+      ci.connect(@vcd,@doc.elements["//CatalogItem[@name='#{name}']"])
+    end
+
+    def each_catalogitem
+      @doc.elements.each("//CatalogItem") do |n|
+        ci = CatalogItem.new
+        if(@vcd)
+          ci.connect(@vcd,n)
+        elsif(@dir)
+          ci.load("#{@dir}/CATALOGITEM/#{n.attributes['name']}")
+        end
+        yield ci
+      end
+    end
+
+    def save(dir)
+      super
+      self.each_catalogitem {|ci| ci.save("#{dir}/CATALOGITEM/#{ci.name}")}
+    end
+  end
+
+  class OrgNetwork < XMLElement
+    TYPE='application/vnd.vmware.vcloud.network+xml'
   end
 
   class Org < XMLElement
@@ -220,9 +368,32 @@ EOS
       }
     end
 
+    def network(name)
+      ntwk = OrgNetwork.new
+      ntwk.connect(@vcd,@doc.elements["//Link[@type='#{OrgNetwork::TYPE}' and @name='#{name}']"])
+    end
+
+    def catalog(name)
+      cat = Catalog.new
+      cat.connect(@vcd,@doc.elements["//Link[@type='#{Catalog::TYPE}' and @name='#{name}']"])
+    end
+
+    def each_catalog
+      @doc.elements.each("//Link[@type='#{Catalog::TYPE}']") {|n| 
+        cat = Catalog.new
+        if(@vcd)
+          cat.connect(@vcd,n)
+        elsif(@dir)
+          cat.load("#{@dir}/CATALOG/#{n.attributes['name']}")
+        end
+        yield cat
+      }
+    end
+
     def save(dir)
       super
       self.each_vdc {|vdc| vdc.save("#{dir}/VDC/#{vdc.name}")}
+      self.each_catalog {|cat| cat.save("#{dir}/CATALOG/#{cat.name}")}
     end
   end
 
@@ -263,7 +434,27 @@ EOS
     end
 
     def post(url,payload=nil,hdrs={})
-      return RestClient.post(url,payload,hdrs.update(@auth_token))
+      RestClient.post(url,payload,hdrs.update(@auth_token)) { |response, request, result, &block|
+        if ENV['RESTCLIENT_LOG']
+          puts "*** request"
+          puts request
+          puts "*** response"
+          puts request
+        end
+        return response
+      }
+    end
+
+    def put(url,payload=nil,hdrs={})
+      RestClient.put(url,payload,hdrs.update(@auth_token)) { |response, request, result, &block|
+        if ENV['RESTCLIENT_LOG']
+          puts "*** request"
+          puts request
+          puts "*** response"
+          puts response
+        end
+        return response
+      }
     end
 
     def wait(task)
