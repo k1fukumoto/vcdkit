@@ -21,14 +21,15 @@ require 'pp'
 # Process command args
 #
 options={
-  :vcd => ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!'],
+#  :vcd => ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!'],
+  :vcd => ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!'],
 }
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-vapp.rb CMD [options]"
 
-  opt.on('-d','--deploy','CMD: Deploy vApp from template') do |o|
-    options[:dir] = "#{o}/#{ts}"
+  opt.on('-d','--deploy','CMD: Deploy vApps') do |o|
+    options[:command] = :deploy
   end
   opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
     options[:vcd] = o
@@ -49,19 +50,28 @@ end
 
 vcd = VCloud::VCD.new()
 vcd.connect(*options[:vcd])
-org = vcd.org('Admin')
-ci = org.catalog('Public').catalogitem('Windows2003 Standard R2(HDD20GB)')
-ntwk = org.network('Admin - Org Private')
-vcd.wait(org.vdc('Admin').deployVApp(ci,"WIN2K3-302",ntwk))
 
-vcd = VCloud::VCD.new()
-vcd.connect(*options[:vcd])
-vapp = vcd.org('Admin').vdc('Admin').vapp('WIN2K3-302')
-vm = vapp.vm('Windows2003 Standard R2(HDD20GB)')
-vcd.wait(vm.customize('VM-02'))
-vcd.wait(vm.connectNetwork(0,'Admin - Org Private','POOL'))
-vcd.wait(vapp.deploy)
+org = vcd.org('CustomerDemo-06')
+ci = org.catalog('Demo').catalogitem('test-xp00')
+ntwk = org.network('Org Private: Cutomer Demo-06')
 
+tasks = (101..101).inject({}) do |h,n|
+  h.update(n => org.vdc('Basic: Customer Demo-06').deployVApp(ci,"VCDTEST-#{n}",ntwk))
+#  h.update(n => "VCDTEST-#{n}")
+end
 
+tasks.keys.sort.each do |n|
+  vcd.wait(tasks[n])
 
+  vapp = vcd.org('CustomerDemo-06').vdc('Basic: Customer Demo-06').vapp("VCDTEST-#{n}")
+  vm = vapp.vm('test-xp00')
 
+  vcd.wait(vm.customize({'DomainName' => 'SANDI',
+                        'DomainUserName' => 'Administrator',
+                        'DomainUserPassword' => 'Redw00d!',
+                        'AdminPassword' => 'Redw00d!',
+                        'ComputerName' => "VCDTESTVM-#{n}",
+                        }))
+  vcd.wait(vm.connectNetwork(0,'Org Private: Cutomer Demo-06','DHCP'))
+  vcd.wait(vapp.deploy)
+end
