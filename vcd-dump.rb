@@ -22,7 +22,8 @@ require 'vcdkit'
 ts=Time.now.strftime('%Y-%m-%d_%H-%M-%S')
 options={
   :dir => "./VCDDUMP/#{ts}",
-  :vcd => ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!'],
+#  :vcd => ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!'],
+  :vcd => ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!'],
 #  :vsp => ['172.16.180.30','vcdadmin','vmware1!']
 }
 
@@ -57,10 +58,14 @@ end
 #
 vcd = VCloud::VCD.new
 vcd.connect(*options[:vcd])
-vcd.save(options[:dir])
+# vcd.save(options[:dir])
 
-if (options[:vsp])
-  vc = VSphere::VCenter.new
-  vc.connect(*options[:vsp])
-  vc.save(options[:dir])
-end
+puts vcd.org('CustomerDemo-06').vdc('Basic: Customer Demo-06').
+  vapp("VCDTEST-104").vm('test-xp00').xml
+
+
+# if (options[:vsp])
+#   vc = VSphere::VCenter.new
+#   vc.connect(*options[:vsp])
+#   vc.save(options[:dir])
+# end
