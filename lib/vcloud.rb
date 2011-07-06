@@ -81,9 +81,41 @@ end
 module VCloud
   class GuestCustomizationSection < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.guestCustomizationSection+xml'
-  end
-  class NetworkConnectionSection < XMLElement
+    XML=<<EOS
+<GuestCustomizationSection>
+  <JoinDomainEnabled>true</JoinDomainEnabled>
+  <UseOrgSettings>false</UseOrgSettings>
+  <DomainName><%= args['DomainName'] %></DomainName>
+  <DomainUserName><%= args['DomainUserName'] %></DomainUserName>
+  <DomainUserPassword><%= args['DomainUserPassword'] %></DomainUserPassword>
+  <AdminPasswordEnabled>true</AdminPasswordEnabled>
+  <AdminPasswordAuto>false</AdminPasswordAuto>
+  <AdminPassword><%= args['AdminPassword'] %></AdminPassword>
+  <ResetPasswordRequired>false</ResetPasswordRequired>
+  <ComputerName><%= args['ComputerName'] %></ComputerName>
+</GuestCustomizationSection>
+EOS
 
+    def compose(node,args)
+      new = ERB.new(XML).result(binding)
+      puts "*** COMPOSE-1"
+      puts new
+      
+      doc = REXML::Document.new(new)
+      prev = nil
+      doc.elements.each("/GuestCustomizationSection/*") do |e|
+        n = node.elements[e.name]
+        if n.nil?
+          n = prev.next_sibling = REXML::Element.new(e.name)
+        end
+        n.elements[e.name] = e.text
+        prev = n
+      end
+    end
+  end
+
+  class NetworkConnectionSection < XMLElement
+    
     TYPE = 'application/vnd.vmware.vcloud.networkConnectionSection+xml'
   end
 
@@ -170,9 +202,12 @@ EOS
                    :content_type => NetworkConnectionSection::TYPE)
     end
 
-    def customize(hostname)
+    def customize(args)
       cfg = @doc.elements["//GuestCustomizationSection"]
-      cfg.elements["ComputerName"].text = hostname
+      GuestCustomizationSection.new.compose(cfg,args)
+
+      puts "*** CUSTOMIZE"
+      puts self.compose_xml(cfg)
 
       task = Task.new
       task.connect(@vcd,
@@ -434,26 +469,18 @@ EOS
     end
 
     def post(url,payload=nil,hdrs={})
-      RestClient.post(url,payload,hdrs.update(@auth_token)) { |response, request, result, &block|
-        if ENV['RESTCLIENT_LOG']
-          puts "*** request"
-          puts request
-          puts "*** response"
-          puts request
-        end
-        return response
-      }
+      return RestClient.post(url,payload,hdrs.update(@auth_token))
     end
 
     def put(url,payload=nil,hdrs={})
       RestClient.put(url,payload,hdrs.update(@auth_token)) { |response, request, result, &block|
         if ENV['RESTCLIENT_LOG']
           puts "*** request"
-          puts request
+          puts payload
           puts "*** response"
           puts response
         end
-        return response
+        response.return!(request,result,&block)
       }
     end
 
