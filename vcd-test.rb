@@ -53,25 +53,25 @@ vcd.connect(*options[:vcd])
 
 org = vcd.org('CustomerDemo-06')
 ci = org.catalog('Demo').catalogitem('test-xp00')
-ntwk = org.network('Org Private: Cutomer Demo-06')
+ntwk = org.network('Org Private - CustomerDemo-06')
 
-tasks = (101..101).inject({}) do |h,n|
-  h.update(n => org.vdc('Basic: Customer Demo-06').deployVApp(ci,"VCDTEST-#{n}",ntwk))
+tasks = (206..215).inject({}) do |h,n|
+  h.update(n => org.vdc('Committed - Customer Demo-06').deployVApp(ci,"VCDTEST-#{n}",ntwk))
 #  h.update(n => "VCDTEST-#{n}")
 end
 
 tasks.keys.sort.each do |n|
   vcd.wait(tasks[n])
 
-  vapp = vcd.org('CustomerDemo-06').vdc('Basic: Customer Demo-06').vapp("VCDTEST-#{n}")
+  vapp = vcd.org('CustomerDemo-06').vdc('Committed - Customer Demo-06').vapp("VCDTEST-#{n}")
   vm = vapp.vm('test-xp00')
 
-  vcd.wait(vm.customize({'DomainName' => 'SANDI',
+  vcd.wait(vm.customize({'DomainName' => 'SANDI.test',
                         'DomainUserName' => 'Administrator',
                         'DomainUserPassword' => 'Redw00d!',
                         'AdminPassword' => 'Redw00d!',
                         'ComputerName' => "VCDTESTVM-#{n}",
                         }))
-  vcd.wait(vm.connectNetwork(0,'Org Private: Cutomer Demo-06','DHCP'))
+  vcd.wait(vm.connectNetwork(0,'Org Private - CustomerDemo-06','DHCP'))
   vcd.wait(vapp.deploy)
 end
