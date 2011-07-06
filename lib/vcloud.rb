@@ -108,7 +108,7 @@ EOS
         if n.nil?
           n = prev.next_sibling = REXML::Element.new(e.name)
         end
-        n.elements[e.name] = e.text
+        n.text = e.text
         prev = n
       end
     end
