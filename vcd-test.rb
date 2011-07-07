@@ -28,11 +28,17 @@ options={
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-vapp.rb CMD [options]"
 
-  opt.on('-d','--deploy','CMD: Deploy vApps') do |o|
-    options[:command] = :deploy
-  end
   opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
     options[:vcd] = o
+  end
+  opt.on('-d','--deploy','CMD: Deploy vApps for stress testing') do |o|
+    options[:command] = :deploy
+  end
+  opt.on('-u','--undeploy','CMD: Undeploy all vApps') do |o|
+    options[:command] = :undeploy
+  end
+  opt.on('-n','--num START,BATCHSZ,REPEAT',Array,'Number of auto-deployed vApps') do |o|
+    options[:num] = o
   end
   opt.on('-h','--help','Display this help') do
     puts opt
@@ -42,36 +48,72 @@ end
 
 begin
   optparse.parse!
+  if (options[:command].nil?)
+    raise OptionParser::MissingArgument.new("CMD")
+  end
+  if (options[:num].nil? || options[:num].size != 3)
+    raise OptionParser::MissingArgument.new("--num") 
+  end
 rescue Exception => e
   puts e
   puts optparse
   exit 1
 end
 
+TEST01_ORG  = 'CustomerDemo-06'
+TEST01_CAT  = 'Demo'
+TEST01_CI   = 'SL-XP-00'
+TEST01_CIVM = 'SL-XP-00'
+TEST01_NTWK = 'Org Private - CustomerDemo-06'
+TEST01_VDC  = 'Committed - Customer Demo-06'
+TEST01_PREFIX = 'SL-XP-'
+
 vcd = VCloud::VCD.new()
 vcd.connect(*options[:vcd])
 
-org = vcd.org('CustomerDemo-06')
-ci = org.catalog('Demo').catalogitem('test-xp00')
-ntwk = org.network('Org Private - CustomerDemo-06')
+start = options[:num][0].to_i
+sz = options[:num][1].to_i
+repeat = options[:num][2].to_i
 
-tasks = (206..215).inject({}) do |h,n|
-  h.update(n => org.vdc('Committed - Customer Demo-06').deployVApp(ci,"VCDTEST-#{n}",ntwk))
-#  h.update(n => "VCDTEST-#{n}")
-end
+case options[:command]
+when :deploy
+  org = vcd.org(TEST01_ORG)
+  ci = org.catalog(TEST01_CAT).catalogitem(TEST01_CI)
+  ntwk = org.network(TEST01_NTWK)
 
-tasks.keys.sort.each do |n|
-  vcd.wait(tasks[n])
+  (1..repeat).each do |n|
 
-  vapp = vcd.org('CustomerDemo-06').vdc('Committed - Customer Demo-06').vapp("VCDTEST-#{n}")
-  vm = vapp.vm('test-xp00')
+    tasks = (start..(start+sz-1)).inject({}) do |h,n|
+      h.update(n => org.vdc(TEST01_VDC).deployVApp(ci,"#{TEST01_PREFIX}#{n}",ntwk))
+    end
+  
+    tasks.keys.sort.each do |n|
+      vcd.wait(tasks[n])
 
-  vcd.wait(vm.customize({'DomainName' => 'SANDI.test',
-                        'DomainUserName' => 'Administrator',
-                        'DomainUserPassword' => 'Redw00d!',
-                        'AdminPassword' => 'Redw00d!',
-                        'ComputerName' => "VCDTESTVM-#{n}",
-                        }))
-  vcd.wait(vm.connectNetwork(0,'Org Private - CustomerDemo-06','DHCP'))
-  vcd.wait(vapp.deploy)
+      vapp = vcd.org(TEST01_ORG).vdc(TEST01_VDC).vapp("#{TEST01_PREFIX}#{n}")
+      vm = vapp.vm(TEST01_CIVM)
+
+      vcd.wait(vm.customize({'DomainName' => 'sandi.test',
+                              'DomainUserName' => 'administrator',
+                              'DomainUserPassword' => 'Redw00d!',
+                              'AdminPassword' => 'Redw00d!',
+                              'ComputerName' => "#{TEST01_PREFIX}#{n}",
+                            }))
+      vcd.wait(vm.connectNetwork(0,TEST01_NTWK,'DHCP'))
+      vcd.wait(vapp.deploy)
+    end
+
+    start += sz
+  end
+
+when :undeploy
+  (1..repeat).each do |n|
+    (start..(start+sz-1)).inject({}) do |h,n|
+      vapp = vcd.org(TEST01_ORG).vdc(TEST01_VDC).vapp("#{TEST01_PREFIX}#{n}")
+      
+      vcd.wait(vapp.powerOff)
+      vcd.wait(vapp.undeploy)
+    end
+    start += sz
+  end
 end

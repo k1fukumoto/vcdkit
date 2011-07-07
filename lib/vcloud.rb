@@ -142,8 +142,7 @@ EOS
   class Task < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.task+xml'
     def status
-      s = @doc.elements["//Task/@status"]
-      if s.nil?
+      if (@doc.nil? || @doc.elements["//Task/@status"].nil?)
         "success"
       else
         @doc.elements["//Task/@status"].value
@@ -261,6 +260,32 @@ EOS
       self.each_vm {|vm| vm.save("#{dir}/VM/#{vm.name}")}
       @cap.save(dir)
     end
+
+    def powerOff
+      task = Task.new
+      if(@doc.elements["VApp/@status"].value != "8")
+        task.connect(@vcd,
+                     @doc.elements["/VApp/Link[@rel='power:powerOff']"],
+                     [], :post)
+      end
+      task
+    end
+    
+    def undeploy
+      task = Task.new
+      if(@doc.elements["VApp/@deployed"].value == "true")
+        task.connect(@vcd,
+                     @doc.elements["//Link[@type='#{UndeployVAppParams::TYPE}']"],
+                     [], :post,
+                     UndeployVAppParams.new().xml,
+                     {:content_type => UndeployVAppParams::TYPE})
+      end
+      task
+    end
+
+    def delete
+      @vcd.delete(@doc.elements["/VApp/Link[@rel='remove']/@href"].value)
+    end
   end
 
   class Vdc < XMLElement
@@ -314,7 +339,15 @@ EOS
     end
   end
 
-
+  class UndeployVAppParams < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.undeployVAppParams+xml'
+    XML =<<EOS
+<UndeployVAppParams saveState="false" xmlns="http://www.vmware.com/vcloud/v1"/>
+EOS
+    def initialize()
+      @xml = ERB.new(XML).result(binding)
+    end
+  end
 
   class InstantiateVAppTemplateParams < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml'
@@ -469,8 +502,20 @@ EOS
       return RestClient.get(url,@auth_token)
     end
 
+    def delete(url)
+      return RestClient.delete(url,@auth_token)
+    end
+
     def post(url,payload=nil,hdrs={})
-      return RestClient.post(url,payload,hdrs.update(@auth_token))
+      RestClient.post(url,payload,hdrs.update(@auth_token)) { |response, request, result, &block|
+        if ENV['RESTCLIENT_LOG']
+          puts "*** request"
+          puts payload
+          puts "*** response"
+          puts response
+        end
+        response.return!(request,result,&block)
+      }
     end
 
     def put(url,payload=nil,hdrs={})
@@ -500,7 +545,3 @@ EOS
     end
   end
 end
-
-
-
-

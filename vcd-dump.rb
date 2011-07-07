@@ -60,8 +60,8 @@ vcd = VCloud::VCD.new
 vcd.connect(*options[:vcd])
 # vcd.save(options[:dir])
 
-puts vcd.org('CustomerDemo-06').vdc('Basic: Customer Demo-06').
-  vapp("VCDTEST-104").vm('test-xp00').xml
+puts vcd.org('CustomerDemo-06').vdc('Committed - Customer Demo-06').
+  vapp("SL-XP-501").xml
 
 
 # if (options[:vsp])
