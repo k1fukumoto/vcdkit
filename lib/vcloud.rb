@@ -83,6 +83,7 @@ module VCloud
     TYPE = 'application/vnd.vmware.vcloud.guestCustomizationSection+xml'
     XML=<<EOS
 <GuestCustomizationSection>
+  <ChangeSid>true</ChangeSid>
   <JoinDomainEnabled>true</JoinDomainEnabled>
   <UseOrgSettings>false</UseOrgSettings>
   <DomainName><%= args['DomainName'] %></DomainName>
