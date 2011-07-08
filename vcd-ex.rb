@@ -85,6 +85,7 @@ VCDEX_TARGETS.each do |t|
   end
 
   vcd.wait(vapp.powerOff)
+  vcd.wait(vapp.undeploy)
 end
 
 

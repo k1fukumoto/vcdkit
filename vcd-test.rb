@@ -68,20 +68,19 @@ TEST01_NTWK = 'Org Private - CustomerDemo-06'
 TEST01_VDC  = 'Committed - Customer Demo-06'
 TEST01_PREFIX = 'SL-XP-'
 
-vcd = VCloud::VCD.new()
-vcd.connect(*options[:vcd])
-
 start = options[:num][0].to_i
 sz = options[:num][1].to_i
 repeat = options[:num][2].to_i
 
 case options[:command]
 when :deploy
-  org = vcd.org(TEST01_ORG)
-  ci = org.catalog(TEST01_CAT).catalogitem(TEST01_CI)
-  ntwk = org.network(TEST01_NTWK)
-
   (1..repeat).each do |n|
+    vcd = VCloud::VCD.new()
+    vcd.connect(*options[:vcd])
+
+    org = vcd.org(TEST01_ORG)
+    ci = org.catalog(TEST01_CAT).catalogitem(TEST01_CI)
+    ntwk = org.network(TEST01_NTWK)
 
     tasks = (start..(start+sz-1)).inject({}) do |h,n|
       h.update(n => org.vdc(TEST01_VDC).deployVApp(ci,"#{TEST01_PREFIX}#{n}",ntwk))
@@ -108,12 +107,17 @@ when :deploy
 
 when :undeploy
   (1..repeat).each do |n|
+    vcd = VCloud::VCD.new()
+    vcd.connect(*options[:vcd])
+    vdc = vcd.org(TEST01_ORG).vdc(TEST01_VDC)
+
     (start..(start+sz-1)).inject({}) do |h,n|
-      vapp = vcd.org(TEST01_ORG).vdc(TEST01_VDC).vapp("#{TEST01_PREFIX}#{n}")
-      
+      vapp = vdc.vapp("#{TEST01_PREFIX}#{n}")
       vcd.wait(vapp.powerOff)
       vcd.wait(vapp.undeploy)
-      vapp.delete
+
+      # Pull the latest vApp XML to ensure the link for delete
+      vdc.vapp("#{TEST01_PREFIX}#{n}").delete
     end
     start += sz
   end
