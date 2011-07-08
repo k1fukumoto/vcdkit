@@ -113,6 +113,7 @@ when :undeploy
       
       vcd.wait(vapp.powerOff)
       vcd.wait(vapp.undeploy)
+      vapp.delete
     end
     start += sz
   end

@@ -150,19 +150,20 @@ EOS
     end
   end
 
+  VAPPSTATUS = {
+    "4" => "Powered On",
+    "8" => "Powered Off",
+  }
+
   class Vm < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.vm+xml'
-    STATUS = {
-      "4" => "Powered On",
-      "8" => "Powered Off",
-    }
-
+  
     def os
       @doc.elements["//ovf:OperatingSystemSection/ovf:Description/text()"]
     end
 
     def status
-      STATUS[@doc.elements["/Vm/@status"].value] || "Busy"
+      VAPPSTATUS[@doc.elements["/Vm/@status"].value] || "Busy"
     end
 
     def thumbnail
@@ -177,13 +178,6 @@ EOS
       task = Task.new
       task.connect(@vcd,
                    @doc.elements["//Link[@rel='power:powerOff']"],
-                   [], :post)
-    end
-
-    def powerOn
-      task = Task.new
-      task.connect(@vcd,
-                   @doc.elements["//Link[@rel='power:powerOn']"],
                    [], :post)
     end
 
@@ -234,6 +228,10 @@ EOS
       vm.connect(@vcd,@doc.elements["//Children/Vm[@name='#{name}']"])
     end
 
+    def status
+      VAPPSTATUS[@doc.elements["/VApp/@status"].value] || "Busy"
+    end
+
     def each_vm
       @doc.elements.each("//Children/Vm"){|n| 
         vm = Vm.new
@@ -261,9 +259,19 @@ EOS
       @cap.save(dir)
     end
 
+    def powerOn
+      task = Task.new
+      if(@doc.elements["/VApp/@status"].value != "4")
+        task.connect(@vcd,
+                     @doc.elements["/VApp/Link[@rel='power:powerOn']"],
+                     [], :post)
+      end
+      task
+    end
+
     def powerOff
       task = Task.new
-      if(@doc.elements["VApp/@status"].value != "8")
+      if(@doc.elements["/VApp/@status"].value != "8")
         task.connect(@vcd,
                      @doc.elements["/VApp/Link[@rel='power:powerOff']"],
                      [], :post)

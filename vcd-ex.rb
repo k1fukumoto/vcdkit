@@ -20,7 +20,7 @@ require 'vcdkit'
 # Process command args
 #
 options={
-  :vcd => ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!'],
+  :vcd => ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!'],
 }
 
 optparse = OptionParser.new do |opt|
@@ -43,32 +43,48 @@ rescue Exception => e
   exit 1
 end
 
+class Target
+  attr_reader :vdc,:vapp
+
+  def initialize(vdc,vapp)
+    @vdc = vdc
+    @vapp = vapp
+  end
+end
+
+VCDEX_ORG   = 'Admin'
+VCDEX_DIR   = 'VCDEX'
+VCDEX_TARGETS  = 
+  [
+   Target.new('Basic - Admin','VCDEX-B01'),
+   Target.new('Basic Backup - Admin','VCDEX-BB01'),
+   Target.new('Committed - Admin','VCDEX-C01'),
+   Target.new('Committed Backup - Admin','VCDEX-CB01'),
+   ]
+
 #
 # MAIN
 #
 vcd = VCloud::VCD.new
 vcd.connect(*options[:vcd])
-vapp = vcd.org('Admin').vdc('Admin').vapp('VCDMON-01')
+org = vcd.org(VCDEX_ORG)
 
-vapp.each_vm do |vm|
-  if(vm.status == "Powered Off")
-    puts "*** Powering on #{vm.name} (#{vm.status}) ***"
-    vcd.wait(vm.powerOn)
+FileUtils.mkdir_p(VCDEX_DIR) unless File.exists? VCDEX_DIR
+
+VCDEX_TARGETS.each do |t|
+  vapp = org.vdc(t.vdc).vapp(t.vapp)
+
+  if(vapp.status == "Powered Off")
+      vcd.wait(vapp.powerOn)
   end
 
-  open("#{vm.name}.png",'w') do |f|
-    f.write vm.thumbnail
+  vapp.each_vm do |vm|
+    open("#{VCDEX_DIR}/#{vm.name}.png",'w') do |f|
+      f.write vm.thumbnail
+    end
   end
+
+  vcd.wait(vapp.powerOff)
 end
 
-3.times do |i|
-  target = "DUMMY-0#{1 + rand(8)}"
 
-  vm = vapp.vm(target)
-  puts "*** Powering off #{target} (#{vm.status}) ***"
-  vcd.wait(vm.powerOff)
-
-  vm = vapp.vm(target)
-  puts "*** Powering On #{target} (#{vm.status})***"
-  vcd.wait(vm.powerOn)
-end
