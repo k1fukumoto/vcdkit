@@ -1,7 +1,37 @@
-<VAppParams>
-<param name="name"><%= vapp["/VApp/@name"].value %></param>
-<param name="description"><%= vapp["/VApp/Description/text()"] %></param>
-<param name="vdc"><%= vdc.name %></param>
-<param name="lease.runtime"><%= vapp["/VApp/LeaseSettingSection/DeploymentLeaseInSecond"]  %></param>
+<?xml version="1.0" encoding="UTF-8"?>
+<VAppParams xmlns="http://www.vmware.com/vcloud/v1" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1">
+  <Properties>
+    <General>
+      <Name><%= self['/VApp/@name'].value %></Name>
+      <Description><%= self['/VApp/Description/text()'] %></Description>
+      <Lease>
+        <% lease='/VApp/LeaseSettingsSection/' %>
+        <Runtime><%= self["#{lease}/DeploymentLeaseInSeconds/text()"]  %></Runtime>
+        <Storage><%= self["#{lease}/StorageLeaseInSeconds/text()"]  %></Storage>
+        <Expiration><%= self["#{lease}/StorageLeaseExpiration/text()"] %></Expiration>
+      </Lease>
+    </General>
+    <Running>
+      <% self.match('/VApp/ovf:StartupSection/ovf:Item').sort do |x,y| 
+           x.attributes['ovf:id'] <=> y.attributes['ovf:id']
+         end.each do |n| %>
+        <VM>
+          <Name><%= n.attributes['ovf:id'] %></Name>
+          <Order><%= n.attributes['ovf:order'] %></Order>
+          <StartAction><%= n.attributes['ovf:startAction'] %></StartAction>
+          <StartDelay><%= n.attributes['ovf:startDelay'] %></StartDelay>
+          <StopAction><%= n.attributes['ovf:stopAction'] %></StopAction>
+          <StopDelay><%= n.attributes['ovf:stopDelay'] %></StopDelay>
+        </VM>
+      <% end %>
+    </Running>
+  </Properties>
+  <Networking>
+    <% self.elements.each('/VApp/NetworkConfigSection/NetworkConfig') do |cfg| %>
+      <%= self.compose_xml(cfg,false) %>
+    <% end %>
+  </Networking>
 </VAppParams>
+  
+
 
