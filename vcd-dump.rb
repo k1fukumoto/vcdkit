@@ -21,10 +21,12 @@ require 'vcdkit'
 #
 ts=Time.now.strftime('%Y-%m-%d_%H-%M-%S')
 options={
-  :dir => "./data/vcd-dump/#{ts}",
-#  :vcd => ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!'],
-  :vcd => ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!'],
-#  :vsp => ['172.16.180.30','vcdadmin','vmware1!']
+  :tree => ts,
+  :dir => "./data/vcd-dump",
+#  :vcd => ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!'],
+  :vcd => ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!'],
+#  :vsp => ['172.16.180.30','vcdadmin','vmware1!'],
+  :target => :all,
 }
 
 optparse = OptionParser.new do |opt|
@@ -33,22 +35,26 @@ optparse = OptionParser.new do |opt|
   opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
     options[:vcd] = o
   end
-  opt.on('-V','--vsp HOST,USER,PASS',Array,'vCenter login parameters') do |o|
+  opt.on('-c','--vcenter HOST,USER,PASS',Array,'vCenter login parameters') do |o|
     options[:vsp] = o
   end
 
   opt.on('-d','--dir DIR','Root directory of the dump data') do |o|
     options[:dir] = o
   end
-  opt.on('-a','--all','Dump all data') do |o|
+  opt.on('-A','--all','Dump all data') do |o|
     options[:target] = :all
   end
-  opt.on('-t','--target ORG,VDC,VAPP,VM',Array,'Dump target object') do |o|
+  opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Dump target vApp') do |o|
     options[:target] = o
   end
 
+  opt.on('-t','--tree TREENAME',Array,'Directory name to identify dump tree') do |o|
+    options[:tree] = o
+  end
+
   opt.on('-h','--help','Display this help') do
-    puts opt
+    puts optparse
     exit
   end
 end
@@ -77,13 +83,10 @@ if (options[:vsp])
 end
 
 ot = options[:target]
+dir = "#{options[:dir]}/#{options[:tree]}"
 if(ot == :all)
-  vcd.save(options[:dir])
-  vc.save(options[:dir]) unless vc.nil?
-
-elsif(ot.size == 3)
-  vapp = vcd.org(ot[0]).vdc(ot[1]).vapp(ot[2])
-  puts vapp.xml
+  vcd.save(dir)
+  vc.save(dir) unless vc.nil?
 else
-  raise "Wrong arguments: #{ot}"
+  vcd.save(dir,*ot)
 end
