@@ -54,25 +54,35 @@ class XMLElement
   def load(dir)
     @dir = dir
     @doc = REXML::Document.
-      new(File.new("#{dir}/#{self.class.name}.xml"))
+      new(File.new("#{dir}/#{self.class.name.sub(/VCloud::/,'')}.xml"))
     init_attrs(@doc.root)
     self
   end
 
   def save(dir)
     FileUtils.mkdir_p(dir) unless File.exists? dir
-    path = "#{dir}/#{self.class.name}.xml"
+    path = "#{dir}/#{self.class.name.sub(/VCloud::/,'')}.xml"
     open(path,'w') {|f| f.puts @xml}
   end
 
   def [](xpath)
     @doc.elements[xpath]
   end
+  def elements
+    @doc.elements
+  end
 
-  def compose_xml(node)
-    node.attributes['xmlns'] = 'http://www.vmware.com/vcloud/v1'
-    node.attributes['xmlns:ovf'] ='http://schemas.dmtf.org/ovf/envelope/1'
-    xml = '<?xml version="1.0" encoding="UTF-8"?>'
+  def match(xpath)
+    REXML::XPath.match(@doc,xpath)
+  end
+
+  def compose_xml(node,hdr=true)
+    xml = ''
+    if(hdr)
+      node.attributes['xmlns'] = 'http://www.vmware.com/vcloud/v1'
+      node.attributes['xmlns:ovf'] ='http://schemas.dmtf.org/ovf/envelope/1'
+      xml = '<?xml version="1.0" encoding="UTF-8"?>'
+    end
     REXML::Formatters::Default.new.write(node,xml)
     xml
   end
@@ -158,6 +168,16 @@ EOS
   class Vm < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.vm+xml'
   
+    def saveparam(dir)
+      FileUtils.mkdir_p(dir) unless File.exists? dir
+
+      open("#{dir}/VMParams.xml",'w') do |f|
+        xml = ERB.new(File.new("template/vcd-report/VMParams.erb").read,0,'>').result(binding)
+        doc = REXML::Document.new(xml)
+        REXML::Formatters::Pretty.new.write(doc.root,f)
+      end
+    end
+
     def os
       @doc.elements["//ovf:OperatingSystemSection/ovf:Description/text()"]
     end
@@ -221,6 +241,17 @@ EOS
       @cap = ControlAccessParams.new
       @cap.connect(vcd,n)
       self
+    end
+
+    def saveparam(dir)
+      FileUtils.mkdir_p(dir) unless File.exists? dir
+
+      open("#{dir}/VAppParams.xml",'w') do |f|
+        xml = ERB.new(File.new("template/vcd-report/VAppParams.erb").read,0,'>').result(binding)
+        doc = REXML::Document.new(xml)
+        REXML::Formatters::Pretty.new.write(doc.root,f)
+      end
+      self.each_vm {|vm| vm.saveparam("#{dir}/VM/#{vm.name}")}
     end
 
     def vm(name)
@@ -484,9 +515,30 @@ EOS
       @doc = REXML::Document.new(@xml)
     end
 
-    def load(dir)
-      super
-      @auth_token = nil
+    def load(dir,*target)
+      case target.size
+      when 0
+        super
+        @auth_token = nil
+      when 3
+        org = target[0]
+        vdc = target[1]
+        vapp = target[2]
+        VApp.new.load("#{dir}/ORG/#{org}/VDC/#{vdc}/VAPP/#{vapp}")
+      end
+    end
+
+    def save(dir,*target)
+      case target.size
+      when 0
+        super
+        self.each_org {|org| org.save("#{dir}/ORG/#{org.name}")}
+      when 3
+        org = target[0]
+        vdc = target[1]
+        vapp = target[2]
+        self.org(org).vdc(vdc).vapp(vapp).save("#{dir}/ORG/#{org}/VDC/#{vdc}/VAPP/#{vapp}")
+      end
     end
 
     def org(name)
@@ -547,9 +599,5 @@ EOS
       end
     end
   
-    def save(dir)
-      super
-      self.each_org {|org| org.save("#{dir}/ORG/#{org.name}")}
-    end
   end
 end
