@@ -62,11 +62,11 @@ end
 
 TEST01_ORG  = 'CustomerDemo-06'
 TEST01_CAT  = 'Demo'
-TEST01_CI   = 'SL-XP-00'
-TEST01_CIVM = 'SL-XP-00'
+TEST01_CI   = 'WL-XP-00'
+TEST01_CIVM = 'WL-XP-00'
 TEST01_NTWK = 'Org Private - CustomerDemo-06'
 TEST01_VDC  = 'Committed - Customer Demo-06'
-TEST01_PREFIX = 'SL-XP-'
+TEST01_PREFIX = 'WL-XP-'
 
 start = options[:num][0].to_i
 sz = options[:num][1].to_i
