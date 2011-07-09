@@ -30,15 +30,23 @@ options={
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-dump.rb [options]"
 
-  opt.on('-d','--dir DIR','Root directory of the dump data') do |o|
-    options[:dir] = "#{o}/#{ts}"
-  end
   opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
     options[:vcd] = o
   end
   opt.on('-V','--vsp HOST,USER,PASS',Array,'vCenter login parameters') do |o|
     options[:vsp] = o
   end
+
+  opt.on('-d','--dir DIR','Root directory of the dump data') do |o|
+    options[:dir] = o
+  end
+  opt.on('-a','--all','Dump all data') do |o|
+    options[:target] = :all
+  end
+  opt.on('-t','--target ORG,VDC,VAPP,VM',Array,'Dump target object') do |o|
+    options[:target] = o
+  end
+
   opt.on('-h','--help','Display this help') do
     puts opt
     exit
@@ -47,6 +55,9 @@ end
 
 begin
   optparse.parse!
+  if (options[:target].nil?)
+    raise OptionParser::MissingArgument.new("--target")
+  end
 rescue Exception => e
   puts e
   puts optparse
@@ -58,14 +69,21 @@ end
 #
 vcd = VCloud::VCD.new
 vcd.connect(*options[:vcd])
-# vcd.save(options[:dir])
 
-puts vcd.org('CustomerDemo-06').vdc('Committed - Customer Demo-06').
-  vapp("SL-XP-501").xml
+vc = nil
+if (options[:vsp])
+  vc = VSphere::VCenter.new
+  vc.connect(*options[:vsp])
+end
 
+ot = options[:target]
+if(ot == :all)
+  vcd.save(options[:dir])
+  vc.save(options[:dir]) unless vc.nil?
 
-# if (options[:vsp])
-#   vc = VSphere::VCenter.new
-#   vc.connect(*options[:vsp])
-#   vc.save(options[:dir])
-# end
+elsif(ot.size == 3)
+  vapp = vcd.org(ot[0]).vdc(ot[1]).vapp(ot[2])
+  puts vapp.xml
+else
+  raise "Wrong arguments: #{ot}"
+end
