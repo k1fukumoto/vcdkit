@@ -20,8 +20,9 @@ require 'vcdkit'
 # Process command args
 #
 options = {
-  :input => nil,
-  :output => nil,
+  :input => "./data/vcd-dump",
+  :output => "./data/vcd-report",
+  :target => :all,
 }
 
 optparse = OptionParser.new do |opt|
@@ -30,9 +31,15 @@ optparse = OptionParser.new do |opt|
   opt.on('-i','--input DIR','Specify root directory of the vCD dump data') do |o|
     options[:input] = o
   end
-
   opt.on('-o','--output DIR','Specify directory for reports') do |o|
     options[:output] = o
+  end
+
+  opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Create report for specified vApp') do |o|
+    options[:target] = o
+  end
+  opt.on('-A','--all','Create report for entire dump tree') do |o|
+    options[:target] = :all
   end
 
   opt.on('-h','--help','Display this help') do
@@ -54,33 +61,34 @@ end
 #
 # MAIN
 #
-Dir.glob("#{options[:input]}/*-*-*_*-*-*").each do |d|
+Dir.glob("#{options[:input]}/*").each do |d|
   outdir = "#{options[:output]}/#{File.basename(d)}"
-  next if File.exists? outdir
+#  next if File.exists? outdir
 
   vcd = VCloud::VCD.new
-  vcd.load(d)
+
+  ot = options[:target]
+  if(ot == :all)
+    vcd.load(d)
   
-  vc = VSphere::VCenter.new
-  vc.load(d)
+  # vc = VSphere::VCenter.new
+  # vc.load(d)
 
-  FileUtils.mkdir_p(outdir)
-  open("#{outdir}/VMList.xml",'w') do |f|
-    f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
-                   read,0,'>').result(binding)
-  end
+  # FileUtils.mkdir_p(outdir)
+  # open("#{outdir}/VMList.xml",'w') do |f|
+  #   f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
+  #                  read,0,'>').result(binding)
+  # end
 
-  vcd.each_org do |org|
-    org.each_vdc do |vdc|
-      vdc.each_vapp do |vapp|
-        dir = "#{outdir}/ORG/#{org.name}/VDC/#{vdc.name}/VAPP/#{vapp.name}"
-        FileUtils.mkdir_p(dir) unless File.exists? dir
-        open("#{dir}/VAppParams.xml",'w') do |f|
-          f.puts ERB.new(File.new("template/vcd-report/VAppParams.erb").
-                         read,0,'>').result(binding)
+    vcd.each_org do |org|
+      org.each_vdc do |vdc|
+        vdc.each_vapp do |vapp|
+          vapp.saveparam("#{outdir}/ORG/#{org.name}/VDC/#{vdc.name}/VAPP/#{vapp.name}")
         end
       end
     end
+  elsif(ot.size == 3)
+    vcd.load(d,*ot).saveparam("#{outdir}/ORG/#{ot[0]}/VDC/#{ot[1]}/VAPP/#{ot[2]}")
   end
 end
 
