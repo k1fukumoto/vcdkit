@@ -21,7 +21,7 @@ require 'vcdkit'
 #
 ts=Time.now.strftime('%Y-%m-%d_%H-%M-%S')
 options={
-  :dir => "./VCDDUMP/#{ts}",
+  :dir => "./data/vcd-dump/#{ts}",
 #  :vcd => ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!'],
   :vcd => ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!'],
 #  :vsp => ['172.16.180.30','vcdadmin','vmware1!']
