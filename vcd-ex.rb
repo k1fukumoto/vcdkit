@@ -53,7 +53,7 @@ class Target
 end
 
 VCDEX_ORG   = 'Admin'
-VCDEX_DIR   = 'VCDEX'
+VCDEX_DIR   = './data/vcd-ex'
 VCDEX_TARGETS  = 
   [
    Target.new('Basic - Admin','VCDEX-B01'),
