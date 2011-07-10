@@ -110,8 +110,6 @@ EOS
 
     def compose(node,args)
       new = ERB.new(XML).result(binding)
-      puts "*** COMPOSE-1"
-      puts new
       
       doc = REXML::Document.new(new)
       prev = nil
