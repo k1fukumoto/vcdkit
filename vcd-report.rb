@@ -41,6 +41,9 @@ optparse = OptionParser.new do |opt|
   opt.on('-A','--all','Create report for entire dump tree') do |o|
     options[:target] = :all
   end
+  opt.on('-t','--tree TREENAME',Array,'Directory name to identify dump tree') do |o|
+    options[:tree] = o
+  end
 
   opt.on('-h','--help','Display this help') do
     puts opt
@@ -61,7 +64,8 @@ end
 #
 # MAIN
 #
-Dir.glob("#{options[:input]}/*").each do |d|
+subdir = options[:tree] || "*"
+Dir.glob("#{options[:input]}/#{subdir}").each do |d|
   outdir = "#{options[:output]}/#{File.basename(d)}"
 #  next if File.exists? outdir
 
