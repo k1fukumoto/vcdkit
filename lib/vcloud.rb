@@ -77,6 +77,7 @@ class XMLElement
   end
 
   def compose_xml(node,hdr=true)
+    return '' if node.nil?
     xml = ''
     if(hdr)
       node.attributes['xmlns'] = 'http://www.vmware.com/vcloud/v1'
@@ -130,8 +131,19 @@ EOS
     TYPE = 'application/vnd.vmware.vcloud.networkConnectionSection+xml'
   end
 
+  class AccessSetting < XMLElement
+  end
+
   class ControlAccessParams < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.controlAccess+xml'
+
+    def each_access_setting
+      @doc.elements.each("//AccessSetting"){|n| 
+        as = AccessSetting.new
+        as.connect(@vcd,n,[:type])
+        yield as
+      }
+    end
   end
 
   class CloneVAppParams < XMLElement
@@ -220,9 +232,6 @@ EOS
       cfg = @doc.elements["//GuestCustomizationSection"]
       GuestCustomizationSection.new.compose(cfg,args)
 
-      puts "*** CUSTOMIZE"
-      puts self.compose_xml(cfg)
-
       task = Task.new
       task.connect(@vcd,
                    cfg.elements["//Link[@type='#{GuestCustomizationSection::TYPE}']"],
@@ -234,6 +243,7 @@ EOS
 
   class VApp < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.vApp+xml'
+    attr_reader :cap
 
     def connect(vcd,node)
       super(vcd,node)
@@ -288,6 +298,13 @@ EOS
       super
       self.each_vm {|vm| vm.save("#{dir}/VM/#{vm.name}")}
       @cap.save(dir)
+    end
+
+    def load(dir)
+      super
+      @cap = ControlAccessParams.new
+      @cap.load(dir)
+      self
     end
 
     def powerOn
@@ -461,11 +478,11 @@ EOS
 
     def vdc(name) 
       vdc = Vdc.new
-      vdc.connect(@vcd,@doc.elements["//Link[@type='#{Vdc::TYPE}' and @name='#{name}']"])
+      vdc.connect(@vcd,@doc.elements["//Vdcs/Vdc[ @name='#{name}']"])
     end
 
     def each_vdc
-      @doc.elements.each("//Link[@type='#{Vdc::TYPE}']") {|n| 
+      @doc.elements.each("//Vdcs/Vdc") {|n| 
         vdc = Vdc.new
         if(@vcd)
           vdc.connect(@vcd,n)
@@ -476,18 +493,39 @@ EOS
       }
     end
 
+    USERPATH ='//Users/UserReference'
+
+    def user(name)
+      user = User.new
+      user.connect(self,@doc.elements["#{USERPATH}[@name='#{name}']"])
+    end
+
+    def each_user
+      @doc.elements.each(USERPATH) { |n| 
+        user = User.new
+        if(@vcd)
+          user.connect(@vcd,n)
+        elsif(@dir)
+          user.load("#{@dir}/USER/#{n.attributes['name']}")
+        end
+        yield user
+      }
+    end
+
     def network(name)
       ntwk = OrgNetwork.new
-      ntwk.connect(@vcd,@doc.elements["//Link[@type='#{OrgNetwork::TYPE}' and @name='#{name}']"])
+      ntwk.connect(@vcd,@doc.elements["//Networks/Network[@name='#{name}']"])
     end
+
+    CATPATH = '//Catalogs/CatalogReference'
 
     def catalog(name)
       cat = Catalog.new
-      cat.connect(@vcd,@doc.elements["//Link[@type='#{Catalog::TYPE}' and @name='#{name}']"])
+      cat.connect(@vcd,@doc.elements["#{CATPATH}[@name='#{name}']"])
     end
 
     def each_catalog
-      @doc.elements.each("//Link[@type='#{Catalog::TYPE}']") {|n| 
+      @doc.elements.each(CATPATH) {|n| 
         cat = Catalog.new
         if(@vcd)
           cat.connect(@vcd,n)
@@ -502,7 +540,11 @@ EOS
       super
       self.each_vdc {|vdc| vdc.save("#{dir}/VDC/#{vdc.name}")}
       self.each_catalog {|cat| cat.save("#{dir}/CATALOG/#{cat.name}")}
+      self.each_user {|user| user.save("#{dir}/USER/#{user.name}")}
     end
+  end
+
+  class User < XMLElement
   end
 
   class VCD < XMLElement
@@ -511,7 +553,8 @@ EOS
                                       :user => "#{user}@#{org}",
                                       :password => pass).post(nil)
       @auth_token = {:x_vcloud_authorization => resp.headers[:x_vcloud_authorization]}
-      @xml = resp.to_s
+
+      @xml = self.get("https://#{host}/api/v1.0/admin")
       @doc = REXML::Document.new(@xml)
     end
 
@@ -541,13 +584,15 @@ EOS
       end
     end
 
+    ORGPATH='//OrganizationReferences/OrganizationReference'
+
     def org(name)
       org = Org.new
-      org.connect(self,@doc.elements["//OrgList/Org[@name='#{name}']"])
+      org.connect(self,@doc.elements["#{ORGPATH}[@name='#{name}']"])
     end
 
     def each_org
-      @doc.elements.each("//OrgList/Org") { |n| 
+      @doc.elements.each(ORGPATH) { |n| 
         org = Org.new
         if(@auth_token)
           org.connect(self,n)
