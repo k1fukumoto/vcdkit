@@ -12,5 +12,6 @@
 # QUALITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. 
 #
 #######################################################################################
+require 'vclouddata.rb'
 require 'vcloud.rb'
 require 'vsphere.rb'
