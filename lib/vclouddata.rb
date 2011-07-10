@@ -71,9 +71,11 @@ class XMLElement
   def elements
     @doc.elements
   end
-
   def match(xpath)
     REXML::XPath.match(@doc,xpath)
+  end
+  def alt
+    REXML::Document.new(@vcd.get(@doc.elements["//Link[@rel='alternate']/@href"].value))
   end
 
   def compose_xml(node,hdr=true)
@@ -176,6 +178,28 @@ EOS
 EOS
     def initialize()
       @xml = ERB.new(XML).result(binding)
+    end
+  end
+
+  class ComposeVAppParams < XMLElement
+    TYPE='application/vnd.vmware.vcloud.composeVAppParams+xml'
+    XML =<<EOS
+<ComposeVAppParams name="<%= self.name %>" 
+  xmlns="http://www.vmware.com/vcloud/v1"
+  xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"> 
+<InstantiationParams>
+  <%= self.compose_xml(ntwkcfg,false) %>
+</InstantiationParams>
+</ComposeVAppParams>
+
+EOS
+    def initialize(src,name)
+      @name = name
+      ntwkcfg = src.doc.elements['/VApp/NetworkConfigSection']
+      ntwkcfg.elements.delete('//IpRange[not(node())]')
+
+      @xml = ERB.new(XML).result(binding)
+      @doc = REXML::Document.new(@xml)
     end
   end
 

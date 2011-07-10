@@ -243,6 +243,16 @@ module VCloud
                    InstantiateVAppTemplateParams.new(ci,name,ntwk,desc).xml,
                    {:content_type => InstantiateVAppTemplateParams::TYPE})
     end
+
+    def composeVApp(src,name)
+      task = Task.new
+      task.connect(@vcd,
+                   self.alt.elements["//Link[@type='#{ComposeVAppParams::TYPE}' and @rel='add']"],
+                   [], :post,
+                   ComposeVAppParams.new(src,name).xml,
+                   {:content_type => ComposeVAppParams::TYPE})
+      
+    end
   end
 
   class CatalogItem < XMLElement
