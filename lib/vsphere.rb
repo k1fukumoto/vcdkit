@@ -16,6 +16,9 @@ require 'rubygems'
 require 'rbvmomi'
 require 'erb'
 
+#
+# VSphere
+#
 module VSphere
 
   class Vm 
