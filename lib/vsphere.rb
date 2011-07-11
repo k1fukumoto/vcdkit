@@ -50,13 +50,13 @@ module VSphere
     def load(dir)
       @dir = dir
       @doc = REXML::Document.
-        new(File.new("#{dir}/#{self.class.name}.xml"))
+        new(File.new("#{dir}/#{self.class.name.sub(/VSphere::/,'')}.xml"))
     end
 
     def save(dir)
       xml = ERB.new(File.new('template/vsp_xml.erb').read,0,'>').result(binding)
       FileUtils.mkdir_p(dir) unless File.exists? dir
-      open("#{dir}/#{self.class.name}.xml",'w') {|f| f.puts xml}
+      open("#{dir}/#{self.class.name.sub(/VSphere::/,'')}.xml",'w') {|f| f.puts xml}
     end
   end
 end

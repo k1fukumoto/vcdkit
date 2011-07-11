@@ -23,13 +23,15 @@ ts=Time.now.strftime('%Y-%m-%d_%H-%M-%S')
 options={
   :tree => ts,
   :dir => "./data/vcd-dump",
-#  :vsp => ['172.16.180.30','vcdadmin','vmware1!'],
   :target => :all,
 }
 
 
 vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!']
 vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!']
+
+vsp1 = ['10.127.11.51','vcdadmin','Redw00d!']
+vsp2 = ['10.128.0.57','vcdadmin','Redw00d!']
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-dump.rb [options]"
@@ -45,7 +47,14 @@ optparse = OptionParser.new do |opt|
     end
   end
   opt.on('-c','--vcenter HOST,USER,PASS',Array,'vCenter login parameters') do |o|
-    options[:vsp] = o
+    case o[0]
+    when "1"
+      options[:vsp] = vsp1
+    when "2"
+      options[:vsp] = vsp2
+    else
+      options[:vsp] = o
+    end
   end
 
   opt.on('-d','--dir DIR','Root directory of the dump data') do |o|
