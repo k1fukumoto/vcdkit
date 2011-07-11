@@ -71,6 +71,7 @@ org = vcd.org(VCDEX_ORG)
 
 FileUtils.mkdir_p(VCDEX_DIR) unless File.exists? VCDEX_DIR
 
+# Get thumbnails from all ESX hosts
 VCDEX_TARGETS.each do |t|
   vapp = org.vdc(t.vdc).vapp(t.vapp)
 
@@ -83,9 +84,13 @@ VCDEX_TARGETS.each do |t|
       f.write vm.thumbnail
     end
   end
-
-  vcd.wait(vapp.powerOff)
-  vcd.wait(vapp.undeploy)
 end
+
+# Recycle power of one of vApp
+t = VCDEX_TARGETS[0]
+vapp = org.vdc(t.vdc).vapp(t.vapp)
+vcd.wait(vapp.powerOff)
+vcd.wait(vapp.undeploy)
+vcd.wait(vapp.powerOn)
 
 
