@@ -87,10 +87,14 @@ VCDEX_TARGETS.each do |t|
 end
 
 # Recycle power of one of vApp
-t = VCDEX_TARGETS[0]
-vapp = org.vdc(t.vdc).vapp(t.vapp)
+t = VCDEX_TARGETS[1]
+vdc = org.vdc(t.vdc)
+
+vapp = vdc.vapp(t.vapp)
 vcd.wait(vapp.powerOff)
+
+vapp = vdc.vapp(t.vapp)
 vcd.wait(vapp.undeploy)
+
+vapp = vdc.vapp(t.vapp)
 vcd.wait(vapp.powerOn)
-
-
