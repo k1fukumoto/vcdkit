@@ -238,7 +238,7 @@ module VCloud
     def deployVApp(ci,name,ntwk,desc='')
       task = Task.new
       task.connect(@vcd,
-                   @doc.elements["//Link[@type='#{InstantiateVAppTemplateParams::TYPE}' and @rel='add']"],
+                   self.alt.elements["//Link[@type='#{InstantiateVAppTemplateParams::TYPE}' and @rel='add']"],
                    [], :post,
                    InstantiateVAppTemplateParams.new(ci,name,ntwk,desc).xml,
                    {:content_type => InstantiateVAppTemplateParams::TYPE})
