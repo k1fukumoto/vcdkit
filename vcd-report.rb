@@ -75,14 +75,14 @@ Dir.glob("#{options[:input]}/#{subdir}").each do |d|
   if(ot == :all)
     vcd.load(d)
   
-  vc = VSphere::VCenter.new
-  vc.load(d)
+#  vc = VSphere::VCenter.new
+#  vc.load(d)
 
-  FileUtils.mkdir_p(outdir)
-  open("#{outdir}/VMList.xml",'w') do |f|
-    f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
-                   read,0,'>').result(binding)
-  end
+#  FileUtils.mkdir_p(outdir)
+#  open("#{outdir}/VMList.xml",'w') do |f|
+#    f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
+#                   read,0,'>').result(binding)
+#  end
 
     vcd.each_org do |org|
       org.each_vdc do |vdc|
