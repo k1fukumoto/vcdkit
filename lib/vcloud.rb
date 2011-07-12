@@ -73,6 +73,16 @@ module VCloud
                    [], :post)
     end
 
+    def configureNetworkConnection(ntwkcon)
+      ncs = NetworkConnectionSection.new(ntwkcon)
+      task = Task.new
+      task.connect(@vcd,
+                   @doc.elements["//NetworkConnectionSection/Link[@rel='edit']"],
+                   [], :put,
+                   ncs.xml(true),
+                   {:content_type => NetworkConnectionSection::TYPE})
+    end
+
     def connectNetwork(nic,name,mode)
       ncon = @doc.elements["//NetworkConnection[NetworkConnectionIndex ='#{nic}']"]
       ncon.attributes['network'] = name
@@ -126,7 +136,11 @@ module VCloud
 
     def vm(name)
       vm = Vm.new
-      vm.connect(@vcd,@doc.elements["//Children/Vm[@name='#{name}']"])
+      if(@vcd)
+        vm.connect(@vcd,@doc.elements["//Children/Vm[@name='#{name}']"])
+      elsif(@dir)
+        vm.load("#{@dir}/VM/#{name}")
+      end
     end
 
     def status
@@ -152,6 +166,16 @@ module VCloud
                    [], :post,
                    DeployVAppParams.new().xml,
                    {:content_type => DeployVAppParams::TYPE})
+    end
+
+    def configureNetwork(ntwkcfg)
+      ncs = NetworkConfigSection.new(ntwkcfg)
+      task = Task.new
+      task.connect(@vcd,
+                   @doc.elements["//NetworkConfigSection/Link[@rel='edit']"],
+                   [], :put,
+                   ncs.xml(true),
+                   {:content_type => NetworkConfigSection::TYPE})
     end
 
     def save(dir)

@@ -32,7 +32,7 @@
   </Properties>
   <Networking>
     <% self.elements.each('/VApp/NetworkConfigSection/NetworkConfig') do |cfg| %>
-      <%= self.compose_xml(cfg,false) %>
+      <%= NetworkConfigSection.new(cfg).xml(false) %>
     <% end %>
   </Networking>
 </VAppParams>

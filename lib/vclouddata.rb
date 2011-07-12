@@ -126,9 +126,37 @@ EOS
     end
   end
 
-  class NetworkConnectionSection < XMLElement
-    
+  class NetworkConnectionSection < XMLElement    
     TYPE = 'application/vnd.vmware.vcloud.networkConnectionSection+xml'
+
+    def initialize(node)
+      @node = node
+    end
+
+    def xml(hdr)
+      self.compose_xml(@node,hdr)
+    end
+  end
+
+  class NetworkConfigSection < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.networkConfigSection+xml'
+
+    def initialize(node)
+      @node = node
+      @node.elements.delete('//IpRange[not(node())]')
+
+      dhcp = @node.elements["//DhcpService[IsEnabled = 'false']"]
+      if(dhcp)
+        dhcp.elements.each('./*') do |n|
+          next if n.name == 'IsEnabled'
+          dhcp.delete(n)
+        end
+      end
+    end
+
+    def xml(hdr)
+      self.compose_xml(@node,hdr)
+    end
   end
 
   class AccessSetting < XMLElement
