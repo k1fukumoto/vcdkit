@@ -110,7 +110,22 @@ module VCloud
 </GuestCustomizationSection>
 EOS
 
-    def compose(node,args)
+    def initialize(node)
+      @node = node.elements['//GuestCustomizationSection']
+    end
+    
+    def extractParams
+      @node.attributes.each {|name,value| @node.attributes.delete(name)}
+      @node.elements.delete('./VirtualMachineId')
+      @node.elements.delete('./Link')
+      self
+    end
+
+    def xml(hdr)
+      self.compose_xml(@node,hdr)
+    end
+
+    def GuestCustomizationSection.compose(node,args)
       new = ERB.new(XML).result(binding)
       
       doc = REXML::Document.new(new)
@@ -143,7 +158,6 @@ EOS
 
     def initialize(node)
       @node = node
-      @node.elements.delete('//IpRange[not(node())]')
 
       dhcp = @node.elements["//DhcpService[IsEnabled = 'false']"]
       if(dhcp)
@@ -154,12 +168,29 @@ EOS
       end
     end
 
+    def extractParams
+      @node.elements.delete('.//VAppScopedVmId')
+      self
+    end
+
     def xml(hdr)
       self.compose_xml(@node,hdr)
     end
   end
 
   class AccessSetting < XMLElement
+    def initialize(node)
+      @node = node
+    end
+
+    def extractParams
+      @node.elements['./Subject'].attributes.delete('type')
+      self
+    end
+
+    def xml(hdr)
+      self.compose_xml(@node,hdr)
+    end
   end
 
   class ControlAccessParams < XMLElement

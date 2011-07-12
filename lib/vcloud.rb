@@ -100,7 +100,7 @@ module VCloud
 
     def customize(args)
       cfg = @doc.elements["//GuestCustomizationSection"]
-      GuestCustomizationSection.new.compose(cfg,args)
+      GuestCustomizationSection.compose(cfg,args)
 
       task = Task.new
       task.connect(@vcd,
@@ -341,7 +341,11 @@ module VCloud
 
     def user(name)
       user = User.new
-      user.connect(self,@doc.elements["#{USERPATH}[@name='#{name}']"])
+      if(@vcd)
+        user.connect(@vcd,@doc.elements["#{USERPATH}[@name='#{name}']"])
+      elsif(@dir)
+        user.load("#{@dir}/USER/#{name}")
+      end
     end
 
     def each_user

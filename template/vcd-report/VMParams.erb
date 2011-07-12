@@ -13,6 +13,6 @@
     <% end %>
   </Networking>
   <Customization>
-    <%= self.compose_xml(self['/Vm/GuestCustomizationSection'],false) %>
+    <%= GuestCustomizationSection.new(self).extractParams.xml(false) %>
   </Customization>
 </VMParams>

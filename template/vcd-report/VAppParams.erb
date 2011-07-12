@@ -27,12 +27,16 @@
     </Running>
     <Sharing>
       <IsSharedToEveryone><%= self.cap['/ControlAccessParams/IsSharedToEveryone/text()'] %></IsSharedToEveryone>
-      <%= self.cap.compose_xml(self.cap['/ControlAccessParams/AccessSettings'],false) %>
+      <AccessSettings>
+      <% self.cap.elements.each('/ControlAccessParams/AccessSettings/AccessSetting') do |n| %>
+      <%= AccessSetting.new(n).extractParams.xml(false) %>
+      <% end %>
+      </AccessSettings>
     </Sharing>
   </Properties>
   <Networking>
     <% self.elements.each('/VApp/NetworkConfigSection/NetworkConfig') do |cfg| %>
-      <%= NetworkConfigSection.new(cfg).xml(false) %>
+      <%= NetworkConfigSection.new(cfg).extractParams.xml(false) %>
     <% end %>
   </Networking>
 </VAppParams>
