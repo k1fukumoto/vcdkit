@@ -178,6 +178,29 @@ EOS
     end
   end
 
+  class StartupSection < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.startupSection+xml'
+  end
+
+  class LeaseSettingsSection < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.leaseSettingsSection+xml'
+
+    def initialize(node)
+      @node = node
+    end
+
+    def extractParams
+      @node.name = 'Lease'
+      @node.attributes.each {|name,value| @node.attributes.delete(name)}
+      ['./ovf:Info','Link'].each {|n| @node.elements.delete(n)}
+      self
+    end
+
+    def xml(hdr)
+      self.compose_xml(@node,hdr)
+    end
+  end
+
   class AccessSetting < XMLElement
     def initialize(node)
       @node = node
@@ -257,6 +280,26 @@ EOS
       ntwkcfg = src.doc.elements['/VApp/NetworkConfigSection']
       ntwkcfg.elements.delete('//IpRange[not(node())]')
 
+      @xml = ERB.new(XML).result(binding)
+      @doc = REXML::Document.new(@xml)
+    end
+  end
+
+  class RecomposeVAppParams < XMLElement
+    TYPE='application/vnd.vmware.vcloud.recomposeVAppParams+xml'
+    XML =<<EOS
+<RecomposeVAppParams name="<%= src.doc.root.attributes['name'] %>" 
+  xmlns="http://www.vmware.com/vcloud/v1"
+  xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"> 
+<Description><%= src['/VApp/Description/text()'] %></Description>
+<InstantiationParams>
+  <%= LeaseSettingsSection.new(src['/VApp/LeaseSettingsSection']).xml(false) %>
+  <%= NetworkConfigSection.new(src['/VApp/NetworkConfigSection']).xml(false) %>
+</InstantiationParams>
+</RecomposeVAppParams>
+
+EOS
+    def initialize(src)
       @xml = ERB.new(XML).result(binding)
       @doc = REXML::Document.new(@xml)
     end

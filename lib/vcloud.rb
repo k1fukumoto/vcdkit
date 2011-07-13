@@ -168,14 +168,49 @@ module VCloud
                    {:content_type => DeployVAppParams::TYPE})
     end
 
-    def configureNetwork(ntwkcfg)
-      ncs = NetworkConfigSection.new(ntwkcfg)
+    def editNetworkConfigSection(e)
       task = Task.new
       task.connect(@vcd,
                    @doc.elements["//NetworkConfigSection/Link[@rel='edit']"],
                    [], :put,
-                   ncs.xml(true),
+                   NetworkConfigSection.new(e).xml(true),
                    {:content_type => NetworkConfigSection::TYPE})
+    end
+
+    def editLeaseSettingsSection(e)
+      task = Task.new
+      task.connect(@vcd,
+                   @doc.elements["//LeaseSettingsSection/Link[@rel='edit']"],
+                   [], :put,
+                   LeaseSettingsSection.new(e).xml(true),
+                   {:content_type => LeaseSettingsSection::TYPE})
+    end
+
+    def editStartupSection(e)
+      task = Task.new
+      task.connect(@vcd,
+                   # Adding @rel='edit' breaks the xpath search. Why??
+                   @doc.elements["//ovf:StartupSection/Link"],
+                   [], :put,
+                   self.compose_xml(e,true),
+                   {:content_type => StartupSection::TYPE})
+    end
+
+    def restore(src)
+      @vcd.wait(self.recomposeVApp(src))
+      self.each_vm do |vm|
+        @vcd.wait(vm.configureNetworkConnection(src.vm(vm.name)['//NetworkConnectionSection']))
+      end
+    end
+
+    def recomposeVApp(src)
+      task = Task.new
+      task.connect(@vcd,
+                   self.elements["//Link[@type='#{RecomposeVAppParams::TYPE}' and @rel='recompose']"],
+                   [], :post,
+                   RecomposeVAppParams.new(src).xml,
+                   {:content_type => RecomposeVAppParams::TYPE})
+      
     end
 
     def save(dir)
@@ -277,6 +312,7 @@ module VCloud
                    {:content_type => ComposeVAppParams::TYPE})
       
     end
+
   end
 
   class CatalogItem < XMLElement

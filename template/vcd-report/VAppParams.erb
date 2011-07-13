@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VAppParams xmlns="http://www.vmware.com/vcloud/v1" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1">
+<VAppParams 
+  xmlns="http://www.vmware.com/vcloud/v1" 
+  xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" 
+>
   <Properties>
     <General>
       <Name><%= self['/VApp/@name'].value %></Name>
       <Description><%= self['/VApp/Description/text()'] %></Description>
-      <Lease>
-        <% lease='/VApp/LeaseSettingsSection/' %>
-        <Runtime><%= self["#{lease}/DeploymentLeaseInSeconds/text()"]  %></Runtime>
-        <Storage><%= self["#{lease}/StorageLeaseInSeconds/text()"]  %></Storage>
-        <Expiration><%= self["#{lease}/StorageLeaseExpiration/text()"] %></Expiration>
-      </Lease>
+      <%= LeaseSettingsSection.new(self['/VApp/LeaseSettingsSection']).extractParams.xml(false) %>
     </General>
     <Running>
       <% self.match('/VApp/ovf:StartupSection/ovf:Item').sort do |x,y| 

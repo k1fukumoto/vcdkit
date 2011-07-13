@@ -70,10 +70,5 @@ end
 vcd = VCloud::VCD.new()
 vcd.connect(*options[:vcd])
 
-src = VCloud::VCD.new().load("#{options[:input]}/#{options[:tree]}",*options[:src])
-tgt = vcd.org(options[:src][0]).vdc(options[:src][1]).vapp(options[:src][2])
-
-vcd.wait(tgt.configureNetwork(src['//NetworkConfigSection']))
-tgt.each_vm do |vm|
-  vcd.wait(vm.configureNetworkConnection(src.vm(vm.name)['//NetworkConnectionSection']))
-end
+vcd.org(options[:src][0]).vdc(options[:src][1]).vapp(options[:src][2]).
+  restore(VCloud::VCD.new().load("#{options[:input]}/#{options[:tree]}",*options[:src]))
