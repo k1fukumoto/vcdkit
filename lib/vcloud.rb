@@ -111,7 +111,41 @@ module VCloud
     end
   end
 
-  class VApp < XMLElement
+  class VAppTemplate < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.vAppTemplate+xml'
+
+    def vm(name)
+      vm = Vm.new
+      if(@vcd)
+        vm.connect(@vcd,@doc.elements["//Children/Vm[@name='#{name}']"])
+      elsif(@dir)
+        vm.load("#{@dir}/VM/#{name}")
+      end
+    end
+
+    def each_vm
+      @doc.elements.each("//Children/Vm"){|n| 
+        vm = Vm.new
+        if(@vcd)
+          vm.connect(@vcd,n)
+        elsif(@dir)
+          vm.load("#{@dir}/VM/#{n.attributes['name']}")
+        end
+        yield vm
+      }
+    end
+
+    def save(dir)
+      super
+      self.each_vm {|vm| vm.save("#{dir}/VM/#{vm.name}")}
+    end
+
+    def delete
+      @vcd.delete(@doc.elements["//Link[@rel='remove']/@href"].value)
+    end
+  end
+
+  class VApp < VAppTemplate
     TYPE = 'application/vnd.vmware.vcloud.vApp+xml'
     attr_reader :cap
 
@@ -134,29 +168,8 @@ module VCloud
       self.each_vm {|vm| vm.saveparam("#{dir}/VM/#{vm.name}")}
     end
 
-    def vm(name)
-      vm = Vm.new
-      if(@vcd)
-        vm.connect(@vcd,@doc.elements["//Children/Vm[@name='#{name}']"])
-      elsif(@dir)
-        vm.load("#{@dir}/VM/#{name}")
-      end
-    end
-
     def status
       VAPPSTATUS[@doc.elements["/VApp/@status"].value] || "Busy"
-    end
-
-    def each_vm
-      @doc.elements.each("//Children/Vm"){|n| 
-        vm = Vm.new
-        if(@vcd)
-          vm.connect(@vcd,n)
-        elsif(@dir)
-          vm.load("#{@dir}/VM/#{n.attributes['name']}")
-        end
-        yield vm
-      }
     end
 
     def deploy()
@@ -213,12 +226,6 @@ module VCloud
       
     end
 
-    def save(dir)
-      super
-      self.each_vm {|vm| vm.save("#{dir}/VM/#{vm.name}")}
-      @cap.save(dir)
-    end
-
     def load(dir)
       super
       @cap = ControlAccessParams.new
@@ -257,10 +264,6 @@ module VCloud
       end
       task
     end
-
-    def delete
-      @vcd.delete(@doc.elements["/VApp/Link[@rel='remove']/@href"].value)
-    end
   end
 
   class Vdc < XMLElement
@@ -283,8 +286,21 @@ module VCloud
       }
     end
 
+    def each_vapptemplate
+      @doc.elements.each("//ResourceEntity[@type='#{VAppTemplate::TYPE}']"){|n|
+        vat = VAppTemplate.new
+        if(@vcd)
+          vat.connect(@vcd,n)
+        elsif(@dir)
+          vat.load("#{@dir}/VAPPTEMPLATE/#{n.attributes['name']}")
+        end
+        yield vat
+      }
+    end
+
     def save(dir)
       super
+      self.each_vapptemplate {|vat| vat.save("#{dir}/VAPPTEMPLATE/#{vat.name}")}
       self.each_vapp {|vapp| vapp.save("#{dir}/VAPP/#{vapp.name}")}
     end
 
