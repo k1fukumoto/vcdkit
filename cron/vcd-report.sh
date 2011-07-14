@@ -2,7 +2,7 @@
 
 cd /home/vcdadmin/vcdkit
 
-VCDKITDATA=/opt/vmware/vcdkit/data
+VCDKIT=/opt/vmware/vcdkit
 
-./vcd-report.rb -i$VCDKITDATA/vcd-dump -o$VCDKITDATA/vcd-report
+./vcd-report.rb -i$VCDKIT/data/vcd-dump -o$VCDKIT/data/vcd-report -l$VCDKIT/logs/vcd-report.log
 
