@@ -29,6 +29,11 @@ optparse = OptionParser.new do |opt|
   opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
     options[:vcd] = o
   end
+
+  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
+    options[:logfile] = o
+  end
+
   opt.on('-h','--help','Display this help') do
     puts opt
     exit
@@ -67,36 +72,42 @@ VCDEX_TARGETS  =
 #
 $log = VCloud::Logger.new(options[:logfile])
 
-vcd = VCloud::VCD.new
-vcd.connect(*options[:vcd])
-org = vcd.org(VCDEX_ORG)
+begin
+  vcd = VCloud::VCD.new
+  vcd.connect(*options[:vcd])
+  org = vcd.org(VCDEX_ORG)
 
-FileUtils.mkdir_p(VCDEX_DIR) unless File.exists? VCDEX_DIR
+  FileUtils.mkdir_p(VCDEX_DIR) unless File.exists? VCDEX_DIR
 
-# Get thumbnails from all ESX hosts
-VCDEX_TARGETS.each do |t|
-  vapp = org.vdc(t.vdc).vapp(t.vapp)
+  # Get thumbnails from all ESX hosts
+  VCDEX_TARGETS.each do |t|
+    vapp = org.vdc(t.vdc).vapp(t.vapp)
 
-  if(vapp.status == "Powered Off")
+    if(vapp.status == "Powered Off")
       vcd.wait(vapp.powerOn)
-  end
+    end
 
-  vapp.each_vm do |vm|
-    open("#{VCDEX_DIR}/#{vm.name}.png",'w') do |f|
-      f.write vm.thumbnail
+    vapp.each_vm do |vm|
+      open("#{VCDEX_DIR}/#{vm.name}.png",'w') do |f|
+        f.write vm.thumbnail
+      end
     end
   end
+
+  # Recycle power of one of vApp
+  t = VCDEX_TARGETS[1]
+  vdc = org.vdc(t.vdc)
+
+  vapp = vdc.vapp(t.vapp)
+  vcd.wait(vapp.powerOff)
+
+  vapp = vdc.vapp(t.vapp)
+  vcd.wait(vapp.undeploy)
+
+  vapp = vdc.vapp(t.vapp)
+  vcd.wait(vapp.powerOn)
+
+rescue Exception => e
+  $log.error("vcd-ex failed: #{e}")
+  $log.error(e.backtrace)
 end
-
-# Recycle power of one of vApp
-t = VCDEX_TARGETS[1]
-vdc = org.vdc(t.vdc)
-
-vapp = vdc.vapp(t.vapp)
-vcd.wait(vapp.powerOff)
-
-vapp = vdc.vapp(t.vapp)
-vcd.wait(vapp.undeploy)
-
-vapp = vdc.vapp(t.vapp)
-vcd.wait(vapp.powerOn)
