@@ -137,13 +137,9 @@ module VCloud
 
   class VApp < VAppTemplate
     TYPE = 'application/vnd.vmware.vcloud.vApp+xml'
-    attr_reader :cap
 
     def connect(vcd,node)
       super(vcd,node)
-      n = REXML::XPath.first(@doc, "/VApp/Link[@type='#{ControlAccessParams::TYPE}' and @rel='down']")
-      @cap = ControlAccessParams.new
-      @cap.connect(vcd,n)
       self
     end
 
@@ -210,16 +206,22 @@ module VCloud
       
     end
 
-    def save(dir)
-      super
-      @cap.save(dir)
+    def cap()
+      unless(@cap)
+        @cap = ControlAccessParams.new
+        if(@vcd)
+          n = REXML::XPath.first(@doc, "/VApp/Link[@type='#{ControlAccessParams::TYPE}' and @rel='down']")
+          @cap.connect(@vcd,n)
+        elsif(@dir)
+          @cap.load(@dir)
+        end
+      end
+      @cap
     end
 
-    def load(dir)
+    def save(dir)
       super
-      @cap = ControlAccessParams.new
-      @cap.load(dir)
-      self
+      self.cap.save(dir)
     end
 
     def powerOn
@@ -526,51 +528,51 @@ module VCloud
       $log.info("HTTP GET: #{url.sub(/#{@apiurl}/,'')}")
       RestClient.get(url,@auth_token) { |response, request, result, &block|
         case response.code
-        when 200
+        when 200..299
           response
         else
-          $log.info(">> #{response}")
+          $log.info("#{response.code}>> #{response}")
           response.return!(request,result,&block)
         end
       }
     end
 
     def delete(url)
-      $log.info("HTTP DELETE: #{url}")
+      $log.info("HTTP DELETE: #{url.sub(/#{@apiurl}/,'')}")
       RestClient.delete(url,@auth_token) { |response, request, result, &block|
         case response.code
-        when 200
+        when 200..299
           response
         else
-          $log.info(">> #{response}")
+          $log.info("#{response.code}>> #{response}")
           response.return!(request,result,&block)
         end
       }
     end
 
     def post(url,payload=nil,hdrs={})
-      $log.info("HTTP POST: #{url}")
+      $log.info("HTTP POST: #{url.sub(/#{@apiurl}/,'')}")
       RestClient.post(url,payload,hdrs.update(@auth_token)) { |response, request, result, &block|
         case response.code
-        when 200
+        when 200..299
           response
         else
-          $log.info("<< #{payload}")
-          $log.info(">> #{response}")
+          $log.info("#{response.code}<< #{payload}")
+          $log.info("#{response.code}>> #{response}")
           response.return!(request,result,&block)
         end
       }
     end
 
     def put(url,payload=nil,hdrs={})
-      $log.info("HTTP PUT: #{url}")
+      $log.info("HTTP PUT: #{url.sub(/#{@apiurl}/,'')}")
       RestClient.put(url,payload,hdrs.update(@auth_token)) { |response, request, result, &block|
         case response.code
-        when 200
+        when 200..299
           response
         else
-          $log.info("<< #{payload}")
-          $log.info(">> #{response}")
+          $log.info("#{response.code}<< #{payload}")
+          $log.info("#{response.code}>> #{response}")
           response.return!(request,result,&block)
         end
       }

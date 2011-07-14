@@ -65,6 +65,8 @@ VCDEX_TARGETS  =
 #
 # MAIN
 #
+$log = VCloud::Logger.new(options[:logfile])
+
 vcd = VCloud::VCD.new
 vcd.connect(*options[:vcd])
 org = vcd.org(VCDEX_ORG)

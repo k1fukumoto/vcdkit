@@ -72,6 +72,8 @@ start = options[:num][0].to_i
 sz = options[:num][1].to_i
 repeat = options[:num][2].to_i
 
+$log = VCloud::Logger.new(options[:logfile])
+
 case options[:command]
 when :deploy
   (1..repeat).each do |n|
