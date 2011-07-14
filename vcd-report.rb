@@ -44,6 +44,9 @@ optparse = OptionParser.new do |opt|
   opt.on('-t','--tree TREENAME',Array,'Directory name to identify dump tree') do |o|
     options[:tree] = o
   end
+  opt.on('-f','--force','Force to recreate reports to exisiting tree') do |o|
+    options[:force] = true
+  end
 
   opt.on('-h','--help','Display this help') do
     puts opt
@@ -64,10 +67,12 @@ end
 #
 # MAIN
 #
+$log = VCloud::Logger.new(options[:logfile])
+
 subdir = options[:tree] || "*"
 Dir.glob("#{options[:input]}/#{subdir}").each do |d|
   outdir = "#{options[:output]}/#{File.basename(d)}"
-  next if File.exists? outdir
+  next if (File.exists?(outdir) && !options[:force])
 
   vcd = VCloud::VCD.new
 
@@ -84,13 +89,8 @@ Dir.glob("#{options[:input]}/#{subdir}").each do |d|
 #                   read,0,'>').result(binding)
 #  end
 
-    vcd.each_org do |org|
-      org.each_vdc do |vdc|
-        vdc.each_vapp do |vapp|
-          vapp.saveparam("#{outdir}/ORG/#{org.name}/VDC/#{vdc.name}/VAPP/#{vapp.name}")
-        end
-      end
-    end
+    vcd.saveparam(outdir)
+
   elsif(ot.size == 3)
     vcd.load(d,*ot).saveparam("#{outdir}/ORG/#{ot[0]}/VDC/#{ot[1]}/VAPP/#{ot[2]}")
   end

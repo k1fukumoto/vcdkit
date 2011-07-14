@@ -39,16 +39,6 @@ module VCloud
 
   class Vm < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.vm+xml'
-  
-    def saveparam(dir)
-      FileUtils.mkdir_p(dir) unless File.exists? dir
-
-      open("#{dir}/VMParams.xml",'w') do |f|
-        xml = ERB.new(File.new("template/vcd-report/VMParams.erb").read,0,'>').result(binding)
-        doc = REXML::Document.new(xml)
-        REXML::Formatters::Pretty.new.write(doc.root,f)
-      end
-    end
 
     def os
       @doc.elements["//ovf:OperatingSystemSection/ovf:Description/text()"]
@@ -158,13 +148,7 @@ module VCloud
     end
 
     def saveparam(dir)
-      FileUtils.mkdir_p(dir) unless File.exists? dir
-
-      open("#{dir}/VAppParams.xml",'w') do |f|
-        xml = ERB.new(File.new("template/vcd-report/VAppParams.erb").read,0,'>').result(binding)
-        doc = REXML::Document.new(xml)
-        REXML::Formatters::Pretty.new.write(doc.root,f)
-      end
+      super
       self.each_vm {|vm| vm.saveparam("#{dir}/VM/#{vm.name}")}
     end
 
@@ -224,6 +208,11 @@ module VCloud
                    RecomposeVAppParams.new(src).xml,
                    {:content_type => RecomposeVAppParams::TYPE})
       
+    end
+
+    def save(dir)
+      super
+      @cap.save(dir)
     end
 
     def load(dir)
@@ -300,8 +289,13 @@ module VCloud
 
     def save(dir)
       super
-      self.each_vapptemplate {|vat| vat.save("#{dir}/VAPPTEMPLATE/#{vat.name}")}
       self.each_vapp {|vapp| vapp.save("#{dir}/VAPP/#{vapp.name}")}
+      self.each_vapptemplate {|vat| vat.save("#{dir}/VAPPTEMPLATE/#{vat.name}")}
+    end
+
+    def saveparam(dir)
+      self.each_vapptemplate {|vat| vat.saveparam("#{dir}/VAPPTEMPLATE/#{vat.name}")}
+      self.each_vapp {|vapp| vapp.saveparam("#{dir}/VAPP/#{vapp.name}")}
     end
 
     def cloneVApp(src,name,desc='')
@@ -362,6 +356,10 @@ module VCloud
     def save(dir)
       super
       self.each_catalogitem {|ci| ci.save("#{dir}/CATALOGITEM/#{ci.name}")}
+    end
+
+    def saveparam(dir)
+      # NOT IMPLEMENTED
     end
   end
 
@@ -442,19 +440,28 @@ module VCloud
       self.each_catalog {|cat| cat.save("#{dir}/CATALOG/#{cat.name}")}
       self.each_user {|user| user.save("#{dir}/USER/#{user.name}")}
     end
+
+    def saveparam(dir)
+      self.each_vdc {|vdc| vdc.saveparam("#{dir}/VDC/#{vdc.name}")}
+      self.each_catalog {|cat| cat.saveparam("#{dir}/CATALOG/#{cat.name}")}
+    end
   end
 
   class User < XMLElement
   end
 
   class VCD < XMLElement
+    attr_reader :logger
+
+
     def connect(host,org,user,pass)
-      resp = RestClient::Resource.new("https://#{host}/api/v1.0/login",
+      @apiurl = "https://#{host}/api/v1.0"
+      resp = RestClient::Resource.new("#{@apiurl}/login",
                                       :user => "#{user}@#{org}",
                                       :password => pass).post(nil)
       @auth_token = {:x_vcloud_authorization => resp.headers[:x_vcloud_authorization]}
 
-      @xml = self.get("https://#{host}/api/v1.0/admin")
+      @xml = self.get("#{@apiurl}/admin")
       @doc = REXML::Document.new(@xml)
     end
 
@@ -484,6 +491,18 @@ module VCloud
       end
     end
 
+    def saveparam(dir,*target)
+      case target.size
+      when 0
+        self.each_org {|org| org.saveparam("#{dir}/ORG/#{org.name}")}
+      when 3
+        org = target[0]
+        vdc = target[1]
+        vapp = target[2]
+        self.org(org).vdc(vdc).vapp(vapp).saveparam("#{dir}/ORG/#{org}/VDC/#{vdc}/VAPP/#{vapp}")
+      end
+    end
+
     ORGPATH='//OrganizationReferences/OrganizationReference'
 
     def org(name)
@@ -504,34 +523,56 @@ module VCloud
     end
 
     def get(url)
-      return RestClient.get(url,@auth_token)
+      $log.info("HTTP GET: #{url.sub(/#{@apiurl}/,'')}")
+      RestClient.get(url,@auth_token) { |response, request, result, &block|
+        case response.code
+        when 200
+          response
+        else
+          $log.info(">> #{response}")
+          response.return!(request,result,&block)
+        end
+      }
     end
 
     def delete(url)
-      return RestClient.delete(url,@auth_token)
+      $log.info("HTTP DELETE: #{url}")
+      RestClient.delete(url,@auth_token) { |response, request, result, &block|
+        case response.code
+        when 200
+          response
+        else
+          $log.info(">> #{response}")
+          response.return!(request,result,&block)
+        end
+      }
     end
 
     def post(url,payload=nil,hdrs={})
+      $log.info("HTTP POST: #{url}")
       RestClient.post(url,payload,hdrs.update(@auth_token)) { |response, request, result, &block|
-        if ENV['RESTCLIENT_LOG']
-          puts "*** request"
-          puts payload
-          puts "*** response"
-          puts response
+        case response.code
+        when 200
+          response
+        else
+          $log.info("<< #{payload}")
+          $log.info(">> #{response}")
+          response.return!(request,result,&block)
         end
-        response.return!(request,result,&block)
       }
     end
 
     def put(url,payload=nil,hdrs={})
+      $log.info("HTTP PUT: #{url}")
       RestClient.put(url,payload,hdrs.update(@auth_token)) { |response, request, result, &block|
-        if ENV['RESTCLIENT_LOG']
-          puts "*** request"
-          puts payload
-          puts "*** response"
-          puts response
+        case response.code
+        when 200
+          response
+        else
+          $log.info("<< #{payload}")
+          $log.info(">> #{response}")
+          response.return!(request,result,&block)
         end
-        response.return!(request,result,&block)
       }
     end
 

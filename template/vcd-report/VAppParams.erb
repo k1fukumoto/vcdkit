@@ -7,7 +7,7 @@
     <General>
       <Name><%= self['/VApp/@name'].value %></Name>
       <Description><%= self['/VApp/Description/text()'] %></Description>
-      <%= LeaseSettingsSection.new(self['/VApp/LeaseSettingsSection']).extractParams.xml(false) %>
+      <%= VCloud::LeaseSettingsSection.new(self['/VApp/LeaseSettingsSection']).extractParams.xml(false) %>
     </General>
     <Running>
       <% self.match('/VApp/ovf:StartupSection/ovf:Item').sort do |x,y| 
@@ -27,17 +27,14 @@
       <IsSharedToEveryone><%= self.cap['/ControlAccessParams/IsSharedToEveryone/text()'] %></IsSharedToEveryone>
       <AccessSettings>
       <% self.cap.elements.each('/ControlAccessParams/AccessSettings/AccessSetting') do |n| %>
-      <%= AccessSetting.new(n).extractParams.xml(false) %>
+      <%= VCloud::AccessSetting.new(n).extractParams.xml(false) %>
       <% end %>
       </AccessSettings>
     </Sharing>
   </Properties>
   <Networking>
     <% self.elements.each('/VApp/NetworkConfigSection/NetworkConfig') do |cfg| %>
-      <%= NetworkConfigSection.new(cfg).extractParams.xml(false) %>
+      <%= VCloud::NetworkConfigSection.new(cfg).extractParams.xml(false) %>
     <% end %>
   </Networking>
 </VAppParams>
-  
-
-

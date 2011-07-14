@@ -91,6 +91,8 @@ end
 #
 # MAIN
 #
+$log = VCloud::Logger.new(options[:logfile])
+
 vcd = VCloud::VCD.new
 vcd.connect(*options[:vcd])
 

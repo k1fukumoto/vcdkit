@@ -52,17 +52,31 @@ class XMLElement
   end
 
   def load(dir)
+    $log.info("Loading #{dir}/#{path}.xml")
     @dir = dir
-    @doc = REXML::Document.
-      new(File.new("#{dir}/#{self.class.name.sub(/VCloud::/,'')}.xml"))
+    @doc = REXML::Document.new(File.new("#{dir}/#{path}.xml"))
     init_attrs(@doc.root)
     self
   end
 
+  def path()
+    self.class.name.sub(/VCloud::/,'')
+  end
+
   def save(dir)
     FileUtils.mkdir_p(dir) unless File.exists? dir
-    path = "#{dir}/#{self.class.name.sub(/VCloud::/,'')}.xml"
+    path = "#{dir}/#{self.path}.xml"
     open(path,'w') {|f| f.puts @xml}
+  end
+
+  def saveparam(dir)
+    FileUtils.mkdir_p(dir) unless File.exists? dir
+
+    open("#{dir}/#{self.path}Params.xml",'w') do |f|
+      xml = ERB.new(File.new("template/vcd-report/#{self.path}Params.erb").read,0,'>').result(binding)
+      doc = REXML::Document.new(xml)
+      REXML::Formatters::Pretty.new.write(doc.root,f)
+    end
   end
 
   def [](xpath)
@@ -332,6 +346,30 @@ EOS
 EOS
     def initialize(src,dest,ntwk,desc)
       @xml = ERB.new(XML).result(binding)
+    end
+  end
+
+  class Logger
+    def initialize(logfile=nil)
+      if(logfile)
+        @logger = ::Logger.new(logfile,10,1024000)
+      else
+        @logger = ::Logger.new(STDOUT)
+      end
+      @logger.formatter = proc {|sev,time,prog,msg|
+        ts = time.strftime('%Y-%m-%d %H:%M:%S')
+        "#{ts} | #{sev} | #{msg}\n"
+      }
+    end
+
+    def info(msg)
+      @logger.info(msg)
+    end
+    def error(msg)
+      @logger.error(msg)
+    end
+    def warn(msg)
+      @logger.warn(msg)
     end
   end
 end

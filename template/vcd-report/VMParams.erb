@@ -13,6 +13,6 @@
     <% end %>
   </Networking>
   <Customization>
-    <%= GuestCustomizationSection.new(self).extractParams.xml(false) %>
+    <%= VCloud::GuestCustomizationSection.new(self).extractParams.xml(false) %>
   </Customization>
 </VMParams>
