@@ -48,6 +48,10 @@ optparse = OptionParser.new do |opt|
     options[:force] = true
   end
 
+  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
+    options[:logfile] = o
+  end
+
   opt.on('-h','--help','Display this help') do
     puts opt
     exit
@@ -70,28 +74,33 @@ end
 $log = VCloud::Logger.new(options[:logfile])
 
 subdir = options[:tree] || "*"
+
 Dir.glob("#{options[:input]}/#{subdir}").each do |d|
   outdir = "#{options[:output]}/#{File.basename(d)}"
   next if (File.exists?(outdir) && !options[:force])
 
-  vcd = VCloud::VCD.new
+  begin
+    ot = options[:target]
 
-  ot = options[:target]
-  if(ot == :all)
-    vcd.load(d)
-  
-#  vc = VSphere::VCenter.new
-#  vc.load(d)
+    vcd = VCloud::VCD.new
+    if(ot == :all)
+      vcd.load(d).saveparam(outdir)
+      
+      vc = VSphere::VCenter.new
+      vc.load(d)
 
-#  FileUtils.mkdir_p(outdir)
-#  open("#{outdir}/VMList.xml",'w') do |f|
-#    f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
-#                   read,0,'>').result(binding)
-#  end
+      FileUtils.mkdir_p(outdir)
+      open("#{outdir}/VMList.xml",'w') do |f|
+        f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
+                       read,0,'>').result(binding)
+      end
 
-    vcd.saveparam(outdir)
+    elsif(ot.size == 3)
+      vcd.load(d,*ot).saveparam("#{outdir}/ORG/#{ot[0]}/VDC/#{ot[1]}/VAPP/#{ot[2]}")
+    end
 
-  elsif(ot.size == 3)
-    vcd.load(d,*ot).saveparam("#{outdir}/ORG/#{ot[0]}/VDC/#{ot[1]}/VAPP/#{ot[2]}")
+  rescue Exception => e
+    $log.error("vcd-report failed: #{e}")
+    $log.error(e.backtrace)
   end
 end

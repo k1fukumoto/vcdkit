@@ -71,6 +71,10 @@ optparse = OptionParser.new do |opt|
     options[:tree] = o
   end
 
+  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
+    options[:logfile] = o
+  end
+
   opt.on('-h','--help','Display this help') do
     puts optparse
     exit
@@ -93,20 +97,26 @@ end
 #
 $log = VCloud::Logger.new(options[:logfile])
 
-vcd = VCloud::VCD.new
-vcd.connect(*options[:vcd])
+begin
+  vcd = VCloud::VCD.new
+  vcd.connect(*options[:vcd])
 
-vc = nil
-if (options[:vsp])
-  vc = VSphere::VCenter.new
-  vc.connect(*options[:vsp])
-end
+  vc = nil
+  if (options[:vsp])
+    vc = VSphere::VCenter.new
+    vc.connect(*options[:vsp])
+  end
 
-ot = options[:target]
-dir = "#{options[:dir]}/#{options[:tree]}"
-if(ot == :all)
-  vcd.save(dir)
-  vc.save(dir) unless vc.nil?
-else
-  vcd.save(dir,*ot)
+  ot = options[:target]
+  dir = "#{options[:dir]}/#{options[:tree]}"
+  if(ot == :all)
+    vcd.save(dir)
+    vc.save(dir) unless vc.nil?
+  else
+    vcd.save(dir,*ot)
+  end
+rescue Exception => e
+  $log.error("vcd-dump failed: #{e}")
+  $log.error(e.backtrace)
+  exit 1
 end

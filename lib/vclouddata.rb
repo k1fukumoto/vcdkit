@@ -52,10 +52,15 @@ class XMLElement
   end
 
   def load(dir)
-    $log.info("Loading #{dir}/#{path}.xml")
+    file = "#{dir}/#{path}.xml"
+    $log.info("Loading: '#{file}'")
     @dir = dir
-    @doc = REXML::Document.new(File.new("#{dir}/#{path}.xml"))
-    init_attrs(@doc.root)
+    begin
+      @doc = REXML::Document.new(File.new(file))
+      init_attrs(@doc.root)
+    rescue Exception => e
+      $log.error("Failed to load xml file: #{file}: #{e}")
+    end
     self
   end
 
@@ -66,16 +71,23 @@ class XMLElement
   def save(dir)
     FileUtils.mkdir_p(dir) unless File.exists? dir
     path = "#{dir}/#{self.path}.xml"
+    $log.info("Saving xml file: #{path}")
     open(path,'w') {|f| f.puts @xml}
   end
 
   def saveparam(dir)
     FileUtils.mkdir_p(dir) unless File.exists? dir
 
-    open("#{dir}/#{self.path}Params.xml",'w') do |f|
-      xml = ERB.new(File.new("template/vcd-report/#{self.path}Params.erb").read,0,'>').result(binding)
-      doc = REXML::Document.new(xml)
-      REXML::Formatters::Pretty.new.write(doc.root,f)
+    path = "#{dir}/#{self.path}Params.xml"
+    $log.info("Saving parameters: #{path}")
+    begin
+      open(path,'w') do |f|
+        xml = ERB.new(File.new("template/vcd-report/#{self.path}Params.erb").read,0,'>').result(binding)
+        doc = REXML::Document.new(xml)
+        REXML::Formatters::Pretty.new.write(doc.root,f)
+      end
+    rescue Exception => e
+      $log.warn("Failed to save parameters: #{path}: #{e}")
     end
   end
 

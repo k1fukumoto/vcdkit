@@ -45,15 +45,20 @@ module VSphere
     end
 
     def vm(moref)
-      vm = Vm.new
-      vm.load(@doc.elements["//HostSystem/VirtualMachine[@moref='#{moref}']"])
-      vm
+      @index_vm[moref.to_s]
     end
 
     def load(dir)
       @dir = dir
       @doc = REXML::Document.
         new(File.new("#{dir}/#{self.class.name.sub(/VSphere::/,'')}.xml"))
+
+      @index_vm = @doc.elements.inject("//HostSystem/VirtualMachine",{}) {|h,e|
+        vm = Vm.new
+        vm.load(e)
+        h.update(e.attributes['moref'] => vm)
+        h
+      }
     end
 
     def save(dir)

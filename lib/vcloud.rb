@@ -465,6 +465,7 @@ module VCloud
 
       @xml = self.get("#{@apiurl}/admin")
       @doc = REXML::Document.new(@xml)
+      self
     end
 
     def load(dir,*target)
@@ -478,6 +479,7 @@ module VCloud
         vapp = target[2]
         VApp.new.load("#{dir}/ORG/#{org}/VDC/#{vdc}/VAPP/#{vapp}")
       end
+      self
     end
 
     def save(dir,*target)
@@ -496,7 +498,9 @@ module VCloud
     def saveparam(dir,*target)
       case target.size
       when 0
-        self.each_org {|org| org.saveparam("#{dir}/ORG/#{org.name}")}
+        self.each_org {|org|
+          org.saveparam("#{dir}/ORG/#{org.name}")
+        }
       when 3
         org = target[0]
         vdc = target[1]
