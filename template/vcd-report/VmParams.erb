@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VMParams xmlns="http://www.vmware.com/vcloud/v1" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1">
+  <General>
+    <FullName><%= self['/Vm/@name'].value %></FullName>
+    <Description><%= self['/Vm/Description/text()'] %></Description>
+  </General>
+  <Networking>
+    <PrimaryNetwork><%= self['/Vm/NetworkConnectionSection/PrimaryNetworkConnectionIndex/text()'] %></PrimaryNetwork>
+    <% self.match('/Vm/NetworkConnectionSection/NetworkConnection').sort do |x,y|
+         x.elements['NetworkConnectionIndex/text()'] <=> y.elements['NetworkConnectionIndex/text()']
+       end.each do |ncon| %>
+      <%= self.compose_xml(ncon,false) %>
+    <% end %>
+  </Networking>
+  <Customization>
+    <%= VCloud::GuestCustomizationSection.new(self).extractParams.xml(false) %>
+  </Customization>
+</VMParams>
