@@ -190,7 +190,15 @@ module VCloud
     end
 
     def restore(src)
+      # For some reasons, StartupSection needs to be edited seperatelly from recompose.
+      @vcd.wait(self.editStartupSection(src['//ovf:StartupSection']))
+
+      # Name and Description needs to be changed from "edit" link of vApp.
+      @vcd.wait(self.editVApp(src))
+
+      # Use recompose function for the rest of settings.
       @vcd.wait(self.recomposeVApp(src))
+
       self.each_vm do |vm|
         @vcd.wait(vm.configureNetworkConnection(src.vm(vm.name)['//NetworkConnectionSection']))
       end
@@ -203,6 +211,16 @@ module VCloud
                    [], :post,
                    RecomposeVAppParams.new(src).xml,
                    {:content_type => RecomposeVAppParams::TYPE})
+      
+    end
+
+    def editVApp(src)
+      task = Task.new
+      task.connect(@vcd,
+                   self.elements["//Link[@type='#{EditVAppParams::TYPE}' and @rel='edit']"],
+                   [], :put,
+                   EditVAppParams.new(src).xml,
+                   {:content_type => EditVAppParams::TYPE})
       
     end
 
@@ -477,7 +495,7 @@ module VCloud
         org = target[0]
         vdc = target[1]
         vapp = target[2]
-        VApp.new.load("#{dir}/ORG/#{org}/VDC/#{vdc}/VAPP/#{vapp}")
+        return VApp.new.load("#{dir}/ORG/#{org}/VDC/#{vdc}/VAPP/#{vapp}")
       end
       self
     end
@@ -535,7 +553,7 @@ module VCloud
         when 200..299
           response
         else
-          $log.info("#{response.code}>> #{response}")
+          $log.error("#{response.code}>> #{response}")
           response.return!(request,result,&block)
         end
       }
@@ -548,7 +566,7 @@ module VCloud
         when 200..299
           response
         else
-          $log.info("#{response.code}>> #{response}")
+          $log.error("#{response.code}>> #{response}")
           response.return!(request,result,&block)
         end
       }
@@ -561,8 +579,8 @@ module VCloud
         when 200..299
           response
         else
-          $log.info("#{response.code}<< #{payload}")
-          $log.info("#{response.code}>> #{response}")
+          $log.error("#{response.code}<< #{payload}")
+          $log.error("#{response.code}>> #{response}")
           response.return!(request,result,&block)
         end
       }
@@ -575,8 +593,8 @@ module VCloud
         when 200..299
           response
         else
-          $log.info("#{response.code}<< #{payload}")
-          $log.info("#{response.code}>> #{response}")
+          $log.error("#{response.code}<< #{payload}")
+          $log.error("#{response.code}>> #{response}")
           response.return!(request,result,&block)
         end
       }

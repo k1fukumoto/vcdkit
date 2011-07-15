@@ -50,6 +50,11 @@ optparse = OptionParser.new do |opt|
   opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Restore target vApp') do |o|
     options[:src] = o
   end
+
+  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
+    options[:logfile] = o
+  end
+
   opt.on('-h','--help','Display this help') do
     puts opt
     exit
@@ -67,8 +72,18 @@ rescue Exception => e
   exit 1
 end
 
-vcd = VCloud::VCD.new()
-vcd.connect(*options[:vcd])
+#
+# MAIN
+#
+$log = VCloud::Logger.new(options[:logfile])
 
-vcd.org(options[:src][0]).vdc(options[:src][1]).vapp(options[:src][2]).
-  restore(VCloud::VCD.new().load("#{options[:input]}/#{options[:tree]}",*options[:src]))
+begin
+  vcd = VCloud::VCD.new()
+  vcd.connect(*options[:vcd])
+
+  vcd.org(options[:src][0]).vdc(options[:src][1]).vapp(options[:src][2]).
+    restore(VCloud::VCD.new().load("#{options[:input]}/#{options[:tree]}",*options[:src]))
+rescue Exception => e
+  $log.error("vcd-restore failed: #{e}")
+  $log.error(e.backtrace)
+end

@@ -1,6 +1,8 @@
 #!/bin/sh
 
 time ( \
-    ./vcd-restore.rb -v1 -t$1 -aAdmin,Admin,VCDTEST-101 && \
-    ./vcd-report.rb -aAdmin,Admin,VCDTEST-101 -trestoring \
+    rm -frv data/vcd-report/restoring && \
+    ./vcd-restore.rb -v1 -t$1 -aAdmin,Admin,BACKUPTEST-01 && \
+    ./vcd-dump.rb -v1 -aAdmin,Admin,BACKUPTEST-01 -trestoring && \
+    ./vcd-report.rb -aAdmin,Admin,BACKUPTEST-01 -trestoring \
 )

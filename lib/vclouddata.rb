@@ -311,15 +311,30 @@ EOS
     end
   end
 
+  class EditVAppParams < XMLElement
+    TYPE='application/vnd.vmware.vcloud.vApp+xml'
+    XML =<<EOS
+<VApp name="<%= src.doc.root.attributes['name'] %>" 
+  xmlns="http://www.vmware.com/vcloud/v1"
+  xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"> 
+<Description><%= src['/VApp/Description/text()'] %></Description>
+</VApp>
+EOS
+    def initialize(src)
+      @xml = ERB.new(XML).result(binding)
+      @doc = REXML::Document.new(@xml)
+    end
+  end
+
   class RecomposeVAppParams < XMLElement
     TYPE='application/vnd.vmware.vcloud.recomposeVAppParams+xml'
     XML =<<EOS
 <RecomposeVAppParams name="<%= src.doc.root.attributes['name'] %>" 
   xmlns="http://www.vmware.com/vcloud/v1"
   xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"> 
-<Description><%= src['/VApp/Description/text()'] %></Description>
 <InstantiationParams>
   <%= LeaseSettingsSection.new(src['/VApp/LeaseSettingsSection']).xml(false) %>
+  <%= self.compose_xml(src['/VApp/ovf:StartupSection'],false) %>
   <%= NetworkConfigSection.new(src['/VApp/NetworkConfigSection']).xml(false) %>
 </InstantiationParams>
 </RecomposeVAppParams>
