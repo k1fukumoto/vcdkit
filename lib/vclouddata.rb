@@ -218,7 +218,7 @@ EOS
     def extractParams
       @node.name = 'Lease'
       @node.attributes.each {|name,value| @node.attributes.delete(name)}
-      ['./ovf:Info','Link'].each {|n| @node.elements.delete(n)}
+      ['./ovf:Info','Link','StorageLeaseExpiration'].each {|n| @node.elements.delete(n)}
       self
     end
 
