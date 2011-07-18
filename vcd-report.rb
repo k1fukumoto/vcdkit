@@ -25,9 +25,23 @@ options = {
   :target => :all,
 }
 
+vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!']
+vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!']
+
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-report.rb [cmd-options]"
   
+  opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
+    case o[0]
+    when "1"
+      options[:vcd] = vcd1
+    when "2"
+      options[:vcd] = vcd2
+    else
+      options[:vcd] = o
+    end
+  end
+
   opt.on('-i','--input DIR','Specify root directory of the vCD dump data') do |o|
     options[:input] = o
   end
@@ -72,35 +86,50 @@ end
 # MAIN
 #
 $log = VCloud::Logger.new(options[:logfile])
+ot = options[:target]
 
-subdir = options[:tree] || "*"
+if(options[:vcd])
 
-Dir.glob("#{options[:input]}/#{subdir}").each do |d|
-  outdir = "#{options[:output]}/#{File.basename(d)}"
-  next if (File.exists?(outdir) && !options[:force])
+  vcd = VCloud::VCD.new
+  vcd.connect(*options[:vcd])
 
-  begin
-    ot = options[:target]
+  if(ot == :all)
+    vcd.saveparam("#{options[:output]}/#{options[:tree]}")
+  elsif(ot.size == 3)
+    vcd.org(ot[0]).vdc(ot[1]).vapp(ot[2]).saveparam("#{options[:output]}/#{options[:tree]}")
+  else
+    $log.error("vcd-report invalid command options")
+  end
 
-    vcd = VCloud::VCD.new
-    if(ot == :all)
-      vcd.load(d).saveparam(outdir)
-      
-      vc = VSphere::VCenter.new
-      vc.load(d)
+else # Load dump tree from directory
 
-      FileUtils.mkdir_p(outdir)
-      open("#{outdir}/VMList.xml",'w') do |f|
-        f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
-                       read,0,'>').result(binding)
+  subdir = options[:tree] || "*"
+  Dir.glob("#{options[:input]}/#{subdir}").each do |d|
+    outdir = "#{options[:output]}/#{File.basename(d)}"
+    next if (File.exists?(outdir) && !options[:force])
+
+    begin
+
+      vcd = VCloud::VCD.new
+      if(ot == :all)
+        vcd.load(d).saveparam(outdir)
+        
+        # vc = VSphere::VCenter.new
+        # vc.load(d)
+
+        # FileUtils.mkdir_p(outdir)
+        # open("#{outdir}/VMList.xml",'w') do |f|
+        #   f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
+        #                  read,0,'>').result(binding)
+        # end
+
+      elsif(ot.size == 3)
+        VCloud::VApp.new(*ot).load(d).saveparam(outdir)
       end
 
-    elsif(ot.size == 3)
-      vcd.load(d,*ot).saveparam("#{outdir}/ORG/#{ot[0]}/VDC/#{ot[1]}/VAPP/#{ot[2]}")
+    rescue Exception => e
+      $log.error("vcd-report failed: #{e}")
+      $log.error(e.backtrace)
     end
-
-  rescue Exception => e
-    $log.error("vcd-report failed: #{e}")
-    $log.error(e.backtrace)
   end
 end
