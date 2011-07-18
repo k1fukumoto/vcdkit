@@ -20,13 +20,14 @@ require 'pp'
 #
 # Process command args
 #
-options = {
-  :input => "./data/vcd-dump",
-  :output => "./data/vcd-report",
-}
-
 vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!']
 vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!']
+
+options = {
+  :input => "/opt/vmware/vcdkit/data/vcd-dump",
+  :output => "/opt/vmware/vcdkit/data/vcd-report",
+  :vcd => vcd2
+}
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-vapp.rb CMD [cmd-options]"
