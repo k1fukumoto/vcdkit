@@ -147,12 +147,22 @@ EOS
 
     def initialize(node)
       @node = node.elements['//GuestCustomizationSection']
+      @node.elements.delete('./VirtualMachineId')
+      @node.elements.delete('./Link')
+      pass = @node.elements['./AdminPassword/text()']
+      if(pass != '')
+        @node.elements['./AdminPasswordAuto'].text = 'false'
+      end
     end
     
     def extractParams
       @node.attributes.each {|name,value| @node.attributes.delete(name)}
       @node.elements.delete('./VirtualMachineId')
       @node.elements.delete('./Link')
+      pass = @node.elements['./AdminPassword/text()']
+      if(pass != '')
+        @node.elements.delete('./AdminPasswordAuto')
+      end
       self
     end
 
@@ -180,7 +190,7 @@ EOS
     TYPE = 'application/vnd.vmware.vcloud.networkConnectionSection+xml'
 
     def initialize(node)
-      @node = node
+      @node = node.elements['//NetworkConnectionSection']
     end
 
     def xml(hdr)
@@ -301,6 +311,21 @@ EOS
   xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"> 
 <Description><%= src['/VApp/Description/text()'] %></Description>
 </VApp>
+EOS
+    def initialize(src)
+      @xml = ERB.new(XML).result(binding)
+      @doc = REXML::Document.new(@xml)
+    end
+  end
+
+  class EditVmParams < XMLElement
+    TYPE='application/vnd.vmware.vcloud.vm+xml'
+    XML =<<EOS
+<Vm name="<%= src.doc.root.attributes['name'] %>" 
+  xmlns="http://www.vmware.com/vcloud/v1"
+  xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"> 
+<Description><%= src['/Vm/Description/text()'] %></Description>
+</Vm>
 EOS
     def initialize(src)
       @xml = ERB.new(XML).result(binding)
