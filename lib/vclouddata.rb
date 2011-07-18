@@ -96,7 +96,6 @@ class XMLElement
       end
     rescue Exception => e
       $log.warn("Failed to save parameters: #{path}: #{e}")
-      raise e
     end
   end
 
@@ -400,7 +399,7 @@ EOS
   class Logger
     def initialize(logfile=nil)
       if(logfile)
-        @logger = ::Logger.new(logfile,10,1024000)
+        @logger = ::Logger.new(logfile,10,20480000) # ~20MB
       else
         @logger = ::Logger.new(STDOUT)
       end
