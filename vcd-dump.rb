@@ -113,7 +113,7 @@ begin
     vcd.save(dir)
     vc.save(dir) unless vc.nil?
   else
-    vcd.save(dir,*ot)
+    vcd.org(ot[0]).vdc(ot[1]).vapp(ot[2]).save(dir)
   end
 rescue Exception => e
   $log.error("vcd-dump failed: #{e}")

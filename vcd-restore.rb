@@ -22,6 +22,7 @@ require 'pp'
 #
 options = {
   :input => "./data/vcd-dump",
+  :output => "./data/vcd-report",
 }
 
 vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!']
@@ -47,7 +48,12 @@ optparse = OptionParser.new do |opt|
   opt.on('-t','--tree TREENAME',Array,'Directory name to identify dump tree') do |o|
     options[:tree] = o
   end
-  opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Restore target vApp') do |o|
+
+  opt.on('-o','--output DIR','Specify directory for reports') do |o|
+    options[:output] = o
+  end
+
+  opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Restore source vApp') do |o|
     options[:src] = o
   end
 
@@ -78,11 +84,14 @@ end
 $log = VCloud::Logger.new(options[:logfile])
 
 begin
-  vcd = VCloud::VCD.new()
-  vcd.connect(*options[:vcd])
+  org,vdc,vapp = *options[:src]
+  src = VCloud::VApp.new(org,vdc,vapp).load("#{options[:input]}/#{options[:tree]}")
 
-  vcd.org(options[:src][0]).vdc(options[:src][1]).vapp(options[:src][2]).
-    restore(VCloud::VCD.new().load("#{options[:input]}/#{options[:tree]}",*options[:src]))
+  vcd = VCloud::VCD.new()
+  vdc = vcd.connect(*options[:vcd]).org(org).vdc(vdc)
+  vdc.vapp(vapp).restore(src)
+  vdc.vapp(vapp).saveparam("#{options[:output]}/RESTORE")
+
 rescue Exception => e
   $log.error("vcd-restore failed: #{e}")
   $log.error(e.backtrace)

@@ -99,27 +99,43 @@ module VCloud
                    self.compose_xml(cfg),
                    :content_type => GuestCustomizationSection::TYPE)
     end
+
+    def initialize(org,vdc,vapp,name)
+      @org = org; @vdc = vdc; @vapp = vapp; @name = name
+    end
+
+    def path
+      "/ORG/#{@org}/VDC/#{@vdc}/VAPP/#{@vapp}/VM/#{@name}"
+    end
   end
 
   class VAppTemplate < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.vAppTemplate+xml'
 
+    def initialize(org,vdc,name)
+      @org = org; @vdc = vdc; @name = name
+    end
+      
+    def path
+      "/ORG/#{@org}/VDC/#{@vdc}/VAPPTEMPLATE/#{@name}"
+    end
+
     def vm(name)
-      vm = Vm.new
+      vm = Vm.new(@org,@vdc,@name,name)
       if(@vcd)
         vm.connect(@vcd,@doc.elements["//Children/Vm[@name='#{name}']"])
       elsif(@dir)
-        vm.load("#{@dir}/VM/#{name}")
+        vm.load(@dir)
       end
     end
 
     def each_vm
       @doc.elements.each("//Children/Vm"){|n| 
-        vm = Vm.new
+        vm = Vm.new(@org,@vdc,@name,n.attributes['name'].to_s)
         if(@vcd)
           vm.connect(@vcd,n)
         elsif(@dir)
-          vm.load("#{@dir}/VM/#{n.attributes['name']}")
+          vm.load(@dir)
         end
         yield vm
       }
@@ -127,7 +143,7 @@ module VCloud
 
     def save(dir)
       super
-      self.each_vm {|vm| vm.save("#{dir}/VM/#{vm.name}")}
+      self.each_vm {|vm| vm.save(dir)}
     end
 
     def delete
@@ -135,17 +151,45 @@ module VCloud
     end
   end
 
+  class ControlAccessParams < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.controlAccess+xml'
+
+    def initialize(org,vdc,name)
+      @org = org; @vdc = vdc; @name = name
+    end
+      
+    def path
+      "/ORG/#{@org}/VDC/#{@vdc}/VAPP/#{@name}"
+    end
+
+    def each_access_setting
+      @doc.elements.each("//AccessSetting"){|n| 
+        as = AccessSetting.new
+        as.connect(@vcd,n,[:type])
+        yield as
+      }
+    end
+  end
+
   class VApp < VAppTemplate
     TYPE = 'application/vnd.vmware.vcloud.vApp+xml'
 
-    def connect(vcd,node)
-      super(vcd,node)
-      self
+    def initialize(org,vdc,name)
+      @org = org; @vdc = vdc; @name = name
+    end
+      
+    def path
+      "/ORG/#{@org}/VDC/#{@vdc}/VAPP/#{@name}"
+    end
+
+    def save(dir)
+      super
+      self.cap.save(dir)
     end
 
     def saveparam(dir)
       super
-      self.each_vm {|vm| vm.saveparam("#{dir}/VM/#{vm.name}")}
+      self.each_vm {|vm| vm.saveparam(dir)}
     end
 
     def status
@@ -226,7 +270,7 @@ module VCloud
 
     def cap()
       unless(@cap)
-        @cap = ControlAccessParams.new
+        @cap = ControlAccessParams.new(@org,@vdc,@name)
         if(@vcd)
           n = REXML::XPath.first(@doc, "/VApp/Link[@type='#{ControlAccessParams::TYPE}' and @rel='down']")
           @cap.connect(@vcd,n)
@@ -235,11 +279,6 @@ module VCloud
         end
       end
       @cap
-    end
-
-    def save(dir)
-      super
-      self.cap.save(dir)
     end
 
     def powerOn
@@ -277,19 +316,28 @@ module VCloud
 
   class Vdc < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.vdc+xml'
+    attr_reader :org
+
+    def initialize(org,name)
+      @org = org; @name = name
+    end
+
+    def path
+      "/ORG/#{@org}/VDC/#{@name}"
+    end
 
     def vapp(name)
-      vapp = VApp.new
+      vapp = VApp.new(@org,@name,name)
       vapp.connect(@vcd,@doc.elements["//ResourceEntity[@type='#{VApp::TYPE}' and @name='#{name}']"])
     end
 
     def each_vapp
       @doc.elements.each("//ResourceEntity[@type='#{VApp::TYPE}']"){|n|
-        vapp = VApp.new
+        vapp = VApp.new(@org,@name,n.attributes['name'].to_s)
         if(@vcd)
           vapp.connect(@vcd,n)
         elsif(@dir)
-          vapp.load("#{@dir}/VAPP/#{n.attributes['name']}")
+          vapp.load(@dir)
         end
         yield vapp
       }
@@ -297,11 +345,11 @@ module VCloud
 
     def each_vapptemplate
       @doc.elements.each("//ResourceEntity[@type='#{VAppTemplate::TYPE}']"){|n|
-        vat = VAppTemplate.new
+        vat = VAppTemplate.new(@org,@name,n.attributes['name'].to_s)
         if(@vcd)
           vat.connect(@vcd,n)
         elsif(@dir)
-          vat.load("#{@dir}/VAPPTEMPLATE/#{n.attributes['name']}")
+          vat.load(@dir)
         end
         yield vat
       }
@@ -309,13 +357,13 @@ module VCloud
 
     def save(dir)
       super
-      self.each_vapp {|vapp| vapp.save("#{dir}/VAPP/#{vapp.name}")}
-      self.each_vapptemplate {|vat| vat.save("#{dir}/VAPPTEMPLATE/#{vat.name}")}
+      self.each_vapp {|vapp| vapp.save(dir)}
+      self.each_vapptemplate {|vat| vat.save(dir)}
     end
 
     def saveparam(dir)
-      self.each_vapptemplate {|vat| vat.saveparam("#{dir}/VAPPTEMPLATE/#{vat.name}")}
-      self.each_vapp {|vapp| vapp.saveparam("#{dir}/VAPP/#{vapp.name}")}
+      self.each_vapptemplate {|vat| vat.saveparam(dir)}
+      self.each_vapp {|vapp| vapp.saveparam(dir)}
     end
 
     def cloneVApp(src,name,desc='')
@@ -348,6 +396,14 @@ module VCloud
   class CatalogItem < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.catalogItem+xml'
 
+    def initialize(org,cat,name)
+      @org = org; @cat = cat; @name = name
+    end
+      
+    def path
+      "/ORG/#{@org}/CATALOG/#{@cat}/CATALOGITEM/#{@name}"
+    end
+
     def entity_href
       @doc.elements["/CatalogItem/Entity/@href"].value
     end
@@ -356,18 +412,26 @@ module VCloud
   class Catalog < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.catalog+xml'
 
+    def initialize(org,name)
+      @org = org; @name = name
+    end
+      
+    def path
+      "/ORG/#{@org}/CATALOG/#{@name}"
+    end
+
     def catalogitem(name)
-      ci = CatalogItem.new
+      ci = CatalogItem.new(@org,@name,name)
       ci.connect(@vcd,@doc.elements["//CatalogItem[@name='#{name}']"])
     end
 
     def each_catalogitem
       @doc.elements.each("//CatalogItem") do |n|
-        ci = CatalogItem.new
+        ci = CatalogItem.new(@org,@name,n.attributes['name'].to_s)
         if(@vcd)
           ci.connect(@vcd,n)
         elsif(@dir)
-          ci.load("#{@dir}/CATALOGITEM/#{n.attributes['name']}")
+          ci.load(@dir)
         end
         yield ci
       end
@@ -375,7 +439,7 @@ module VCloud
 
     def save(dir)
       super
-      self.each_catalogitem {|ci| ci.save("#{dir}/CATALOGITEM/#{ci.name}")}
+      self.each_catalogitem {|ci| ci.save(dir)}
     end
 
     def saveparam(dir)
@@ -390,18 +454,26 @@ module VCloud
   class Org < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.org+xml'
 
+    def initialize(name)
+      @name = name
+    end
+
+    def path
+      "/ORG/#{@name}"
+    end
+
     def vdc(name) 
-      vdc = Vdc.new
+      vdc = Vdc.new(@name,name)
       vdc.connect(@vcd,@doc.elements["//Vdcs/Vdc[ @name='#{name}']"])
     end
 
     def each_vdc
       @doc.elements.each("//Vdcs/Vdc") {|n| 
-        vdc = Vdc.new
+        vdc = Vdc.new(@name,n.attributes['name'].to_s)
         if(@vcd)
           vdc.connect(@vcd,n)
         elsif(@dir)
-          vdc.load("#{@dir}/VDC/#{n.attributes['name']}")
+          vdc.load(@dir)
         end
         yield vdc
       }
@@ -410,7 +482,7 @@ module VCloud
     USERPATH ='//Users/UserReference'
 
     def user(name)
-      user = User.new
+      user = User.new(@name,name)
       if(@vcd)
         user.connect(@vcd,@doc.elements["#{USERPATH}[@name='#{name}']"])
       elsif(@dir)
@@ -420,11 +492,11 @@ module VCloud
 
     def each_user
       @doc.elements.each(USERPATH) { |n| 
-        user = User.new
+        user = User.new(@name,n.attributes['name'].to_s)
         if(@vcd)
           user.connect(@vcd,n)
         elsif(@dir)
-          user.load("#{@dir}/USER/#{n.attributes['name']}")
+          user.load(@dir)
         end
         yield user
       }
@@ -438,17 +510,17 @@ module VCloud
     CATPATH = '//Catalogs/CatalogReference'
 
     def catalog(name)
-      cat = Catalog.new
+      cat = Catalog.new(@name,name)
       cat.connect(@vcd,@doc.elements["#{CATPATH}[@name='#{name}']"])
     end
 
     def each_catalog
       @doc.elements.each(CATPATH) {|n| 
-        cat = Catalog.new
+        cat = Catalog.new(@name,n.attributes['name'].to_s)
         if(@vcd)
           cat.connect(@vcd,n)
         elsif(@dir)
-          cat.load("#{@dir}/CATALOG/#{n.attributes['name']}")
+          cat.load(@dir)
         end
         yield cat
       }
@@ -456,23 +528,34 @@ module VCloud
 
     def save(dir)
       super
-      self.each_vdc {|vdc| vdc.save("#{dir}/VDC/#{vdc.name}")}
-      self.each_catalog {|cat| cat.save("#{dir}/CATALOG/#{cat.name}")}
-      self.each_user {|user| user.save("#{dir}/USER/#{user.name}")}
+      self.each_vdc {|vdc| vdc.save(dir)}
+      self.each_catalog {|cat| cat.save(dir)}
+      self.each_user {|user| user.save(dir)}
     end
 
     def saveparam(dir)
-      self.each_vdc {|vdc| vdc.saveparam("#{dir}/VDC/#{vdc.name}")}
-      self.each_catalog {|cat| cat.saveparam("#{dir}/CATALOG/#{cat.name}")}
+      self.each_vdc {|vdc| vdc.saveparam(dir)}
+      self.each_catalog {|cat| cat.saveparam(dir)}
     end
   end
 
   class User < XMLElement
+    def initialize(org,name)
+      @org = org; @name = name
+    end
+      
+    def path
+      "/ORG/#{@org}/USER/#{@name}"
+    end
+
   end
 
   class VCD < XMLElement
     attr_reader :logger
 
+    def path
+      ""
+    end
 
     def connect(host,org,user,pass)
       @apiurl = "https://#{host}/api/v1.0"
@@ -487,60 +570,34 @@ module VCloud
     end
 
     def load(dir,*target)
-      case target.size
-      when 0
-        super
-        @auth_token = nil
-      when 3
-        org = target[0]
-        vdc = target[1]
-        vapp = target[2]
-        return VApp.new.load("#{dir}/ORG/#{org}/VDC/#{vdc}/VAPP/#{vapp}")
-      end
+      super
+      @auth_token = nil
       self
     end
 
-    def save(dir,*target)
-      case target.size
-      when 0
-        super
-        self.each_org {|org| org.save("#{dir}/ORG/#{org.name}")}
-      when 3
-        org = target[0]
-        vdc = target[1]
-        vapp = target[2]
-        self.org(org).vdc(vdc).vapp(vapp).save("#{dir}/ORG/#{org}/VDC/#{vdc}/VAPP/#{vapp}")
-      end
+    def save(dir)
+      super
+      self.each_org {|org| org.save(dir)}
     end
 
-    def saveparam(dir,*target)
-      case target.size
-      when 0
-        self.each_org {|org|
-          org.saveparam("#{dir}/ORG/#{org.name}")
-        }
-      when 3
-        org = target[0]
-        vdc = target[1]
-        vapp = target[2]
-        self.org(org).vdc(vdc).vapp(vapp).saveparam("#{dir}/ORG/#{org}/VDC/#{vdc}/VAPP/#{vapp}")
-      end
+    def saveparam(dir)
+      self.each_org {|org| org.saveparam(dir)}
     end
 
     ORGPATH='//OrganizationReferences/OrganizationReference'
 
     def org(name)
-      org = Org.new
+      org = Org.new(name)
       org.connect(self,@doc.elements["#{ORGPATH}[@name='#{name}']"])
     end
 
     def each_org
       @doc.elements.each(ORGPATH) { |n| 
-        org = Org.new
+        org = Org.new(n.attributes['name'])
         if(@auth_token)
           org.connect(self,n)
         elsif(@dir)
-          org.load("#{@dir}/ORG/#{n.attributes['name']}")
+          org.load(@dir)
         end
         yield org
       }

@@ -52,8 +52,9 @@ class XMLElement
   end
 
   def load(dir)
-    file = "#{dir}/#{path}.xml"
-    $log.info("Loading: '#{file}'")
+    $log.info("LOAD: #{self.path}/#{self.basename}")
+
+    file = "#{dir}/#{self.path}/#{self.basename}"
     @dir = dir
     begin
       @doc = REXML::Document.new(File.new(file))
@@ -64,30 +65,38 @@ class XMLElement
     self
   end
 
-  def path()
-    self.class.name.sub(/VCloud::/,'')
+  def basename()
+    self.class.name.sub(/VCloud::/,'') + ".xml"
+  end
+  def paramsname()
+    self.class.name.sub(/VCloud::/,'') + "Params.xml"
   end
 
   def save(dir)
+    $log.info("SAVE: #{self.path}/#{self.basename}")
+
+    dir = "#{dir}/#{self.path}"
     FileUtils.mkdir_p(dir) unless File.exists? dir
-    path = "#{dir}/#{self.path}.xml"
-    $log.info("Saving xml file: #{path}")
+    path = "#{dir}/#{self.basename}"
     open(path,'w') {|f| f.puts @xml}
   end
 
   def saveparam(dir)
-    FileUtils.mkdir_p(dir) unless File.exists? dir
+    $log.info("SAVE: #{self.path}/#{self.paramsname}")
 
-    path = "#{dir}/#{self.path}Params.xml"
-    $log.info("Saving parameters: #{path}")
+    dir = "#{dir}/#{self.path}"
+    FileUtils.mkdir_p(dir) unless File.exists? dir
+    path = "#{dir}/#{self.paramsname}"
     begin
       open(path,'w') do |f|
-        xml = ERB.new(File.new("template/vcd-report/#{self.path}Params.erb").read,0,'>').result(binding)
+        erb = File.new("template/vcd-report/#{self.paramsname.sub('.xml','.erb')}").read
+        xml = ERB.new(erb,0,'>').result(binding)
         doc = REXML::Document.new(xml)
         REXML::Formatters::Pretty.new.write(doc.root,f)
       end
     rescue Exception => e
       $log.warn("Failed to save parameters: #{path}: #{e}")
+      raise e
     end
   end
 
@@ -239,33 +248,6 @@ EOS
 
     def xml(hdr)
       self.compose_xml(@node,hdr)
-    end
-  end
-
-  class ControlAccessParams < XMLElement
-    TYPE = 'application/vnd.vmware.vcloud.controlAccess+xml'
-
-    def each_access_setting
-      @doc.elements.each("//AccessSetting"){|n| 
-        as = AccessSetting.new
-        as.connect(@vcd,n,[:type])
-        yield as
-      }
-    end
-  end
-
-  class CloneVAppParams < XMLElement
-    TYPE = 'application/vnd.vmware.vcloud.cloneVAppParams+xml'
-    XML =<<EOS
-<?xml version="1.0" encoding="UTF-8"?>
-<CloneVAppParams name="<%= name %>" xmlns="http://www.vmware.com/vcloud/v1">
-  <Description><%= desc %></Description> 
-  <Source href="<%= src %>"/>
-</CloneVAppParams>
-EOS
-
-    def initialize(src,name,desc)
-      @xml = ERB.new(XML).result(binding)
     end
   end
 
