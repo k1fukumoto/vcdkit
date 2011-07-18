@@ -149,7 +149,7 @@ EOS
       @node.elements.delete('./VirtualMachineId')
       @node.elements.delete('./Link')
       pass = @node.elements['./AdminPassword/text()']
-      if(pass != '')
+      if(pass != nil && pass != '')
         @node.elements['./AdminPasswordAuto'].text = 'false'
       end
     end
