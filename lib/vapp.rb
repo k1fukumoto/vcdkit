@@ -71,6 +71,17 @@ module VCloud
                    {:content_type => GuestCustomizationSection::TYPE})
     end
 
+    def editOperatingSystemSection(node)
+      oss = OperatingSystemSection.new(node)
+      task = Task.new
+      task.connect(@vcd,
+                   # Can't locate Link node if @rel='edit' is specified... 
+                   @doc.elements["//ovf:OperatingSystemSection/Link"],
+                   [], :put,
+                   oss.xml(true),
+                   {:content_type => OperatingSystemSection::TYPE})
+    end
+
     def connectNetwork(nic,name,mode)
       ncon = @doc.elements["//NetworkConnection[NetworkConnectionIndex ='#{nic}']"]
       ncon.attributes['network'] = name
@@ -242,13 +253,13 @@ module VCloud
     end
 
     def restore(src)
-      # For some reasons, StartupSection needs to be edited seperatelly from recompose.
+      # StartupSection needs to be edited seperatelly from recompose.
       @vcd.wait(self.editStartupSection(src['//ovf:StartupSection']))
 
       # Name and Description needs to be changed from "edit" link of vApp.
       @vcd.wait(self.edit(src))
 
-      # Use recompose function for the rest of settings.
+      # Use recompose API for the rest of settings.
       @vcd.wait(self.recomposeVApp(src))
 
       self.each_vm do |vm|
@@ -256,6 +267,7 @@ module VCloud
         @vcd.wait(vm.edit(srcvm))
         @vcd.wait(vm.editNetworkConnectionSection(srcvm))
         @vcd.wait(vm.editGuestCustomizationSection(srcvm))
+        @vcd.wait(vm.editOperatingSystemSection(srcvm))
       end
     end
 

@@ -3,6 +3,12 @@
   <General>
     <FullName><%= self['/Vm/@name'].value %></FullName>
     <Description><%= self['/Vm/Description/text()'] %></Description>
+    <OperatingSystemType>
+      <%= self['/Vm/ovf:OperatingSystemSection/@vmw:osType'].value %>
+    </OperatingSystemType>
+    <OperatingSystem>
+      <%= self['/Vm/ovf:OperatingSystemSection/ovf:Description/text()'] %>
+    </OperatingSystem>
   </General>
   <Networking>
     <PrimaryNetwork><%= self['/Vm/NetworkConnectionSection/PrimaryNetworkConnectionIndex/text()'] %></PrimaryNetwork>

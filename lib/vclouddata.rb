@@ -186,6 +186,20 @@ EOS
     end
   end
 
+  class OperatingSystemSection < XMLElement    
+    TYPE = 'application/vnd.vmware.vcloud.operatingSystemSection+xml'
+
+    def initialize(node)
+      @node = node.elements['//ovf:OperatingSystemSection']
+      @node.elements.delete('./Link')
+      @node.attributes.delete('vcloud:href')
+    end
+
+    def xml(hdr)
+      self.compose_xml(@node,hdr)
+    end
+  end
+
   class NetworkConnectionSection < XMLElement    
     TYPE = 'application/vnd.vmware.vcloud.networkConnectionSection+xml'
 
