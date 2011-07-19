@@ -66,6 +66,9 @@ optparse = OptionParser.new do |opt|
   opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Dump target vApp') do |o|
     options[:target] = o
   end
+  opt.on('-o','--org ORG',Array,'Dump target organization') do |o|
+    options[:target] = o
+  end
 
   opt.on('-t','--tree TREENAME',Array,'Directory name to identify dump tree') do |o|
     options[:tree] = o
@@ -112,7 +115,9 @@ begin
   if(ot == :all)
     vcd.save(dir)
     vc.save(dir) unless vc.nil?
-  else
+  elsif(ot.size == 1)
+    vcd.org(ot[0]).save(dir)
+  elsif(ot.size == 3)
     vcd.org(ot[0]).vdc(ot[1]).vapp(ot[2]).save(dir)
   end
 rescue Exception => e

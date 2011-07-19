@@ -131,11 +131,6 @@ module VCloud
     XML=<<EOS
 <GuestCustomizationSection>
   <ChangeSid>true</ChangeSid>
-  <JoinDomainEnabled>true</JoinDomainEnabled>
-  <UseOrgSettings>false</UseOrgSettings>
-  <DomainName><%= args['DomainName'] %></DomainName>
-  <DomainUserName><%= args['DomainUserName'] %></DomainUserName>
-  <DomainUserPassword><%= args['DomainUserPassword'] %></DomainUserPassword>
   <AdminPasswordEnabled>true</AdminPasswordEnabled>
   <AdminPasswordAuto>false</AdminPasswordAuto>
   <AdminPassword><%= args['AdminPassword'] %></AdminPassword>
@@ -143,6 +138,11 @@ module VCloud
   <ComputerName><%= args['ComputerName'] %></ComputerName>
 </GuestCustomizationSection>
 EOS
+  #  <UseOrgSettings>false</UseOrgSettings>
+  # <JoinDomainEnabled>true</JoinDomainEnabled>
+  # <DomainName><%= args['DomainName'] %></DomainName>
+  # <DomainUserName><%= args['DomainUserName'] %></DomainUserName>
+  # <DomainUserPassword><%= args['DomainUserPassword'] %></DomainUserPassword>
 
     def initialize(node)
       @node = node.elements['//GuestCustomizationSection']

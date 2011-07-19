@@ -130,13 +130,14 @@ when 1,2
         vapp = vcd.org(cfg[:ORG]).vdc(cfg[:VDC]).vapp("#{cfg[:PREFIX]}#{n}")
         vm = vapp.vm(cfg[:CIVM])
 
-        vcd.wait(vm.customize({'DomainName' => 'sandi.test',
-                                'DomainUserName' => 'administrator',
-                                'DomainUserPassword' => 'Redw00d!',
+        vcd.wait(vm.customize({
+                                # 'DomainName' => 'sandi.test',
+                                # 'DomainUserName' => 'administrator',
+                                # 'DomainUserPassword' => 'Redw00d!',
                                 'AdminPassword' => 'Redw00d!',
                                 'ComputerName' => "#{cfg[:PREFIX]}#{n}",
                               }))
-        vcd.wait(vm.connectNetwork(0,cfg[:NTWK],'DHCP'))
+        vcd.wait(vm.connectNetwork(0,cfg[:NTWK],'POOL'))
         vcd.wait(vapp.deploy)
 
         start += sz
