@@ -200,6 +200,7 @@ module VCloud
     USERPATH ='//Users/UserReference'
 
     def user(name)
+      name.downcase!
       user = User.new(@name,name)
       if(@vcd)
         user.connect(@vcd,@doc.elements["#{USERPATH}[@name='#{name}']"])
@@ -220,12 +221,12 @@ module VCloud
       }
     end
 
-    def add_user(name)
+    def add_user(name,role)
       task = Task.new
       task.connect(@vcd,
                    self.elements["//Link[@type='#{User::TYPE}' and @rel='add']"],
                    [], :post,
-                   User.new(@name,name).xml,
+                   User.compose(name,role),
                    {:content_type => User::TYPE})
       
     end
@@ -270,24 +271,48 @@ module VCloud
   class User < XMLElement
     TYPE='application/vnd.vmware.admin.user+xml'
     XML=<<EOS
-<User name="<%= @name %>" 
+<User name="<%= name %>" 
   xmlns="http://www.vmware.com/vcloud/v1">
 <FullName><%= name %></FullName>
-<EmailAddress><%= @name %>@vmware.com</EmailAddress>
+<EmailAddress><%= name %>@vmware.com</EmailAddress>
 <IsEnabled>true</IsEnabled>
+<Role type="application/vnd.vmware.admin.role+xml"
+  href="<%= role.href %>" name="<%= role.name %>"/>
 <Password>Redw00d!</Password>
 </User>
 EOS
     def initialize(org,name)
       @org = org; @name = name
-      @xml = ERB.new(XML).result(binding)
-      @doc = REXML::Document.new(@xml) 
     end
       
+    def User.compose(name,role)
+      ERB.new(XML).result(binding)
+    end
+
     def path
       "/ORG/#{@org}/USER/#{@name}"
     end
 
+    def disable
+      self.elements['/User/IsEnabled'].text = 'false'
+      @vcd.put(self.href,compose_xml(@doc.root,true),{:content_type => TYPE})
+    end
+
+    def delete
+      @vcd.delete(self.href)
+    end
+  end
+
+  class Role < XMLElement
+    TYPE='application/vnd.vmware.admin.role+xml'
+
+    def initialize(name)
+      @name = name
+    end
+      
+    def path
+      "/ROLE/#{@name}"
+    end
   end
 
   class VCD < XMLElement
@@ -318,10 +343,34 @@ EOS
     def save(dir)
       super
       self.each_org {|org| org.save(dir)}
+      self.each_role {|role| role.save(dir)}
     end
 
     def saveparam(dir)
       self.each_org {|org| org.saveparam(dir)}
+    end
+
+    ROLEPATH ='//RoleReferences/RoleReference'
+
+    def role(name)
+      role = Role.new(name)
+      if(@auth_token)
+        role.connect(self,@doc.elements["#{ROLEPATH}[@name='#{name}']"])
+      elsif(@dir)
+        role.load(@dir)
+      end
+    end
+
+    def each_role
+      @doc.elements.each(ROLEPATH) { |n| 
+        role = Role.new(n.attributes['name'].to_s)
+        if(@auth_token)
+          role.connect(self,n)
+        elsif(@dir)
+          role.load(@dir)
+        end
+        yield role
+      }
     end
 
     ORGPATH='//OrganizationReferences/OrganizationReference'
