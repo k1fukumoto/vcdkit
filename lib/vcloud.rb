@@ -220,6 +220,16 @@ module VCloud
       }
     end
 
+    def add_user(name)
+      task = Task.new
+      task.connect(@vcd,
+                   self.elements["//Link[@type='#{User::TYPE}' and @rel='add']"],
+                   [], :post,
+                   User.new(@name,name).xml,
+                   {:content_type => User::TYPE})
+      
+    end
+
     def network(name)
       ntwk = OrgNetwork.new
       ntwk.connect(@vcd,@doc.elements["//Networks/Network[@name='#{name}']"])
@@ -258,8 +268,20 @@ module VCloud
   end
 
   class User < XMLElement
+    TYPE='application/vnd.vmware.admin.user+xml'
+    XML=<<EOS
+<User name="<%= @name %>" 
+  xmlns="http://www.vmware.com/vcloud/v1">
+<FullName><%= name %></FullName>
+<EmailAddress><%= @name %>@vmware.com</EmailAddress>
+<IsEnabled>true</IsEnabled>
+<Password>Redw00d!</Password>
+</User>
+EOS
     def initialize(org,name)
       @org = org; @name = name
+      @xml = ERB.new(XML).result(binding)
+      @doc = REXML::Document.new(@xml) 
     end
       
     def path

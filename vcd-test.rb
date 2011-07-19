@@ -20,26 +20,41 @@ require 'pp'
 #
 # Process command args
 #
+vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!']
+vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!']
+
 options={
-#  :vcd => ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!'],
-  :vcd => ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!'],
+  :vcd => vcd2
 }
 
 optparse = OptionParser.new do |opt|
-  opt.banner = "Usage: vcd-vapp.rb CMD [options]"
+  opt.banner = "Usage: vcd-test.rb CMD [options]"
 
   opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
-    options[:vcd] = o
+    case o[0]
+    when "1"
+      options[:vcd] = vcd1
+    when "2"
+      options[:vcd] = vcd2
+    else
+      options[:vcd] = o
+    end
   end
+
   opt.on('-d','--deploy','CMD: Deploy vApps for stress testing') do |o|
-    options[:command] = :deploy
+    options[:command] = :DEPLOY
   end
   opt.on('-u','--undeploy','CMD: Undeploy all vApps') do |o|
-    options[:command] = :undeploy
+    options[:command] = :UNDEPLOY
   end
   opt.on('-n','--num START,BATCHSZ,REPEAT',Array,'Number of auto-deployed vApps') do |o|
     options[:num] = o
   end
+
+  opt.on('-U','--user','CMD: Create users for stress testing') do |o|
+    options[:command] = :USER
+  end
+
   opt.on('-h','--help','Display this help') do
     puts opt
     exit
@@ -60,13 +75,17 @@ rescue Exception => e
   exit 1
 end
 
-TEST01_ORG  = 'CustomerDemo-06'
-TEST01_CAT  = 'Demo'
-TEST01_CI   = 'WL-XP-00'
-TEST01_CIVM = 'WL-XP-00'
-TEST01_NTWK = 'Org Private - CustomerDemo-06'
-TEST01_VDC  = 'Committed - Customer Demo-06'
-TEST01_PREFIX = 'WL-XP-'
+TESTCFG = {
+  :DEPLOY => {
+    :ORG  => 'CustomerDemo-06',
+    :CAT  => 'Demo',
+    :CI   => 'SL-XP-00',
+    :CIVM => 'SL-XP-00',
+    :NTWK => 'Org Private - CustomerDemo-06',
+    :VDC  => 'Committed - Customer Demo-06',
+    :PREFIX => 'SL-XP-',
+  }
+}
 
 start = options[:num][0].to_i
 sz = options[:num][1].to_i
@@ -75,51 +94,51 @@ repeat = options[:num][2].to_i
 $log = VCloud::Logger.new(options[:logfile])
 
 case options[:command]
-when :deploy
+when :DEPLOY
   (1..repeat).each do |n|
     vcd = VCloud::VCD.new()
     vcd.connect(*options[:vcd])
 
-    org = vcd.org(TEST01_ORG)
-    ci = org.catalog(TEST01_CAT).catalogitem(TEST01_CI)
-    ntwk = org.network(TEST01_NTWK)
+    org = vcd.org(TESTCFG[:DEPLOY][:ORG])
+    ci = org.catalog(TESTCFG[:DEPLOY][:CAT]).catalogitem(TESTCFG[:DEPLOY][:CI])
+    ntwk = org.network(TESTCFG[:DEPLOY][:NTWK])
 
     tasks = (start..(start+sz-1)).inject({}) do |h,n|
-      h.update(n => org.vdc(TEST01_VDC).deployVApp(ci,"#{TEST01_PREFIX}#{n}",ntwk))
+      h.update(n => org.vdc(TESTCFG[:DEPLOY][:VDC]).deployVApp(ci,"#{TESTCFG[:DEPLOY][:PREFIX]}#{n}",ntwk))
     end
   
     tasks.keys.sort.each do |n|
       vcd.wait(tasks[n])
 
-      vapp = vcd.org(TEST01_ORG).vdc(TEST01_VDC).vapp("#{TEST01_PREFIX}#{n}")
-      vm = vapp.vm(TEST01_CIVM)
+      vapp = vcd.org(TESTCFG[:DEPLOY][:ORG]).vdc(TESTCFG[:DEPLOY][:VDC]).vapp("#{TESTCFG[:DEPLOY][:PREFIX]}#{n}")
+      vm = vapp.vm(TESTCFG[:DEPLOY][:CIVM])
 
       vcd.wait(vm.customize({'DomainName' => 'sandi.test',
                               'DomainUserName' => 'administrator',
                               'DomainUserPassword' => 'Redw00d!',
                               'AdminPassword' => 'Redw00d!',
-                              'ComputerName' => "#{TEST01_PREFIX}#{n}",
+                              'ComputerName' => "#{TESTCFG[:DEPLOY][:PREFIX]}#{n}",
                             }))
-      vcd.wait(vm.connectNetwork(0,TEST01_NTWK,'DHCP'))
+      vcd.wait(vm.connectNetwork(0,TESTCFG[:DEPLOY][:NTWK],'DHCP'))
       vcd.wait(vapp.deploy)
     end
 
     start += sz
   end
 
-when :undeploy
+when :UNDEPLOY
   (1..repeat).each do |n|
     vcd = VCloud::VCD.new()
     vcd.connect(*options[:vcd])
-    vdc = vcd.org(TEST01_ORG).vdc(TEST01_VDC)
+    vdc = vcd.org(TESTCFG[:DEPLOY][:ORG]).vdc(TESTCFG[:DEPLOY][:VDC])
 
     (start..(start+sz-1)).inject({}) do |h,n|
-      vapp = vdc.vapp("#{TEST01_PREFIX}#{n}")
+      vapp = vdc.vapp("#{TESTCFG[:DEPLOY][:PREFIX]}#{n}")
       vcd.wait(vapp.powerOff)
       vcd.wait(vapp.undeploy)
 
       # Pull the latest vApp XML to ensure the link for delete
-      vdc.vapp("#{TEST01_PREFIX}#{n}").delete
+      vdc.vapp("#{TESTCFG[:DEPLOY][:PREFIX]}#{n}").delete
     end
     start += sz
   end
