@@ -87,6 +87,15 @@ TESTCFG = {
   },
   2 => {
     :ORG  => 'Admin',
+    :CAT  => 'Public',
+    :CI   => 'WIN2003-STD-R2-32',
+    :CIVM => 'WIN2003-STD-R2-32',
+    :NTWK => 'Org Private - Admin',
+    :VDC  => 'Basic - Admin',
+    :PREFIX => 'WIN2K3-',
+  },
+  3 => {
+    :ORG  => 'Admin',
     :ROLE  => 'vApp Author',
     :PREFIX => 'USER-',
   }
@@ -100,7 +109,7 @@ $log = VCloud::Logger.new(options[:logfile])
 cfg = TESTCFG[options[:test]]
 
 case options[:test]
-when 1
+when 1,2
   case options[:command]
   when :SETUP
     (1..repeat).each do |n|
@@ -125,7 +134,7 @@ when 1
                                 'DomainUserName' => 'administrator',
                                 'DomainUserPassword' => 'Redw00d!',
                                 'AdminPassword' => 'Redw00d!',
-                                'ComputerName' => "#{TESTCFG[:DEPLOY][:PREFIX]}#{n}",
+                                'ComputerName' => "#{cfg[:PREFIX]}#{n}",
                               }))
         vcd.wait(vm.connectNetwork(0,cfg[:NTWK],'DHCP'))
         vcd.wait(vapp.deploy)
@@ -151,7 +160,7 @@ when 1
     end
   end
 
-when 2
+when 3
   case options[:command]
   when :SETUP
     (1..repeat).each do |n|
