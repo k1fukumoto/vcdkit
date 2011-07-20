@@ -38,12 +38,43 @@ EOS
     end
   end
 
+  class SearchParam < XMLElement
+    XML=<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<Request>
+<SearchQueries>
+  <SearchQuery id="report">
+    <Criteria type="AND">
+      <Filter name="name" type="LIKE" value="<%= name %>" /> 
+    </Criteria>
+    <SortBy>
+      <Params> 
+        <Param index="1" order="DESC">name</Param>
+      </Params> 
+    </SortBy>
+    <Pagination>
+      <FirstResultCount>0</FirstResultCount>
+      <MaxResultCount>100</MaxResultCount>
+    </Pagination> 
+  </SearchQuery>
+</SearchQueries>
+</Request>
+EOS
+    def initialize(name)
+      @xml = ERB.new(XML).result(binding)
+    end
+  end
+
   class VCB < XMLElement
 
     def connect(host,user,pass)
-      url = "https://#{host}/vCenter-CB/api/login?version=1.5.0"
-      resp = self.post(url,LoginParam.new(user,pass).xml)
+      @url = "https://#{host}/vCenter-CB/api/login?version=1.5.0"
+      resp = self.post(@url,LoginParam.new(user,pass).xml)
       self
+    end
+
+    def search(name)
+      self.post(@url,SearchParam.new(name).xml)
     end
 
     def get(url)
