@@ -316,8 +316,6 @@ EOS
   end
 
   class VCD < XMLElement
-    attr_reader :logger
-
     def path
       ""
     end

@@ -139,9 +139,8 @@ when 1,2
                               }))
         vcd.wait(vm.connectNetwork(0,cfg[:NTWK],'POOL'))
         vcd.wait(vapp.deploy)
-
-        start += sz
       end
+      start += sz
     end
   when :TEARDOWN
     (1..repeat).each do |n|
