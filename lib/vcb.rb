@@ -20,10 +20,11 @@ require 'pp'
 
 module VCloud
 
+# <Request xmlns="http://www.vmware.com/vcenter/chargeback/1.5.0">
   class LoginParam < XMLElement
     XML=<<EOS
 <?xml version="1.0" encoding="UTF-8"?>
-<Request xmlns="http://www.vmware.com/vcenter/chargeback/1.5.0">
+<Request>
   <Users>
     <User>
       <Type>local</Type>
@@ -38,6 +39,8 @@ EOS
     end
   end
 
+#      <Filter name="createdon" type="BETWEEN" from="1311069860000" to="1311069861000" />
+
   class SearchParam < XMLElement
     XML=<<EOS
 <?xml version="1.0" encoding="UTF-8"?>
@@ -47,11 +50,6 @@ EOS
     <Criteria type="AND">
       <Filter name="name" type="LIKE" value="<%= name %>" /> 
     </Criteria>
-    <SortBy>
-      <Params> 
-        <Param index="1" order="DESC">name</Param>
-      </Params> 
-    </SortBy>
     <Pagination>
       <FirstResultCount>0</FirstResultCount>
       <MaxResultCount>100</MaxResultCount>
@@ -68,13 +66,19 @@ EOS
   class VCB < XMLElement
 
     def connect(host,user,pass)
-      @url = "https://#{host}/vCenter-CB/api/login?version=1.5.0"
-      resp = self.post(@url,LoginParam.new(user,pass).xml)
+      @url = "https://#{host}/vCenter-CB/api"
+      resp = self.post("#{@url}/login",LoginParam.new(user,pass).xml)
+      @cookies = resp.cookies 
       self
     end
 
     def search(name)
-      self.post(@url,SearchParam.new(name).xml)
+      resp = self.post("#{@url}/search",SearchParam.new(name).xml,{:cookies => @cookies})
+      @xml = resp.body
+      @doc = REXML::Document.new(@xml)
+      @doc.elements.each("//Report") do |r|
+        puts r.attributes['id']
+      end
     end
 
     def get(url)
