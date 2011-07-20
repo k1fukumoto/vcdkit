@@ -27,7 +27,10 @@ module VSphere
     def load(node)
       @name = node.attributes['name']
       @esx = node.elements["../@name"].value
-      @datastore = node.elements["Datastore/@name"].value
+   
+      ds = node.elements["Datastore/@name"]
+      @datastore = ""
+      @datastore = ds.value unless ds.nil?
     end
   end
 
