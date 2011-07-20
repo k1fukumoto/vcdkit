@@ -146,15 +146,15 @@ when 1,2
     (1..repeat).each do |n|
       vcd = VCloud::VCD.new()
       vcd.connect(*options[:vcd])
-      vdc = vcd.org(TESTCFG[:DEPLOY][:ORG]).vdc(TESTCFG[:DEPLOY][:VDC])
+      vdc = vcd.org(cfg[:ORG]).vdc(cfg[:VDC])
 
       (start..(start+sz-1)).inject({}) do |h,n|
-        vapp = vdc.vapp("#{TESTCFG[:DEPLOY][:PREFIX]}#{n}")
+        vapp = vdc.vapp("#{cfg[:PREFIX]}#{n}")
         vcd.wait(vapp.powerOff)
         vcd.wait(vapp.undeploy)
 
         # Pull the latest vApp XML to ensure the link for delete
-        vdc.vapp("#{TESTCFG[:DEPLOY][:PREFIX]}#{n}").delete
+        vdc.vapp("#{cfg[:PREFIX]}#{n}").delete
       end
       start += sz
     end
