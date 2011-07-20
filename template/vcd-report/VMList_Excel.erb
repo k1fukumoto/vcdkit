@@ -82,7 +82,7 @@
 <%
        end
      end
-     vdc.each_vapptemlate do |vat|
+     vdc.each_vapptemplate do |vat|
         vat.each_vm do |vm| 
           _vm = vc.vm(vm.moref)
 %>
@@ -93,7 +93,7 @@
     <Cell><Data ss:Type="String"><%= vat.name %></Data></Cell>
     <Cell><Data ss:Type="String"><%= vm.name %></Data></Cell>
     <Cell><Data ss:Type="String"><%= vm.os %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= vm.status %></Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
     <Cell><Data ss:Type="String"><%= _vm.name %></Data></Cell>
     <Cell><Data ss:Type="String"><%= _vm.esx %></Data></Cell>
     <Cell><Data ss:Type="String"><%= _vm.datastore %></Data></Cell>
