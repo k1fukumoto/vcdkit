@@ -95,6 +95,15 @@ TESTCFG = {
     :PREFIX => 'WIN2K3-',
   },
   3 => {
+    :ORG  => 'VMTest',
+    :CAT  => 'Test',
+    :CI   => 'WIN2003-STD-R2-32',
+    :CIVM => 'WIN2003-STD-R2-32',
+    :NTWK => 'Org Private - VMTest',
+    :VDC  => 'Basic - VMTest',
+    :PREFIX => 'CBSCALE-',
+  },
+  10 => {
     :ORG  => 'Admin',
     :ROLE  => 'vApp Author',
     :PREFIX => 'USER-',
@@ -109,7 +118,7 @@ $log = VCloud::Logger.new(options[:logfile])
 cfg = TESTCFG[options[:test]]
 
 case options[:test]
-when 1,2
+when 1..3
   case options[:command]
   when :SETUP
     (1..repeat).each do |n|
