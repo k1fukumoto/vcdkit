@@ -2,5 +2,5 @@
 
 time ( \
     rm -frv data/vcd-report/RESTORE && \
-    ./vcd-restore.rb -v1 -t$1 -aAdmin,Admin,$2 \
+    ./vcd-restore.rb -v2 -tBASE -idata/vcd-dump -odata/vcd-report -aVMTest,'Basic - VMTest',BACKUPTEST-01 
 )
