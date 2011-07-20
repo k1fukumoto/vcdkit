@@ -119,12 +119,12 @@ module VCloud
       
     end
 
-    def initialize(org,vdc,vapp,name)
-      @org = org; @vdc = vdc; @vapp = vapp; @name = name
+    def initialize(parent,name)
+      @parent = parent; @name = name
     end
 
     def path
-      "/ORG/#{@org}/VDC/#{@vdc}/VAPP/#{@vapp}/VM/#{@name}"
+      "#{@parent.path}/VM/#{@name}"
     end
   end
 
@@ -140,7 +140,7 @@ module VCloud
     end
 
     def vm(name)
-      vm = Vm.new(@org,@vdc,@name,name)
+      vm = Vm.new(self,name)
       if(@vcd)
         vm.connect(@vcd,@doc.elements["//Children/Vm[@name='#{name}']"])
       elsif(@dir)
@@ -150,7 +150,7 @@ module VCloud
 
     def each_vm
       @doc.elements.each("//Children/Vm"){|n| 
-        vm = Vm.new(@org,@vdc,@name,n.attributes['name'].to_s)
+        vm = Vm.new(self,n.attributes['name'].to_s)
         if(@vcd)
           vm.connect(@vcd,n)
         elsif(@dir)
