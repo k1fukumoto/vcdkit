@@ -252,7 +252,19 @@ module VCloud
                    {:content_type => StartupSection::TYPE})
     end
 
+    def editControlAccessParams(e)
+      task = Task.new
+      task.connect(@vcd,
+                   @doc.elements["/VApp/Link[@rel='controlAccess']"],
+                   [], :post,
+                   self.compose_xml(e,true),
+                   {:content_type => ControlAccessParams::TYPE})
+    end
+
     def restore(src)
+      # Restore control access settings
+      @vcd.wait(self.editControlAccessParams(src.cap.doc.root))
+
       # StartupSection needs to be edited seperatelly from recompose.
       @vcd.wait(self.editStartupSection(src['//ovf:StartupSection']))
 
