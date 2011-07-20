@@ -104,7 +104,7 @@ TESTCFG = {
     :PREFIX => 'CBSCALE-',
   },
   10 => {
-    :ORG  => 'Admin',
+    :ORG  => 'VMTest',
     :ROLE  => 'vApp Author',
     :PREFIX => 'USER-',
   }
@@ -169,7 +169,7 @@ when 1..3
     end
   end
 
-when 3
+when 10
   case options[:command]
   when :SETUP
     (1..repeat).each do |n|
