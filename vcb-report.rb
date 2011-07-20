@@ -31,9 +31,9 @@ optparse = OptionParser.new do |opt|
   opt.on('-c','--cb HOST,USER,PASS',Array,'Chargeback login parameters') do |o|
     case o[0]
     when "1"
-      options[:cb] = vcd1
+      options[:cb] = cb1
     when "2"
-      options[:cb] = vcd2
+      options[:cb] = cb2
     else
       options[:cb] = o
     end

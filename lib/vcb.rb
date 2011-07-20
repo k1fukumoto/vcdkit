@@ -24,12 +24,11 @@ module VCloud
     XML=<<EOS
 <?xml version="1.0" encoding="UTF-8"?>
 <Request xmlns="http://www.vmware.com/vcenter/chargeback/1.5.0">
-<Request>
   <Users>
     <User>
       <Type>local</Type>
-      <Name>${user}</Name>
-      <Password>${pass}</Password>
+      <Name><%= user %></Name>
+      <Password><%= pass %></Password>
     </User>
   </Users>
 </Request>
@@ -42,14 +41,14 @@ EOS
   class VCB < XMLElement
 
     def connect(host,user,pass)
-      url = "https://#{host}/vCenter-CB/api/login"
-      self.post(url,LoginParam.new(user,pass).xml)
+      url = "https://#{host}/vCenter-CB/api/login?version=1.5.0"
+      resp = self.post(url,LoginParam.new(user,pass).xml)
       self
     end
 
     def get(url)
-      $log.info("HTTP GET: #{url.sub(/#{@apiurl}/,'')}")
-      RestClient.get(url,@auth_token) { |response, request, result, &block|
+      $log.info("HTTP GET: #{url}")
+      RestClient.get(url) { |response, request, result, &block|
         case response.code
         when 200..299
           response
@@ -61,8 +60,8 @@ EOS
     end
 
     def delete(url)
-      $log.info("HTTP DELETE: #{url.sub(/#{@apiurl}/,'')}")
-      RestClient.delete(url,@auth_token) { |response, request, result, &block|
+      $log.info("HTTP DELETE: #{url}")
+      RestClient.delete(url) { |response, request, result, &block|
         case response.code
         when 200..299
           response
@@ -74,8 +73,8 @@ EOS
     end
 
     def post(url,payload=nil,hdrs={})
-      $log.info("HTTP POST: #{url.sub(/#{@apiurl}/,'')}")
-      RestClient.post(url,payload,hdrs.update(@auth_token)) { |response, request, result, &block|
+      $log.info("HTTP POST: #{url}")
+      RestClient.post(url,payload,hdrs) { |response, request, result, &block|
         case response.code
         when 200..299
           response
@@ -88,8 +87,8 @@ EOS
     end
 
     def put(url,payload=nil,hdrs={})
-      $log.info("HTTP PUT: #{url.sub(/#{@apiurl}/,'')}")
-      RestClient.put(url,payload,hdrs.update(@auth_token)) { |response, request, result, &block|
+      $log.info("HTTP PUT: #{url}")
+      RestClient.put(url,payload,hdrs) { |response, request, result, &block|
         case response.code
         when 200..299
           response
