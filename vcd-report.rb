@@ -114,14 +114,14 @@ else # Load dump tree from directory
       if(ot == :all)
         vcd.load(d).saveparam(outdir)
         
-        # vc = VSphere::VCenter.new
-        # vc.load(d)
+        vc = VSphere::VCenter.new
+        vc.load(d)
 
-        # FileUtils.mkdir_p(outdir)
-        # open("#{outdir}/VMList.xml",'w') do |f|
-        #   f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
-        #                  read,0,'>').result(binding)
-        # end
+        FileUtils.mkdir_p(outdir)
+        open("#{outdir}/VMList.xml",'w') do |f|
+          f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
+                         read,0,'>').result(binding)
+        end
 
       elsif(ot.size == 3)
         VCloud::VApp.new(*ot).load(d).saveparam(outdir)
