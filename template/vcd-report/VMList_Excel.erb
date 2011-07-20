@@ -39,6 +39,7 @@
  <Worksheet ss:Name="Sheet1">
   <Table>
    <Column ss:AutoFitWidth="1" ss:Width="100"/>
+   <Column ss:AutoFitWidth="1" ss:Width="100"/>
    <Column ss:AutoFitWidth="1" ss:Width="160"/>
    <Column ss:AutoFitWidth="1" ss:Width="120"/>
    <Column ss:AutoFitWidth="1" ss:Width="300"/>
@@ -48,6 +49,7 @@
    <Column ss:AutoFitWidth="1" ss:Width="100"/>
    <Column ss:AutoFitWidth="1" ss:Width="100"/>
    <Row>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">TYPE</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">ORG</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">VDC</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">VAPP</Data></Cell>
@@ -61,14 +63,34 @@
 <% 
   vcd.each_org do |org|
     org.each_vdc do |vdc|
-      vdc.each_vapp do |vapp|
+     vdc.each_vapp do |vapp|
         vapp.each_vm do |vm| 
           _vm = vc.vm(vm.moref)
 %>
    <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
     <Cell><Data ss:Type="String"><%= org.name %></Data></Cell>
     <Cell><Data ss:Type="String"><%= vdc.name %></Data></Cell>
     <Cell><Data ss:Type="String"><%= vapp.name %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= vm.name %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= vm.os %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= vm.status %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= _vm.name %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= _vm.esx %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= _vm.datastore %></Data></Cell>
+   </Row>
+<%
+       end
+     end
+     vdc.each_vapptemlate do |vat|
+        vat.each_vm do |vm| 
+          _vm = vc.vm(vm.moref)
+%>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String"><%= org.name %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= vdc.name %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= vat.name %></Data></Cell>
     <Cell><Data ss:Type="String"><%= vm.name %></Data></Cell>
     <Cell><Data ss:Type="String"><%= vm.os %></Data></Cell>
     <Cell><Data ss:Type="String"><%= vm.status %></Data></Cell>
