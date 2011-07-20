@@ -17,4 +17,5 @@ require 'vclouddata.rb'
 require 'vcloud.rb'
 require 'vapp.rb'
 require 'vsphere.rb'
+require 'vcb.rb'
 
