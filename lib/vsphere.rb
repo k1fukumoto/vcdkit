@@ -39,26 +39,33 @@ module VSphere
       @datastore = ds
     end
 
-    def search(path,spec)
+    def search(path)
+      spec = RbVmomi::VIM::HostDatastoreBrowserSearchSpec.new
+      spec.query = [RbVmomi::VIM::FileQuery.new]
       begin 
         task = @datastore.browser.SearchDatastoreSubFolders_Task('datastorePath' => path,'searchSpec' => spec)
         task.wait_for_completion
         task.info.result
       rescue Exception => e
+        []
       end
     end
 
-    def searchFolder(path)
-      spec = RbVmomi::VIM::HostDatastoreBrowserSearchSpec.new
-      spec.query = [RbVmomi::VIM::FolderFileQuery.new]
-      search(path,spec)
-    end
-    
     def each_media()
-      self.searchFolder("[#{@datastore.info.name}] vCDC-02/media/").each do |f|
-        path = f.folderPath
-        next unless path =~ /\d+-org/
-        yield path
+      self.search("[#{@datastore.info.name}] vCDC-02/media/").each do |f|
+        orgpath = f.folderPath
+        next unless orgpath =~ /(\d+-org)/
+        org = $1
+
+        self.search(orgpath).each do |f|
+          vdcpath = f.folderPath
+          next unless vdcpath =~ /(\d+-vdc)/
+          vdc = $1
+
+          self.search(vdcpath).each do |f|
+            f.file.each {|f| yield [@datastore.info.name,org,vdc,f.path]}
+          end    
+        end
       end
     end
   end
