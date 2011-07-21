@@ -81,16 +81,6 @@ module VSphere
                   :insecure => true,
                 })
       @root = @vim.serviceInstance.content.rootFolder
-
-      @root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
-        dc.datastore.each do |ds|
-          dsb = DatastoreBrowser.new(ds)
-          dsb.each_media do |m|
-            pp m
-          end
-        end
-        raise "STOP"
-      end
     end
 
     def vm(moref)
