@@ -45,6 +45,29 @@ module VSphere
                   :insecure => true,
                 })
       @root = @vim.serviceInstance.content.rootFolder
+      @root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
+        dc.datastore.each do |ds|
+          b = ds.browser
+ begin
+          task = b.SearchDatastoreSubFolders_Task(:datastorePath => "[#{ds.info.name}] vCDC-02/media/")
+          task.wait_for_completion
+          task.info.result.each do |r|
+            path = r.folderPath
+            next unless path =~ /\d+-org/
+
+            task = b.SearchDatastoreSubFolders_Task(:datastorePath => path)
+            task.wait_for_completion
+            task.info.result.each do |r|
+              path = r.folderPath
+              puts path
+            end
+          end
+rescue Exception => e
+  puts e
+end
+        end
+       raise "STOP"
+      end
     end
 
     def vm(moref)
