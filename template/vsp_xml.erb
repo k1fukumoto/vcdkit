@@ -18,21 +18,22 @@
     </ComputeResource>
   <% end %>
 
-  <Media>
+  <MediaList>
   <%
      dc.datastore.each do |ds|
        dsb = DatastoreBrowser.new(ds)
        dsb.each_media do |m|
   %>
+    <Media name="<%= m[3] %>">
     <Datastore><%= m[0] %></Datastore>
     <Organization><%= m[1] %></Organization>
     <VDC><%= m[2] %></VDC>
-    <Media><%= m[3] %></Media>
+    </Media>
   <% 
       end 
     end 
   %>
-  </Media>
+  </MediaList>
   </Datacenter>
 <% end %>
   </VCenter>
