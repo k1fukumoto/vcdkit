@@ -34,6 +34,33 @@ module VSphere
     end
   end
 
+  class DatastoreBrowser
+    def initialize(ds)
+      @datastore = ds
+    end
+
+    def search(path)
+      begin 
+        task = @datastore.browser.SearchDatastoreSubFolders_Task(:datastorePath => path)
+        task.wait_for_completion
+        task.info.result.each {|r| yield r.folderPath}
+      rescue Exception => e
+      end
+    end
+
+    def each_media()
+      self.search("[#{@datastore.info.name}] vCDC-02/media/").each do |org|
+        next unless org =~ /\d+-org/
+        self.search(org) do |vdc|
+          next unless vdc =~ /\d+-vdc/
+          self.search(vdc) do |media|
+            yield media
+          end
+        end
+      end
+    end
+  end
+
   class VCenter
     def connect(host,user,pass)
       @name = host
@@ -47,26 +74,12 @@ module VSphere
       @root = @vim.serviceInstance.content.rootFolder
       @root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
         dc.datastore.each do |ds|
-          b = ds.browser
- begin
-          task = b.SearchDatastoreSubFolders_Task(:datastorePath => "[#{ds.info.name}] vCDC-02/media/")
-          task.wait_for_completion
-          task.info.result.each do |r|
-            path = r.folderPath
-            next unless path =~ /\d+-org/
-
-            task = b.SearchDatastoreSubFolders_Task(:datastorePath => path)
-            task.wait_for_completion
-            task.info.result.each do |r|
-              path = r.folderPath
-              puts path
-            end
+          dsb = DatastoreBrowser.new(ds)
+          dsb.each_media do |m|
+            pp m
           end
-rescue Exception => e
-  puts e
-end
         end
-       raise "STOP"
+        raise "STOP"
       end
     end
 
