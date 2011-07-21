@@ -41,40 +41,24 @@ module VSphere
 
     def search(path,spec)
       begin 
-        task = nil
-        if (spec)
-puts "SPEC SEARCH #{path}"
-          task = @datastore.browser.SearchDatastoreSubFolders_Task('datastorePath' => path,'searchSpec' => spec)
-        else
-          task = @datastore.browser.SearchDatastoreSubFolders_Task(:datastorePath => path)
-        end
+        task = @datastore.browser.SearchDatastoreSubFolders_Task('datastorePath' => path,'searchSpec' => spec)
         task.wait_for_completion
-        task.info.result.each {|r| yield r}
+        task.info.result
       rescue Exception => e
       end
     end
 
+    def searchFolder(path)
+      spec = RbVmomi::VIM::HostDatastoreBrowserSearchSpec.new
+      spec.query = [RbVmomi::VIM::FolderFileQuery.new]
+      search(path,spec)
+    end
+    
     def each_media()
-spec = RbVmomi::VIM::HostDatastoreBrowserSearchSpec.new
-spec.query = [
-  RbVmomi::VIM::FileQuery.new,
-]
-
-      self.search("[#{@datastore.info.name}]",spec) do |org|
-        org.file.each do |f|
-          puts f.path
-        end
-      end
-raise "STOP"
-
-      self.search("[#{@datastore.info.name}] vCDC-02/media/",nil) do |org|
-        next unless org =~ /\d+-org/
-        self.search(org,nil) do |vdc|
-          next unless vdc =~ /\d+-vdc/
-          self.search("[#{@datastore.info.name}]", spec) do |media|
-            yield media
-          end
-        end
+      self.searchFolder("[#{@datastore.info.name}] vCDC-02/media/").each do |f|
+        path = f.folderPath
+        next unless path =~ /\d+-org/
+        yield path
       end
     end
   end
@@ -90,8 +74,6 @@ raise "STOP"
                   :insecure => true,
                 })
       @root = @vim.serviceInstance.content.rootFolder
-
-
 
       @root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
         dc.datastore.each do |ds|
