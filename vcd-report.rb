@@ -50,6 +50,11 @@ optparse = OptionParser.new do |opt|
   end
 
   opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Create report for specified vApp') do |o|
+    options[:targettype] = :VAPP
+    options[:target] = o
+  end
+  opt.on('-T','--vapptemplate ORG,VDC,VAPPTEMPLATE',Array,'Create report for specified vApp Template') do |o|
+    options[:targettype] = :VAPPTEMPLATE
     options[:target] = o
   end
   opt.on('-A','--all','Create report for entire dump tree') do |o|
@@ -96,7 +101,12 @@ if(options[:vcd])
   if(ot == :all)
     vcd.saveparam("#{options[:output]}/#{options[:tree]}")
   elsif(ot.size == 3)
-    vcd.org(ot[0]).vdc(ot[1]).vapp(ot[2]).saveparam("#{options[:output]}/#{options[:tree]}")
+    case options[:targettype]
+    when :VAPPTEMPLATE
+      vcd.org(ot[0]).vdc(ot[1]).vapptemplate(ot[2]).saveparam("#{options[:output]}/#{options[:tree]}")
+    else
+      vcd.org(ot[0]).vdc(ot[1]).vapp(ot[2]).saveparam("#{options[:output]}/#{options[:tree]}")
+    end
   else
     $log.error("vcd-report invalid command options")
   end
@@ -124,7 +134,12 @@ else # Load dump tree from directory
         end
 
       elsif(ot.size == 3)
-        VCloud::VApp.new(*ot).load(d).saveparam(outdir)
+        case options[:targettype]
+        when :VAPPTEMPLATE
+          VCloud::VAppTemplate.new(*ot).load(d).saveparam(outdir)
+        else
+          VCloud::VApp.new(*ot).load(d).saveparam(outdir)
+        end
       end
 
     rescue Exception => e

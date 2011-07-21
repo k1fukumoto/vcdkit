@@ -61,6 +61,11 @@ module VCloud
       }
     end
 
+    def vapptemplate(name)
+      vat = VAppTemplate.new(@org,@name,name)
+      vat.connect(@vcd,@doc.elements["//ResourceEntity[@type='#{VAppTemplate::TYPE}' and @name='#{name}']"])
+    end
+
     def each_vapptemplate
       @doc.elements.each("//ResourceEntity[@type='#{VAppTemplate::TYPE}']"){|n|
         vat = VAppTemplate.new(@org,@name,n.attributes['name'].to_s)
