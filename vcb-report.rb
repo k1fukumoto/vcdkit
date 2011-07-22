@@ -67,9 +67,11 @@ end
 $log = VCloud::Logger.new(options[:logfile])
 
 begin
-  vcb = VCloud::VCB.new
+  vcb = Chargeback::VCB.new
   vcb.connect(*options[:cb])
-  pp vcb.search('TESTJAPANESE')
+  vcb.searchReport('TESTJAPANESE').each do |id|
+    vcb.exportReport(id)
+  end
 
 rescue Exception => e
   $log.error("vcb-report failed: #{e}")

@@ -18,7 +18,12 @@ require 'rexml/document'
 require 'erb'
 require 'pp'
 
-module VCloud
+module Chargeback
+
+  class Task < XMLElement
+    def status
+    end
+  end
 
 # <Request xmlns="http://www.vmware.com/vcenter/chargeback/1.5.0">
   class LoginParam < XMLElement
@@ -38,6 +43,7 @@ EOS
       @xml = ERB.new(XML).result(binding)
     end
   end
+
 
   class SearchReportParam < XMLElement
     XML=<<EOS
@@ -75,6 +81,13 @@ EOS
       @xml = resp.body
       @doc = REXML::Document.new(@xml)
       @doc.elements.collect("//Report") {|r| r.attributes['id']}
+    end
+
+    def exportReport(id)
+      resp = self.get("#{@url}/report/#{id}/export?exportFormat=XML")
+      @xml = resp.body
+      puts @xml
+      @doc = REXML::Document.new(@xml)
     end
 
     def get(url)
