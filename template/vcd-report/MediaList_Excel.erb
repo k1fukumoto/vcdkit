@@ -43,11 +43,9 @@
    <Column ss:AutoFitWidth="1" ss:Width="200"/>
    <Column ss:AutoFitWidth="1" ss:Width="200"/>
    <Column ss:AutoFitWidth="1" ss:Width="200"/>
-   <Column ss:AutoFitWidth="1" ss:Width="200"/>
    <Row>
     <Cell ss:StyleID="s100"><Data ss:Type="String">ORG</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">CATALOG</Data></Cell>
-    <Cell ss:StyleID="s100"><Data ss:Type="String">VDC</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">MEDIA</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">DATASTORE</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">PATH</Data></Cell>
@@ -62,10 +60,9 @@
    <Row>
     <Cell><Data ss:Type="String"><%= org.name %></Data></Cell>
     <Cell><Data ss:Type="String"><%= cat.name %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= media.vdc %></Data></Cell>
     <Cell><Data ss:Type="String"><%= ci.name %></Data></Cell>
     <Cell><Data ss:Type="String"><%= media.datastore %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= media.path %></Data></Cell>
+    <Cell><Data ss:Type="String">vCDC-02/media/<%= media.org %>/<%= media.vdc %>/<%= media.path %></Data></Cell>
    </Row>
 <%
        end

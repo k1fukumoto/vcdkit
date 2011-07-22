@@ -21,11 +21,12 @@ require 'erb'
 #
 module VSphere
   class Media
-    attr_reader :path,:vdc,:datastore
+    attr_reader :path,:vdc,:datastore,:org
     def load(node)
       @path = node.elements["./@path"].value
       @vdc = node.elements["./VDC/@path"].value
       @datastore = node.elements["./Datastore/@path"].value
+      @org = node.elements["./Organization/@path"].value
     end
   end
 
