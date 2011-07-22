@@ -113,7 +113,7 @@ module VSphere
       @index_media = @doc.elements.inject("//MediaList/Media",{}) {|h,e|
         m = Media.new
         m.load(e)
-        e.attributes['path'] = /(\d+)\-media\.iso/
+        e.attributes['path'] =~ /(\d+)\-media\.iso/
         h.update($1 => m)
         h
       }

@@ -128,6 +128,10 @@ else # Load dump tree from directory
         vc.load(d)
 
         FileUtils.mkdir_p(outdir)
+        open("#{outdir}/MediaList.xml",'w') do |f|
+          f.puts ERB.new(File.new("template/vcd-report/MediaList_Excel.erb").
+                         read,0,'>').result(binding)
+        end
         open("#{outdir}/VMList.xml",'w') do |f|
           f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
                          read,0,'>').result(binding)

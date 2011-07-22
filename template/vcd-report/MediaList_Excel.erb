@@ -54,7 +54,7 @@
    </Row>
 <% 
   vcd.each_org do |org|
-     vdc.each_catalog do |cat|
+     org.each_catalog do |cat|
         cat.each_catalogitem do |ci| 
 	  next unless ci.type == VCloud::Media::TYPE
           media = vc.media(ci.id)
