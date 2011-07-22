@@ -30,12 +30,16 @@ module VSphere
   end
 
   class Vm 
-    attr_reader :name,:esx,:datastore
+    attr_reader :name,:esx,:datastore,:guestFullName,:guestFamily
 
     def load(node)
       @name = node.attributes['name']
       @esx = node.elements["../@name"].value
-   
+      
+      @guestFullName = node.elements["Guest/@fullName"].value
+      @guestFamily = node.elements["Guest/@family"].value
+
+
       ds = node.elements["Datastore/@name"]
       @datastore = ""
       @datastore = ds.value unless ds.nil?
