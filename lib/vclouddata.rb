@@ -228,6 +228,7 @@ EOS
 
     def extractParams
       @node.elements.delete('.//VAppScopedVmId')
+      @node.elements.delete('.//IsDeployed')
       self
     end
 

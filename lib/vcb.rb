@@ -39,9 +39,7 @@ EOS
     end
   end
 
-#      <Filter name="createdon" type="BETWEEN" from="1311069860000" to="1311069861000" />
-
-  class SearchParam < XMLElement
+  class SearchReportParam < XMLElement
     XML=<<EOS
 <?xml version="1.0" encoding="UTF-8"?>
 <Request>
@@ -72,13 +70,11 @@ EOS
       self
     end
 
-    def search(name)
-      resp = self.post("#{@url}/search",SearchParam.new(name).xml,{:cookies => @cookies})
+    def searchReport(name)
+      resp = self.post("#{@url}/search",SearchReportParam.new(name).xml)
       @xml = resp.body
       @doc = REXML::Document.new(@xml)
-      @doc.elements.each("//Report") do |r|
-        puts r.attributes['id']
-      end
+      @doc.elements.collect("//Report") {|r| r.attributes['id']}
     end
 
     def get(url)
@@ -109,6 +105,7 @@ EOS
 
     def post(url,payload=nil,hdrs={})
       $log.info("HTTP POST: #{url}")
+      hdrs.update(:cookies => @cookies) if @cookies
       RestClient.post(url,payload,hdrs) { |response, request, result, &block|
         case response.code
         when 200..299

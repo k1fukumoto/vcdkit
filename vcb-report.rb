@@ -69,7 +69,7 @@ $log = VCloud::Logger.new(options[:logfile])
 begin
   vcb = VCloud::VCB.new
   vcb.connect(*options[:cb])
-  vcb.search('TESTJAPANESE')
+  pp vcb.search('TESTJAPANESE')
 
 rescue Exception => e
   $log.error("vcb-report failed: #{e}")
