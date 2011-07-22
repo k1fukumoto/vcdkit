@@ -84,7 +84,8 @@ module VSphere
   end
 
   class VCenter
-    def connect(host,user,pass)
+    def connect(host,user)
+      pass = VCloud::SecurePass.new().decrypt(File.new('.vc','r').read)
       @name = host
 
       @vim = RbVmomi::VIM.

@@ -25,8 +25,8 @@ options = {
   :target => :all,
 }
 
-vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!']
-vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!']
+vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl']
+vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin']
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-report.rb [cmd-options]"

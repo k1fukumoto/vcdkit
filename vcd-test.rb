@@ -20,8 +20,8 @@ require 'pp'
 #
 # Process command args
 #
-vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!']
-vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!']
+vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl']
+vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin']
 
 options={
   :vcd => vcd2
@@ -142,8 +142,8 @@ when 1..3
         vcd.wait(vm.customize({
                                 # 'DomainName' => 'sandi.test',
                                 # 'DomainUserName' => 'administrator',
-                                # 'DomainUserPassword' => 'Redw00d!',
-                                'AdminPassword' => 'Redw00d!',
+                                # 'DomainUserPassword' => 'password',
+                                'AdminPassword' => 'password',
                                 'ComputerName' => "#{cfg[:PREFIX]}#{n}",
                               }))
         vcd.wait(vm.connectNetwork(0,cfg[:NTWK],'POOL'))

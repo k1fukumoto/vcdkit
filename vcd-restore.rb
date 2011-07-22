@@ -20,8 +20,8 @@ require 'pp'
 #
 # Process command args
 #
-vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!']
-vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!']
+vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl']
+vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin']
 
 options = {
   :input => "/opt/vmware/vcdkit/data/vcd-dump",

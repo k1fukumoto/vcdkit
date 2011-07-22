@@ -20,13 +20,13 @@ require 'vcdkit'
 # Process command args
 #
 options={
-  :vcd => ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!'],
+  :vcd => ['vcd.vcdc.whitecloud.jp','System','vcdadminl'],
 }
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-ex.rb [options]"
 
-  opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
+  opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
     options[:vcd] = o
   end
 

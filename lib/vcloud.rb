@@ -296,7 +296,7 @@ module VCloud
 <IsEnabled>true</IsEnabled>
 <Role type="application/vnd.vmware.admin.role+xml"
   href="<%= role.href %>" name="<%= role.name %>"/>
-<Password>Redw00d!</Password>
+<Password>password</Password>
 </User>
 EOS
     def initialize(org,name)
@@ -338,7 +338,8 @@ EOS
       ""
     end
 
-    def connect(host,org,user,pass)
+    def connect(host,org,user)
+      pass = VCloud::SecurePass.new().decrypt(File.new('.vcd','r').read)
       @apiurl = "https://#{host}/api/v1.0"
       resp = RestClient::Resource.new("#{@apiurl}/login",
                                       :user => "#{user}@#{org}",

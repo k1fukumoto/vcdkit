@@ -27,16 +27,16 @@ options={
 }
 
 
-vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!']
-vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!']
+vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl']
+vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
 
-vsp1 = ['10.127.11.51','vcdadmin','Redw00d!']
-vsp2 = ['10.128.0.57','vcdadmin','Redw00d!']
+vsp1 = ['10.127.11.51','vcdadmin']
+vsp2 = ['10.128.0.57','vcdadmin']
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-dump.rb [options]"
 
-  opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
+  opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
     case o[0]
     when "1"
       options[:vcd] = vcd1
@@ -46,7 +46,7 @@ optparse = OptionParser.new do |opt|
       options[:vcd] = o
     end
   end
-  opt.on('-c','--vcenter HOST,USER,PASS',Array,'vCenter login parameters') do |o|
+  opt.on('-c','--vcenter HOST,USER',Array,'vCenter login parameters') do |o|
     case o[0]
     when "1"
       options[:vsp] = vsp1

@@ -22,13 +22,13 @@ require 'vcdkit'
 options={
 }
 
-cb1 = ['10.128.0.66','vcdadmin','Redw00d!']
+cb1 = ['10.128.0.66','vcdadmin']
 cb2 = []
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcb-report.rb [options]"
 
-  opt.on('-c','--cb HOST,USER,PASS',Array,'Chargeback login parameters') do |o|
+  opt.on('-c','--cb HOST,USER',Array,'Chargeback login parameters') do |o|
     case o[0]
     when "1"
       options[:cb] = cb1

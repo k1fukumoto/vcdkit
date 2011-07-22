@@ -24,8 +24,8 @@ options = {
   :input => "./data/vcd-dump",
 }
 
-vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl','Redw00d!']
-vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin','Redw00d!']
+vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl']
+vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin']
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-vapp.rb CMD [cmd-options]"

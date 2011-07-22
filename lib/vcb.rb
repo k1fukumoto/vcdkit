@@ -90,7 +90,8 @@ EOS
 
   class VCB < XMLElement
 
-    def connect(host,user,pass)
+    def connect(host,user)
+      pass = VCloud::SecurePass.new().decrypt(File.new('.vcb','r').read)
       @url = "https://#{host}/vCenter-CB/api"
       resp = self.post("#{@url}/login",LoginParam.new(user,pass).xml)
       @cookies = resp.cookies 

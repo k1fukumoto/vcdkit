@@ -1,4 +1,5 @@
-######################################################################################
+#!/usr/bin/ruby -I./lib
+#######################################################################################
 #
 # Copyright 2011 Kaoru Fukumoto All Rights Reserved
 #
@@ -12,11 +13,16 @@
 # QUALITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. 
 #
 #######################################################################################
-require 'logger'
-require 'vclouddata.rb'
-require 'securepass.rb'
-require 'vcloud.rb'
-require 'vapp.rb'
-require 'vsphere.rb'
-require 'vcb.rb'
+require 'rubygems'
+require 'highline/import'
+require 'vcdkit'
+require 'pp'
 
+p = ask('Enter vCloud Director password:'){|q| q.echo = false}
+open('.vcd','w'){|f| f.puts VCloud::SecurePass.new().encrypt(p)}
+
+p = ask('Enter vCenter password:'){|q| q.echo = false}
+open('.vc','w'){|f| f.puts VCloud::SecurePass.new().encrypt(p)}
+
+p = ask('Enter vCenter Chargeback password:'){|q| q.echo = false}
+open('.vb','w'){|f| f.puts VCloud::SecurePass.new().encrypt(p)}
