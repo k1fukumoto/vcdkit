@@ -21,6 +21,27 @@ require 'pp'
 module Chargeback
 
   class Task < XMLElement
+	XML=<<EOS
+  <QueuedTasks>
+    <QueuedTask id="433" type="EXPORT_REPORT">
+      <Status>QUEUED</Status>
+      <Progress>0.0</Progress>
+      <CreatedOn>1311302010358</CreatedOn>
+      <CreatedBy>1</CreatedBy>
+      <CreatedByName>vcdadmin</CreatedByName>
+      <ModifiedOn>1311302010358</ModifiedOn>
+      <ModifiedBy />
+      <Result>
+        <Report id="10670">
+          <Hierarchy id="">
+            <Name />
+          </Hierarchy>
+        </Report>
+      </Result>
+    </QueuedTask>
+  </QueuedTasks>
+</Response>
+EOS
     def status
     end
   end
@@ -92,7 +113,8 @@ EOS
 
     def get(url)
       $log.info("HTTP GET: #{url}")
-      RestClient.get(url) { |response, request, result, &block|
+      hdrs = {:cookies => @cookies} if @cookies
+      RestClient.get(url,hdrs) { |response, request, result, &block|
         case response.code
         when 200..299
           response
@@ -105,7 +127,8 @@ EOS
 
     def delete(url)
       $log.info("HTTP DELETE: #{url}")
-      RestClient.delete(url) { |response, request, result, &block|
+      hdrs = {:cookies => @cookies} if @cookies
+      RestClient.delete(url,hdrs) { |response, request, result, &block|
         case response.code
         when 200..299
           response
@@ -133,6 +156,7 @@ EOS
 
     def put(url,payload=nil,hdrs={})
       $log.info("HTTP PUT: #{url}")
+      hdrs.update(:cookies => @cookies) if @cookies
       RestClient.put(url,payload,hdrs) { |response, request, result, &block|
         case response.code
         when 200..299
