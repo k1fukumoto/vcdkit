@@ -31,6 +31,9 @@ module VCloud
     def os
       @doc.elements["//ovf:OperatingSystemSection/ovf:Description/text()"]
     end
+    def osType
+      @doc.elements["//ovf:OperatingSystemSection/@vmw:osType"].value
+    end
 
     def status
       VAPPSTATUS[@doc.elements["/Vm/@status"].value] || "Busy"
