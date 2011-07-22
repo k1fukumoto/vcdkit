@@ -8,6 +8,7 @@
       <HostSystem name="<%= h.name %>" moref="<%= h._ref %>">
       <% h.vm.each do |vm| %>
         <VirtualMachine name="<%= vm.name %>" moref="<%= vm._ref %>">
+          <Guest name="<%= vm.guest.guestFullName %>" family="<%= vm.guest.guestFamily %>"/>
         <% vm.datastore.each do |ds| %>
           <Datastore name="<%= ds.name %>" moref="<%= ds._ref %>"/>
         <% end  %>
