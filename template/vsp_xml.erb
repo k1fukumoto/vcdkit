@@ -24,10 +24,10 @@
        dsb = DatastoreBrowser.new(ds)
        dsb.each_media do |m|
   %>
-    <Media name="<%= m[3] %>">
-    <Datastore><%= m[0] %></Datastore>
-    <Organization><%= m[1] %></Organization>
-    <VDC><%= m[2] %></VDC>
+    <Media path="<%= m[3] %>">
+    <Datastore path="<%= m[0] %>"/>
+    <Organization path="<%= m[1] %>"/>
+    <VDC path="<%= m[2] %>"/>
     </Media>
   <% 
       end 

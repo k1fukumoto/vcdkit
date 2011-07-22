@@ -20,6 +20,14 @@ require 'erb'
 # VSphere
 #
 module VSphere
+  class Media
+    attr_reader :path,:vdc,:datastore
+    def load(node)
+      @path = node.elements["./@path"].value
+      @vdc = node.elements["./VDC/@path"].value
+      @datastore = node.elements["./Datastore/@path"].value
+    end
+  end
 
   class Vm 
     attr_reader :name,:esx,:datastore
@@ -87,6 +95,10 @@ module VSphere
       @index_vm[moref.to_s]
     end
 
+    def media(id)
+      @index_media[id]
+    end
+
     def load(dir)
       @dir = dir
       @doc = REXML::Document.
@@ -96,6 +108,13 @@ module VSphere
         vm = Vm.new
         vm.load(e)
         h.update(e.attributes['moref'] => vm)
+        h
+      }
+      @index_media = @doc.elements.inject("//MediaList/Media",{}) {|h,e|
+        m = Media.new
+        m.load(e)
+        e.attributes['path'] = /(\d+)\-media\.iso/
+        h.update($1 => m)
         h
       }
     end

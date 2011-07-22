@@ -116,6 +116,10 @@ module VCloud
 
   end
 
+  class Media < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.media+xml'
+  end
+
   class CatalogItem < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.catalogItem+xml'
 
@@ -125,6 +129,15 @@ module VCloud
       
     def path
       "/ORG/#{@org}/CATALOG/#{@cat}/CATALOGITEM/#{@name}"
+    end
+
+    def type
+      @doc.elements['/CatalogItem/Entity/@type'].value
+    end
+
+    def id
+      self.entity_href =~ /media\/(\d+)$/
+      sprintf('%010d',$1)
     end
 
     def entity_href
