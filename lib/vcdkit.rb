@@ -20,3 +20,10 @@ require 'vapp.rb'
 require 'vsphere.rb'
 require 'vcb.rb'
 
+$VCDKIT=ENV['VCDKIT']
+if $VCDKIT.nil?
+  puts "Please set VCDKIT environment variable to installataion directory." 
+  exit 1
+end
+Dir.chdir($VCDKIT)
+

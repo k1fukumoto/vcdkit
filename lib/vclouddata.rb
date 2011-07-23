@@ -400,6 +400,8 @@ EOS
   class Logger
     def initialize(logfile=nil)
       if(logfile)
+        dir = File.dirname(logfile)
+        FileUtils.mkdir_p(dir) unless File.exists? dir
         @logger = ::Logger.new(logfile,10,20480000) # ~20MB
       else
         @logger = ::Logger.new(STDOUT)

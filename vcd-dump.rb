@@ -16,16 +16,11 @@
 require 'optparse'
 require 'vcdkit'
 
-#
-# Process command args
-#
-ts=Time.now.strftime('%Y-%m-%d_%H-%M-%S')
 options={
-  :tree => ts,
-  :dir => "./data/vcd-dump",
+  :tree => Time.now.strftime('%Y-%m-%d_%H-%M-%S'),
+  :dir => "#{$VCDKIT}/data/vcd-dump",
   :target => :all,
 }
-
 
 vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl']
 vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
@@ -57,16 +52,13 @@ optparse = OptionParser.new do |opt|
     end
   end
 
-  opt.on('-d','--dir DIR','Root directory of the dump data') do |o|
-    options[:dir] = o
-  end
   opt.on('-A','--all','Dump all data') do |o|
     options[:target] = :all
   end
-  opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Dump target vApp') do |o|
+  opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Dump vApp') do |o|
     options[:target] = o
   end
-  opt.on('-o','--org ORG',Array,'Dump target organization') do |o|
+  opt.on('-o','--org ORG',Array,'Dump organization') do |o|
     options[:target] = o
   end
 
@@ -95,9 +87,6 @@ rescue Exception => e
   exit 1
 end
 
-#
-# MAIN
-#
 $log = VCloud::Logger.new(options[:logfile])
 
 begin
