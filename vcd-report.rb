@@ -18,8 +18,8 @@ require 'optparse'
 require 'vcdkit'
 
 options = {
-  :input => "$VCDKIT/data/vcd-dump",
-  :output => "$VCDKIT/data/vcd-report",
+  :input => "#{$VCDKIT}/data/vcd-dump",
+  :output => "#{$VCDKIT}/data/vcd-report",
   :target => :all,
 }
 
@@ -110,6 +110,7 @@ else # Load dump tree from directory
 
   subdir = options[:tree] || "*"
   Dir.glob("#{options[:input]}/#{subdir}").each do |d|
+    next unless File.directory?(d)
     outdir = "#{options[:output]}/#{File.basename(d)}"
     next if (File.exists?(outdir) && !options[:force])
 
