@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -I./lib
+#!/usr/bin/ruby
 #######################################################################################
 #
 # Copyright 2011 Kaoru Fukumoto All Rights Reserved
@@ -13,6 +13,7 @@
 # QUALITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. 
 #
 #######################################################################################
+$: << File.dirname(__FILE__) + "/lib"
 require 'optparse'
 require 'vcdkit'
 
