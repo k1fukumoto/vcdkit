@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -I./lib
+#!/usr/bin/ruby
 #######################################################################################
 #
 # Copyright 2011 Kaoru Fukumoto All Rights Reserved
@@ -13,15 +13,13 @@
 # QUALITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. 
 #
 #######################################################################################
+$: << File.dirname(__FILE__) + "/lib"
 require 'optparse'
 require 'vcdkit'
 
-#
-# Process command args
-#
 options = {
-  :input => "./data/vcd-dump",
-  :output => "./data/vcd-report",
+  :input => "$VCDKIT/data/vcd-dump",
+  :output => "$VCDKIT/data/vcd-report",
   :target => :all,
 }
 
@@ -31,7 +29,7 @@ vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin']
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-report.rb [cmd-options]"
   
-  opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
+  opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
     case o[0]
     when "1"
       options[:vcd] = vcd1
@@ -49,20 +47,22 @@ optparse = OptionParser.new do |opt|
     options[:output] = o
   end
 
-  opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Create report for specified vApp') do |o|
+  opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Create report for vApp') do |o|
     options[:targettype] = :VAPP
     options[:target] = o
   end
-  opt.on('-T','--vapptemplate ORG,VDC,VAPPTEMPLATE',Array,'Create report for specified vApp Template') do |o|
+  opt.on('-T','--vapptemplate ORG,VDC,VAPPTEMPLATE',Array,'Create report for vApp Template') do |o|
     options[:targettype] = :VAPPTEMPLATE
     options[:target] = o
   end
   opt.on('-A','--all','Create report for entire dump tree') do |o|
     options[:target] = :all
   end
+
   opt.on('-t','--tree TREENAME',Array,'Directory name to identify dump tree') do |o|
     options[:tree] = o
   end
+
   opt.on('-f','--force','Force to recreate reports to exisiting tree') do |o|
     options[:force] = true
   end
@@ -79,17 +79,12 @@ end
 
 begin
   optparse.parse!
-  raise OptionParser::MissingArgument.new("--input") if options[:input].nil?
-  raise OptionParser::MissingArgument.new("--output") if options[:output].nil?
 rescue Exception => e
   puts e
   puts optparse
   exit 1
 end
 
-#
-# MAIN
-#
 $log = VCloud::Logger.new(options[:logfile])
 ot = options[:target]
 
@@ -119,7 +114,6 @@ else # Load dump tree from directory
     next if (File.exists?(outdir) && !options[:force])
 
     begin
-
       vcd = VCloud::VCD.new
       if(ot == :all)
         vcd.load(d).saveparam(outdir)
