@@ -199,11 +199,14 @@ EOS
     end
   end
 
-  class NetworkConnectionSection < XMLElement    
-    TYPE = 'application/vnd.vmware.vcloud.networkConnectionSection+xml'
-
+  class NetworkConnection < XMLElement    
     def initialize(node)
-      @node = node.elements['//NetworkConnectionSection']
+      @node = node
+    end
+
+    def extractParams
+      @node.elements.delete('./ExternalIpAddress')
+      self
     end
 
     def xml(hdr)
@@ -211,14 +214,48 @@ EOS
     end
   end
 
+  class NetworkConnectionSection < XMLElement    
+    TYPE = 'application/vnd.vmware.vcloud.networkConnectionSection+xml'
+    EMPTYXML = <<EOS
+<NetworkConnectionSection 
+  xmlns="http://www.vmware.com/vcloud/v1"
+  xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"
+  type="application/vnd.vmware.vcloud.networkConnectionSection+xml"
+  ovf:required="false">
+<ovf:Info>Specifies the available VM network connections</ovf:Info>
+</NetworkConnectionSection>
+EOS
+
+    def initialize(node)
+      if(node)
+        @node = node.elements['//NetworkConnectionSection']
+      end
+    end
+
+    def extractParams
+      @node.elements.each('./NetworkConnection') do |n|
+        n.elements.delete('./ExternalIpAddress')
+      end
+      self
+    end
+
+    def xml(hdr)
+      if(@node)
+        self.compose_xml(@node,hdr)
+      else
+        EMPTYXML
+      end
+    end
+  end
+
+
   class NetworkConfigSection < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.networkConfigSection+xml'
 
     def initialize(node)
       @node = node
 
-      dhcp = @node.elements["//DhcpService[IsEnabled = 'false']"]
-      if(dhcp)
+      dhcp = @node.elements.each("//DhcpService[IsEnabled = 'false']") do |dhcp|
         dhcp.elements.each('./*') do |n|
           next if n.name == 'IsEnabled'
           dhcp.delete(n)
@@ -227,8 +264,15 @@ EOS
     end
 
     def extractParams
-      @node.elements.delete('.//VAppScopedVmId')
-      @node.elements.delete('.//IsDeployed')
+      @node.elements.delete('./IsDeployed')
+      @node.elements.delete('.//AllocatedIpAddresses')
+      @node.elements.each('.//OneToOneVmRule') do |n|
+        n.elements.delete('./VAppScopedVmId')
+        n.elements.delete('./ExternalIP')
+      end
+      @node.elements.each('.//IpScope') do |n|
+        n.elements.delete('./IsInherited')
+      end
       self
     end
 
@@ -251,7 +295,10 @@ EOS
     def extractParams
       @node.name = 'Lease'
       @node.attributes.each {|name,value| @node.attributes.delete(name)}
-      ['./ovf:Info','Link','StorageLeaseExpiration'].each {|n| @node.elements.delete(n)}
+      ['./ovf:Info',
+       'Link',
+       'StorageLeaseExpiration',
+       'DeploymentLeaseExpiration'].each {|n| @node.elements.delete(n)}
       self
     end
 

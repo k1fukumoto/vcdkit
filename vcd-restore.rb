@@ -21,18 +21,18 @@ require 'vcdkit'
 # Process command args
 #
 vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl']
-vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin']
+vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
 
 options = {
-  :input => "/opt/vmware/vcdkit/data/vcd-dump",
-  :output => "/opt/vmware/vcdkit/data/vcd-report",
+  :input => "#{$VCDKIT}/data/vcd-dump",
+  :output => "#{$VCDKIT}/data/vcd-report",
   :vcd => vcd2
 }
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-vapp.rb CMD [cmd-options]"
   
-  opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
+  opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
     case o[0]
     when "1"
       options[:vcd] = vcd1

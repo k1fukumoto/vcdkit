@@ -11,12 +11,16 @@
     </OperatingSystem>
   </General>
   <Networking>
-    <PrimaryNetwork><%= self['/Vm/NetworkConnectionSection/PrimaryNetworkConnectionIndex/text()'] %></PrimaryNetwork>
+    <NetworkConnectionSection>
+      <PrimaryNetwork>
+       <%= self['/Vm/NetworkConnectionSection/PrimaryNetworkConnectionIndex/text()'] %>
+      </PrimaryNetwork>
     <% self.match('/Vm/NetworkConnectionSection/NetworkConnection').sort do |x,y|
          x.elements['NetworkConnectionIndex/text()'] <=> y.elements['NetworkConnectionIndex/text()']
        end.each do |ncon| %>
-      <%= self.compose_xml(ncon,false) %>
+      <%= VCloud::NetworkConnection.new(ncon).extractParams.xml(false) %>
     <% end %>
+    </NetworkConnectionSection>
   </Networking>
   <Customization>
     <%= VCloud::GuestCustomizationSection.new(self).extractParams.xml(false) %>

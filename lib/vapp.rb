@@ -100,6 +100,10 @@ module VCloud
                    :content_type => NetworkConnectionSection::TYPE)
     end
 
+    def disconnectNetworks()
+      self.editNetworkConnectionSection(nil)
+    end
+
     def customize(args)
       cfg = @doc.elements["//GuestCustomizationSection"]
       GuestCustomizationSection.compose(cfg,args)
@@ -265,6 +269,9 @@ module VCloud
     end
 
     def restore(src)
+      # Disconnect VMs from networks to avoid 'unabled to delete networks' error
+      self.each_vm {|vm| @vcd.wait(vm.disconnectNetworks())}
+
       # Restore control access settings
       @vcd.wait(self.editControlAccessParams(src.cap.doc.root))
 
