@@ -265,9 +265,13 @@ EOS
 
     def extractParams
       @node.elements.delete('./IsDeployed')
+      @node.elements.delete('.//AllocatedIpAddresses')
       @node.elements.each('.//OneToOneVmRule') do |n|
         n.elements.delete('./VAppScopedVmId')
         n.elements.delete('./ExternalIP')
+      end
+      @node.elements.each('.//IpScope') do |n|
+        n.elements.delete('./IsInherited')
       end
       self
     end
