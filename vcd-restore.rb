@@ -107,7 +107,7 @@ if(options[:tree].nil?)
 
   options[:src] = [nil,nil,nil]
   begin
-    pattern = ask("Enter vApp name pattern: ")
+    pattern = "*" + ask("Enter vApp name pattern: ") + "*"
     while true
       choose do |menu|
         menu.header = 'Select VAPP'
@@ -125,7 +125,7 @@ if(options[:tree].nil?)
           end
         end
         menu.choice("Change name pattern. Current pattern='#{pattern}'") {
-          pattern = ask("New pattern: ")
+          pattern = "*" + ask("New pattern: ") + "*"
         }
       end
     end
