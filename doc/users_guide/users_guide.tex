@@ -1,0 +1,114 @@
+\documentclass[10pt,a4paper]{jarticle}
+
+\newcommand{\thetitle}{vCloud Datacenter Toolkit - Users Guide}
+\newcommand{\theauthor}{Kaoru Fukumoto}
+\newcommand{\email}{kfukumot@vmware.com}
+\newcommand{\version}{0.1}
+\newcommand{\customer}{SoftBank Telecom}
+\newcommand{\COMMON}{../common}
+
+\input{\COMMON/packages}
+\input{\COMMON/style}
+\usepackage{booktabs}
+\usepackage{listings}
+
+\begin{document}
+\CoverPage
+
+\pagenumbering{roman}
+\section*{改版履歴}
+\begin{tabular}{|cccp{5cm}|}
+\hline
+\rowcolor[gray]{.8} \textbf{変更日} & 
+\textbf{\small バージョン} & 
+\textbf{変更者} & 
+\textbf{コメント}\\
+
+2011/07/25 & 0.1 & 福本　薫 & 
+最初のバージョン\\
+
+\hline
+\end{tabular}
+
+\newpage
+\tableofcontents
+
+\newpage
+\pagenumbering{arabic}
+\section{インストール}
+
+\subsection{システム要件}
+vcdkitをインストールするためには以下のruby実行環境が必要です。
+\begin{itemize}
+\item ruby (version 1.8.7 以降)
+\item ruby gem (version 1.3.5 以降)
+\item ruby gem パッケージ
+  \begin{itemize}
+  \item crypt 
+  \item highline
+  \item rbvmomi
+  \item rest-client
+  \end{itemize}
+\end{itemize}
+
+\subsection{インストール手順}
+\begin{enumerate}
+\item 配布パッケージ(vcdkit-x.x.tgz)をインストール先サーバのローカルディスクにコピーします。
+\item 配布パッケージをインストールディレクトリ配下に展開します。
+/opt/vmware/vcdkitディレクトリにインストールする例を以下に示します。
+以下インストールディレクトリを\$VCDKITとして参照します。
+\begin{verbatim}
+$ cd /opt/vmware/vcdkit
+$ tar zcvf /tmp/vcdkit-0.1.tgz
+\end{verbatim}
+\end{enumerate}
+
+vcdkitのコマンドを実行するためには環境変数 \$VCDKIT を設定する必要があります。
+また、すべてのコマンドは \$VCDKIT ディレクトリ直下にインストールされるので、
+PATH変数に \$ VCDKITを追加する事をお勧めします。.bashrcの編集例を以下に示します。
+
+ \begin{verbatim}
+export VCDKIT=/opt/vmware/vcdkit
+export PATH=$VCDKIT:$PATH
+\end{verbatim}
+
+\section{コマンド} 
+\subsection{vcd-dump.rb} 
+vCloud DirectorとvCenterからデータの抽出を行います。
+
+\subsection{コマンドオプションの詳細について} 
+各コマンドオプションの詳細は引数に{\tt -h}を指定すると表示されます。
+{\tt vcd-dump.rb}の例を以下に示します。
+
+\begin{verbatim}
+$ vcd-dump.rb -h
+Usage: vcd-dump.rb [options]
+    -v, --vcd HOST,ORG,USER          vCD login parameters
+    -c, --vcenter HOST,USER          vCenter login parameters
+    -A, --all                        Dump all data
+    -a, --vapp ORG,VDC,VAPP          Dump specified vApp data
+    -o, --org ORG                    Dump specified organization data
+    -t, --tree TREENAME              Dump tree directory name
+    -l, --logfile LOGFILEPATH        Log file name
+    -h, --help                       Display this help
+\end{verbatim}
+
+\begin{table}[H]
+\begin{tabular}{lm{7cm}}
+\toprule
+\textbf{コマンド}　& \textbf{主な機能} \\ 
+\midrule
+ {\tt vcd-dump.rb}  & vCloud DirectorとvCenterからデータの抽出\\ 
+ {\tt vcd-report.rb}  & 
+ {\tt vcd-dump.rb}で抽出したデータから各種レポートの作成\\ 
+ {\tt vcd-restore.rb}  &
+  {\tt vcd-dump.rb} で抽出したデータを用いてvAppの各種設定の自動リストア\\ 
+ \bottomrule
+\end{tabular}
+\end{table}
+
+\section{データファイル} 
+\section{利用手順} 
+\section{vApp設定のリストア} 
+
+\end{document}

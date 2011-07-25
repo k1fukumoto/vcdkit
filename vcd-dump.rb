@@ -56,14 +56,14 @@ optparse = OptionParser.new do |opt|
   opt.on('-A','--all','Dump all data') do |o|
     options[:target] = :all
   end
-  opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Dump vApp') do |o|
+  opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Dump specified vApp data') do |o|
     options[:target] = o
   end
-  opt.on('-o','--org ORG',Array,'Dump organization') do |o|
+  opt.on('-o','--org ORG',Array,'Dump specified organization data') do |o|
     options[:target] = o
   end
 
-  opt.on('-t','--tree TREENAME',Array,'Directory name to identify dump tree') do |o|
+  opt.on('-t','--tree TREENAME',Array,'Dump tree directory name') do |o|
     options[:tree] = o
   end
 
@@ -82,6 +82,8 @@ begin
   if (options[:target].nil?)
     raise OptionParser::MissingArgument.new("--target")
   end
+rescue SystemExit => e
+  exit(e.status)
 rescue Exception => e
   puts e
   puts optparse

@@ -69,6 +69,8 @@ begin
   if (options[:num].nil? || options[:num].size != 3)
     raise OptionParser::MissingArgument.new("--num") 
   end
+rescue SystemExit => e
+  exit(e.status)
 rescue Exception => e
   puts e
   puts optparse
