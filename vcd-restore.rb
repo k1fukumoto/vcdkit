@@ -14,6 +14,8 @@
 #
 #######################################################################################
 $: << File.dirname(__FILE__) + "/lib"
+require 'rubygems'
+require 'highline/import'
 require 'optparse'
 require 'vcdkit'
 
@@ -70,7 +72,6 @@ end
 
 begin
   optparse.parse!
-  raise OptionParser::MissingArgument.new("--input") if options[:input].nil?
 rescue SystemExit
   exit
 rescue Exception => e
@@ -79,20 +80,79 @@ rescue Exception => e
   exit 1
 end
 
-#
-# MAIN
-#
 $log = VCloud::Logger.new(options[:logfile])
 
+if(options[:tree].nil?)
+  choose do |menu|
+    menu.header = 'Select restart target directory'
+    Dir.glob("#{options[:input]}/*").each do |d|
+      next unless File.directory?(d)
+      tree = File.basename(d)
+      menu.choice(tree) {options[:tree] = tree}
+    end
+  end
+
+  options[:src] = [nil,nil,nil]
+  choose do |menu|
+    menu.header = 'Select organization'
+    Dir.glob("#{options[:input]}/#{options[:tree]}/ORG/*").each do |d|
+      next unless File.directory?(d)
+      org = File.basename(d)
+      menu.choice(org) {options[:src][0] = org}
+    end
+  end
+
+  choose do |menu|
+    menu.header = 'Select VDC'
+    Dir.glob("#{options[:input]}/#{options[:tree]}/" +
+             "ORG/#{options[:src][0]}/VDC/*").each do |d|
+      next unless File.directory?(d)
+      vdc = File.basename(d)
+      menu.choice(vdc) {options[:src][1] = vdc}
+    end
+  end
+
+  choose do |menu|
+    menu.header = 'Select VAPP'
+    Dir.glob("#{options[:input]}/#{options[:tree]}/" +
+             "ORG/#{options[:src][0]}/VDC/#{options[:src][1]}/VAPP/*").each do |d|
+      next unless File.directory?(d)
+      vapp = File.basename(d)
+      menu.choice(vapp) {options[:src][2] = vapp}
+    end
+  end
+end
+
+class NoChangesException < Exception
+end
+
+$log.info("[RESTORE OPTIONS]: #{options.to_yaml}")
 begin
   org,vdc,vapp = *options[:src]
+  vappdir = "ORG/#{org}/VDC/#{vdc}/VAPP/#{vapp}"
+  diff1 = "'#{options[:output]}/#{options[:tree]}/#{vappdir}'"
+  diff2 = "'#{options[:output]}/RESTORE/#{vappdir}'"
+
   src = VCloud::VApp.new(org,vdc,vapp).load("#{options[:input]}/#{options[:tree]}")
 
   vcd = VCloud::VCD.new()
   vdc = vcd.connect(*options[:vcd]).org(org).vdc(vdc)
+
+  vdc.vapp(vapp).saveparam("#{options[:output]}/RESTORE")
+  ds = %x(diff -cbr #{diff1} #{diff2})
+  $log.info("[DIFF BEFORE RESTORE]: >>#{ds}<<")
+  if(ds == '')
+    print "No differences are found. Continue (yN)? "; a = gets
+    raise NoChangesException.new unless (a =~ /yY/)
+  end
+
   vdc.vapp(vapp).restore(src)
   vdc.vapp(vapp).saveparam("#{options[:output]}/RESTORE")
+  ds = %x(diff -cbr #{diff1} #{diff2})
+  $log.info("[DIFF AFTER RESTORE]: >>#{ds}<<")
 
+rescue NoChangesException => e
+  $log.info("vcd-restore operation aborted: No changes to restore.")
 rescue Exception => e
   $log.error("vcd-restore failed: #{e}")
   $log.error(e.backtrace)
