@@ -84,13 +84,25 @@ end
 $log = VCloud::Logger.new(options[:logfile])
 
 if(options[:tree].nil?)
-  choose do |menu|
-    menu.header = 'Select restart target directory'
-    Dir.glob("#{options[:input]}/*").sort.each do |d|
-      next unless File.directory?(d)
-      tree = File.basename(d)
-      menu.choice(tree) {options[:tree] = tree}
+  begin
+    pattern = "*"
+    while true
+      choose do |menu|
+        menu.header = 'Select restart target directory'
+        Dir.glob("#{options[:input]}/#{pattern}").sort.each do |d|
+          next unless File.directory?(d)
+          tree = File.basename(d)
+          menu.choice(tree) {options[:tree] = tree; raise "BREAK"}
+        end
+        menu.choice("Specify date") {
+          pattern = ask("Date: ",Date).strftime('%Y-%m-%d*')
+        }
+        menu.choice("Change name pattern. Current pattern='#{pattern}'") {
+          pattern = ask("New pattern: ")
+        }
+      end
     end
+  rescue Exception => e
   end
 
   options[:src] = [nil,nil,nil]
@@ -113,14 +125,23 @@ if(options[:tree].nil?)
     end
   end
 
-  choose do |menu|
-    menu.header = 'Select VAPP'
-    Dir.glob("#{options[:input]}/#{options[:tree]}/" +
-             "ORG/#{options[:src][0]}/VDC/#{options[:src][1]}/VAPP/*").sort.each do |d|
-      next unless File.directory?(d)
-      vapp = File.basename(d)
-      menu.choice(vapp) {options[:src][2] = vapp}
+  begin
+    pattern = "*"
+    while true
+      choose do |menu|
+        menu.header = 'Select VAPP'
+        Dir.glob("#{options[:input]}/#{options[:tree]}/" +
+                 "ORG/#{options[:src][0]}/VDC/#{options[:src][1]}/VAPP/#{pattern}").sort.each do |d|
+          next unless File.directory?(d)
+          vapp = File.basename(d)
+          menu.choice(vapp) {options[:src][2] = vapp; raise "BREAK"}
+        end
+        menu.choice("Change name pattern. Current pattern='#{pattern}'") {
+          pattern = ask("New pattern: ")
+        }
+      end
     end
+  rescue Exception => e
   end
 end
 
