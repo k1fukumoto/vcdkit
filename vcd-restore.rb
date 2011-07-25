@@ -73,8 +73,8 @@ end
 
 begin
   optparse.parse!
-rescue SystemExit
-  exit
+rescue SystemExit => e
+  exit(e.status)
 rescue Exception => e
   puts e
   puts optparse

@@ -47,6 +47,8 @@ begin
   if (options[:apps].size == 0)
     raise OptionParser::MissingArgument.new("Applications")
   end
+rescue SystemExit => e
+  exit(e.status)
 rescue Exception => e
   puts e
   puts optparse
