@@ -105,33 +105,34 @@ if(options[:tree].nil?)
   rescue Exception => e
   end
 
-  options[:src] = [nil,nil,nil]
-  choose do |menu|
-    menu.header = 'Select organization'
-    Dir.glob("#{options[:input]}/#{options[:tree]}/ORG/*").sort.each do |d|
-      next unless File.directory?(d)
-      org = File.basename(d)
-      menu.choice(org) {options[:src][0] = org}
-    end
-  end
-
-  choose do |menu|
-    menu.header = 'Select VDC'
-    Dir.glob("#{options[:input]}/#{options[:tree]}/" +
-             "ORG/#{options[:src][0]}/VDC/*").sort.each do |d|
-      next unless File.directory?(d)
-      vdc = File.basename(d)
-      menu.choice(vdc) {options[:src][1] = vdc}
-    end
-  end
+#  options[:src] = [nil,nil,nil]
+#  choose do |menu|
+#    menu.header = 'Select organization'
+#    Dir.glob("#{options[:input]}/#{options[:tree]}/ORG/*").sort.each do |d|
+#      next unless File.directory?(d)
+#      org = File.basename(d)
+#      menu.choice(org) {options[:src][0] = org}
+#    end
+#  end
+#
+#  choose do |menu|
+#    menu.header = 'Select VDC'
+#    Dir.glob("#{options[:input]}/#{options[:tree]}/" +
+#             "ORG/#{options[:src][0]}/VDC/*").sort.each do |d|
+#      next unless File.directory?(d)
+#      vdc = File.basename(d)
+#      menu.choice(vdc) {options[:src][1] = vdc}
+#    end
+#  end
+#
 
   begin
-    pattern = "*"
+    pattern = ask("Enter vApp name pattern: ")
     while true
       choose do |menu|
         menu.header = 'Select VAPP'
         Dir.glob("#{options[:input]}/#{options[:tree]}/" +
-                 "ORG/#{options[:src][0]}/VDC/#{options[:src][1]}/VAPP/#{pattern}").sort.each do |d|
+                 "ORG/*/VDC/*/VAPP/#{pattern}").sort.each do |d|
           next unless File.directory?(d)
           vapp = File.basename(d)
           menu.choice(vapp) {options[:src][2] = vapp; raise "BREAK"}
