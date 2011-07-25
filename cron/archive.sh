@@ -4,7 +4,7 @@ VCDDATA=/opt/vmware/vcdkit/data
 
 for d in vcd-dump vcd-report
 do
-  for t in `find $VCDDATA/$d -maxdepth 1 -mindepth 1 -mtime +1 -type d`
+  for t in `find $VCDDATA/$d -maxdepth 1 -mindepth 1 -mtime +3 -type d`
   do
     file=`basename $t`
     dir=`dirname $t`
