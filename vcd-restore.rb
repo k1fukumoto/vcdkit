@@ -92,6 +92,7 @@ if(options[:tree].nil?)
         Dir.glob("#{options[:input]}/#{pattern}").sort.each do |d|
           next unless File.directory?(d)
           tree = File.basename(d)
+          next if tree == 'archive'
           menu.choice(tree) {options[:tree] = tree; raise "BREAK"}
         end
         menu.choice("Specify date") {
