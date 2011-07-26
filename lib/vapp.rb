@@ -135,6 +135,17 @@ module VCloud
     end
   end
 
+  class VmTemplate < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.vm+xml'
+    def initialize(parent,name)
+      @parent = parent; @name = name
+    end
+
+    def path
+      "#{@parent.path}/VMTEMPLATE/#{@name}"
+    end
+  end
+
   class VAppTemplate < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.vAppTemplate+xml'
 
@@ -147,7 +158,7 @@ module VCloud
     end
 
     def vm(name)
-      vm = Vm.new(self,name)
+      vm = VmTemplate.new(self,name)
       if(@vcd)
         vm.connect(@vcd,@doc.elements["//Children/Vm[@name='#{name}']"])
       elsif(@dir)
@@ -157,7 +168,7 @@ module VCloud
 
     def each_vm
       @doc.elements.each("//Children/Vm"){|n| 
-        vm = Vm.new(self,n.attributes['name'].to_s)
+        vm = VmTemplate.new(self,n.attributes['name'].to_s)
         if(@vcd)
           vm.connect(@vcd,n)
         elsif(@dir)
@@ -170,6 +181,11 @@ module VCloud
     def save(dir)
       super
       self.each_vm {|vm| vm.save(dir)}
+    end
+
+    def saveparam(dir)
+      super
+      self.each_vm {|vm| vm.saveparam(dir)}
     end
 
     def delete
@@ -208,14 +224,30 @@ module VCloud
       "/ORG/#{@org}/VDC/#{@vdc}/VAPP/#{@name}"
     end
 
+    def vm(name)
+      vm = Vm.new(self,name)
+      if(@vcd)
+        vm.connect(@vcd,@doc.elements["//Children/Vm[@name='#{name}']"])
+      elsif(@dir)
+        vm.load(@dir)
+      end
+    end
+
+    def each_vm
+      @doc.elements.each("//Children/Vm"){|n| 
+        vm = Vm.new(self,n.attributes['name'].to_s)
+        if(@vcd)
+          vm.connect(@vcd,n)
+        elsif(@dir)
+          vm.load(@dir)
+        end
+        yield vm
+      }
+    end
+
     def save(dir)
       super
       self.cap.save(dir)
-    end
-
-    def saveparam(dir)
-      super
-      self.each_vm {|vm| vm.saveparam(dir)}
     end
 
     def status

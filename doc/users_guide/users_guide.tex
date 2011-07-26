@@ -10,7 +10,7 @@
 \input{\COMMON/packages}
 \input{\COMMON/style}
 \usepackage{booktabs}
-\usepackage{listings}
+\usepackage{hyperref}
 
 \begin{document}
 \CoverPage
@@ -38,7 +38,7 @@
 \section{インストール}
 
 \subsection{システム要件}
-vcdkitをインストールするためには以下のruby実行環境が必要です。
+vcdkitをインストールするためには各種Liunx系OSもしくはMac OSXと以下のruby実行環境が必要です。
 \begin{itemize}
 \item ruby (version 1.8.7 以降)
 \item ruby gem (version 1.3.5 以降)
@@ -52,34 +52,122 @@ vcdkitをインストールするためには以下のruby実行環境が必要です。
 \end{itemize}
 
 \subsection{インストール手順}
+vcdkit のインストールは vcdkit を利用するアカウントで行います。root 権限は必要ありません。
 \begin{enumerate}
-\item 配布パッケージ(vcdkit-x.x.tgz)をインストール先サーバのローカルディスクにコピーします。
-\item 配布パッケージをインストールディレクトリ配下に展開します。
+\item 配布パッケージ(vcdkit-x.x.tgz)をインストール先サーバのローカルディスクにコピー。
+\item 配布パッケージをインストールディレクトリ配下に展開。\\
 /opt/vmware/vcdkitディレクトリにインストールする例を以下に示します。
 以下インストールディレクトリを\$VCDKITとして参照します。
 \begin{verbatim}
 $ cd /opt/vmware/vcdkit
 $ tar zcvf /tmp/vcdkit-0.1.tgz
 \end{verbatim}
-\end{enumerate}
 
+\item 環境変数 VCDKITを設定。\\
 vcdkitのコマンドを実行するためには環境変数 \$VCDKIT を設定する必要があります。
 また、すべてのコマンドは \$VCDKIT ディレクトリ直下にインストールされるので、
 PATH変数に \$ VCDKITを追加する事をお勧めします。.bashrcの編集例を以下に示します。
-
  \begin{verbatim}
 export VCDKIT=/opt/vmware/vcdkit
 export PATH=$VCDKIT:$PATH
 \end{verbatim}
 
+\item 暗号化されたパスワードの保存。\\
+vCloud Datacenterの各種システムへ接続する際に使用するパスワードを、暗号化した上でローカルディスクに保存します。
+保存されたパスワードファイルは vcdkit 利用アカウントと root アカウントのみが読み取り出来るように設定する事を推奨します。
+
+以下に設定例を示します。パスワードファイルはシステム毎に\$VCDKITディレクトリに保存されます。
+
+ \begin{verbatim}
+$ vcd-pass.rb -vcb
+Enter vCloud Director password: ********
+Enter vCenter password: ********
+Enter vCenter Chargeback password: ********
+$ chmod go-r $VCDKIT/.vc*
+\end{verbatim}
+
+\item cronジョブの設定。\\
+vApp設定のリストアを行うためには、バックアップジョブのスケジュールと同期して vcd-dump.rbを実行します。
+\$VCDKIT/cron/crontab.conf には標準的な毎時バックアップのスケジュール例が記述されています。
+crontab.conf を適切に編集後、crontab コマンドで cron ジョブをスケジュールします。
+
+ \begin{verbatim}
+$ crontab $VCDKIT/cron/crontab.conf
+$ crontab -l
+0 * * * * /opt/vmware/vcdkit/cron/vcd-dump.sh
+15 * * * * /opt/vmware/vcdkit/cron/vcd-report.sh
+30 * * * * /opt/vmware/vcdkit/cron/archive.sh
+45 * * * * /opt/vmware/vcdkit/cron/vcd-ex.sh
+\end{verbatim}
+
+\end{enumerate}
+
 \section{コマンド} 
+%
+% vcd-dump.rb
+%
 \subsection{vcd-dump.rb} 
 vCloud DirectorとvCenterからデータの抽出を行います。
 
-\subsection{コマンドオプションの詳細について} 
-各コマンドオプションの詳細は引数に{\tt -h}を指定すると表示されます。
-{\tt vcd-dump.rb}の例を以下に示します。
+\subsubsection{使用例}
+\paragraph{フェーズ２環境すべてのデータを自動タイムスタンプ付きディレクトリにダンプする。}
 
+\begin{verbatim}
+$ vcd-dump-rb -v2 -c2 -l $VCDKIT/logs/vcd-dump.log
+\end{verbatim}
+
+{\tt -v2 -c2} オプションは vCloud Director, vCenter 共にフェーズ２本番環境を利用する事を指定します。
+ダンプデータは \$VCDKIT/data/vcd-report/TIMESTAMP 以下に保存されます。
+TIMESTAMP の生成にはコマンド実行開始時の時間が利用されます。（例：2011-07-20\_12-00-00）
+
+{\tt -l} オプションはログ出力先ファイルを指定します。無指定の場合は標準出力に出力されます。
+
+\subsubsection{データファイルの構造}
+vcd-dump.rb は \$VCDKIT/data/vcd-dump 配下に以下の形で抽出データをダンプします。
+データファイルはすべて vCloud API を用いて取得されるオブジェクト毎の XML形式です。
+\footnote{XMLデータの詳細についてはvCloud APIの仕様を参照ください。
+\url{http://communities.vmware.com/community/vmtn/developer/forums/vcloudapi}}
+
+{\footnotesize
+\begin{verbatim}
+$VCDKIT/data/vcd-dump/TIMESTAMP
+`-- ORG
+  |-- VCD.xml
+  |-- VCenter.xml
+  `-- Org-01
+     |-- Org.xml
+     |-- VDC
+     | `-- OrgVDC-01
+     |   |-- Vdc.xml
+     |   |-- VAPP
+     |   | `-- MyApp-01
+     |   |   |-- VApp.xml
+     |   |   |-- ControlAccessParams.xml
+     |   |   `-- VM
+     |   |     `-- Web-01
+     |   |       `-- Vm.xml     
+     |   `-- VAPPTEMPLATE
+     |     `-- MyTemplate-01
+     |       |-- VAppTemplate.xml
+     |       `-- VMTEMPLATE
+     |         `-- DB-01
+     |            `-- VmTempalte.xml     
+     |-- CATALOG
+     | `-- Public
+     |    |-- Catalog.xml
+     |    `-- CATALOGITEM
+     |      `-- Win2003R2
+     |        `-- CatalogItem.xml
+     `-- USER
+       `-- MyUser
+         `-- User.xml
+\end{verbatim}
+}
+
+\subsubsection{コマンドオプション一覧}
+利用できるコマンドオプションの一覧は引数に{\tt -h}を指定すると表示されます。
+
+{\footnotesize
 \begin{verbatim}
 $ vcd-dump.rb -h
 Usage: vcd-dump.rb [options]
@@ -92,23 +180,90 @@ Usage: vcd-dump.rb [options]
     -l, --logfile LOGFILEPATH        Log file name
     -h, --help                       Display this help
 \end{verbatim}
+}
+
+%
+% vcd-report.rb
+%
+\subsection{vcd-report.rb} 
+vcd-dump.rb で抽出した XMLデータをもとに各種レポート作成します。
+
+\subsubsection{使用例}
+\paragraph{レポート未作成のすべてのダンプデータからレポートを作成する。}
+
+\begin{verbatim}
+$ vcd-report.rb
+\end{verbatim}
+
+vcd-report.rb はデフォルトで \$VCDKIT/data/vcd-dump以下のすべてのディレクトリを検索し、
+\$VCDKIT/data/vcd-report 以下にレポートを作成します。（例：\$VCDKIT/data/vcd-dump/2011-07-01\_00-00-00
+のレポートを \$VCDKIT/data/vcd-report/2011-07-01\_00-00-00に作成）既にレポート作成が行われている
+ダンプデータはスキップされます。
+
+\subsubsection{データファイルの構造}
+vcd-report.rb は \$VCDKIT/data/vcd-report 配下に以下の形で各種レポートファイルを作成します。
+
+{\footnotesize
+\begin{verbatim}
+$VCDKIT/data/vcd-report/TIMESTAMP
+`-- ORG
+   |-- VMList.xml
+   |-- MediaList.xml
+   `-- Org-01
+     `-- VDC
+       `-- OrgVDC-01
+         |-- VAPP
+         | `-- MyApp-01
+         |   |-- VAppParams.xml
+         |   `-- VM
+         |     `-- Web-01
+         |       `-- VmParams.xml     
+         `-- VAPPTEMPLATE
+           `-- MyTemplate-01
+             |-- VAppTemplateParams.xml
+             `-- VMTEMPLATE
+               `-- DB-01
+                  `-- VmTemplateParams.xml     
+
+\end{verbatim}
+}
+
+\subsubsection{作成されるレポートの種類}
 
 \begin{table}[H]
-\begin{tabular}{lm{7cm}}
+\begin{tabular}{lm{6.5cm}}
 \toprule
-\textbf{コマンド}　& \textbf{主な機能} \\ 
+\textbf{ファイル名}　& \textbf{説明} \\ 
 \midrule
- {\tt vcd-dump.rb}  & vCloud DirectorとvCenterからデータの抽出\\ 
- {\tt vcd-report.rb}  & 
- {\tt vcd-dump.rb}で抽出したデータから各種レポートの作成\\ 
- {\tt vcd-restore.rb}  &
-  {\tt vcd-dump.rb} で抽出したデータを用いてvAppの各種設定の自動リストア\\ 
- \bottomrule
+VMList.xml & 仮想マシンのインベントリ一覧 \\
+MediaList.xml & メディアのインベントリ一覧 \\
+vAppParams.xml & vAppのパラメータ一覧 \\
+VmParams.xml  & vApp内仮想マシンのパラメータ一覧 \\
+vAppTemplateParams.xml & vApp Templateのパラメータ一覧 \\
+VmTemplateParams.xml & vApp Template内仮想マシンのパラメータ一覧 \\
+\bottomrule
 \end{tabular}
 \end{table}
 
+\subsubsection{コマンドオプション一覧}
+利用できるコマンドオプションの一覧は引数に{\tt -h}を指定すると表示されます。
+
+{\footnotesize
+\begin{verbatim}
+$ vcd-dump.rb -h
+Usage: vcd-dump.rb [options]
+    -v, --vcd HOST,ORG,USER          vCD login parameters
+    -c, --vcenter HOST,USER          vCenter login parameters
+    -A, --all                        Dump all data
+    -a, --vapp ORG,VDC,VAPP          Dump specified vApp data
+    -o, --org ORG                    Dump specified organization data
+    -t, --tree TREENAME              Dump tree directory name
+    -l, --logfile LOGFILEPATH        Log file name
+    -h, --help                       Display this help
+\end{verbatim}
+}
+
 \section{データファイル} 
-\section{利用手順} 
 \section{vApp設定のリストア} 
 
 \end{document}
