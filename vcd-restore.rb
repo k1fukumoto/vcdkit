@@ -33,7 +33,7 @@ options = {
 }
 
 optparse = OptionParser.new do |opt|
-  opt.banner = "Usage: vcd-vapp.rb CMD [cmd-options]"
+  opt.banner = "Usage: vcd-report.rb CMD [cmd-options]"
   
   opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
     case o[0]
