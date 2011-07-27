@@ -76,7 +76,7 @@ export PATH=$VCDKIT:$PATH
 vCloud Datacenterの各種システムへ接続する際に使用するパスワードを、暗号化した上でローカルディスクに保存します。
 保存されたパスワードファイルは vcdkit 利用アカウントと root アカウントのみが読み取り出来るように設定する事を推奨します。
 
-以下に設定例を示します。パスワードファイルはシステム毎に\$VCDKITディレクトリに保存されます。
+以下に設定例を示します。パスワードファイルはシステム毎に\$VCDKITディレクトリ直下に保存されます。
 
  \begin{verbatim}
 $ vcd-pass.rb -vcb
@@ -87,7 +87,7 @@ $ chmod go-r $VCDKIT/.vc*
 \end{verbatim}
 
 \item cronジョブの設定。\\
-vApp設定のリストアを行うためには、バックアップジョブのスケジュールと同期して vcd-dump.rbを実行します。
+vApp設定のリストアを行うためにバックアップジョブのスケジュールと同期して vcd-dump.rbを実行します。
 \$VCDKIT/cron/crontab.conf には標準的な毎時バックアップのスケジュール例が記述されています。
 crontab.conf を適切に編集後、crontab コマンドで cron ジョブをスケジュールします。
 
@@ -123,7 +123,7 @@ TIMESTAMP の生成にはコマンド実行開始時の時間が利用されます。（例：2011-07-20\_12
 {\tt -l} オプションはログ出力先ファイルを指定します。無指定の場合は標準出力に出力されます。
 
 \subsubsection{データファイルの構造}
-vcd-dump.rb は \$VCDKIT/data/vcd-dump 配下に以下の形で抽出データをダンプします。
+vcd-dump.rb は \$VCDKIT/data/vcd-dump/TIMESTAMP 配下に以下の形で抽出データをダンプします。
 データファイルはすべて vCloud API を用いて取得されるオブジェクト毎の XML形式です。
 \footnote{XMLデータの詳細についてはvCloud APIの仕様を参照ください。
 \url{http://communities.vmware.com/community/vmtn/developer/forums/vcloudapi}}
@@ -134,32 +134,32 @@ $VCDKIT/data/vcd-dump/TIMESTAMP
 `-- ORG
   |-- VCD.xml
   |-- VCenter.xml
-  `-- Org-01
+  `-- [Org Name]
      |-- Org.xml
      |-- VDC
-     | `-- OrgVDC-01
+     | `-- [vDC Name]
      |   |-- Vdc.xml
      |   |-- VAPP
-     |   | `-- MyApp-01
+     |   | `-- [vApp Name]
      |   |   |-- VApp.xml
      |   |   |-- ControlAccessParams.xml
      |   |   `-- VM
-     |   |     `-- Web-01
+     |   |     `-- [VM Name]
      |   |       `-- Vm.xml     
      |   `-- VAPPTEMPLATE
-     |     `-- MyTemplate-01
+     |     `-- [vApp Template Name]
      |       |-- VAppTemplate.xml
      |       `-- VMTEMPLATE
-     |         `-- DB-01
+     |         `-- [VM Template Name]
      |            `-- VmTempalte.xml     
      |-- CATALOG
      | `-- Public
      |    |-- Catalog.xml
      |    `-- CATALOGITEM
-     |      `-- Win2003R2
+     |      `-- [Catalog Item Name]
      |        `-- CatalogItem.xml
      `-- USER
-       `-- MyUser
+       `-- [User Name]
          `-- User.xml
 \end{verbatim}
 }
@@ -209,20 +209,20 @@ $VCDKIT/data/vcd-report/TIMESTAMP
 `-- ORG
    |-- VMList.xml
    |-- MediaList.xml
-   `-- Org-01
+   `-- [Org Name]
      `-- VDC
-       `-- OrgVDC-01
+       `-- [vDC Name]
          |-- VAPP
-         | `-- MyApp-01
+         | `-- [vApp Name]
          |   |-- VAppParams.xml
          |   `-- VM
-         |     `-- Web-01
+         |     `-- [VM Name]
          |       `-- VmParams.xml     
          `-- VAPPTEMPLATE
-           `-- MyTemplate-01
+           `-- [vApp Template Name]
              |-- VAppTemplateParams.xml
              `-- VMTEMPLATE
-               `-- DB-01
+               `-- [VM Template Name]
                   `-- VmTemplateParams.xml     
 
 \end{verbatim}
