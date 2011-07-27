@@ -99,11 +99,11 @@ TESTCFG = {
   3 => {
     :ORG  => 'VMTest',
     :CAT  => 'Test',
-    :CI   => 'P1TMPL-WIN2K3',
-    :CIVM => 'P1TMPL-WIN2K3',
+    :CI   => 'P2TMPL-WIN2K3STD-32',
+    :CIVM => 'Windows 2003 Standard 32bit (10GB)',
     :NTWK => 'Customization Test',
     :VDC  => 'Basic - VMTest',
-    :PREFIX => 'GC-',
+    :PREFIX => 'GC2-',
   },
   10 => {
     :ORG  => 'VMTest',
