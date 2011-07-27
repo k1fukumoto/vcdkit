@@ -157,6 +157,7 @@ EOS
     def extractParams
       @node.attributes.each {|name,value| @node.attributes.delete(name)}
       @node.elements.delete('./VirtualMachineId')
+      @node.elements.delete('./ovf:Info')
       @node.elements.delete('./Link')
       pass = @node.elements['./AdminPassword/text()']
       if(pass != '')
@@ -266,6 +267,9 @@ EOS
     def extractParams
       @node.elements.delete('./IsDeployed')
       @node.elements.delete('.//AllocatedIpAddresses')
+      @node.elements.each('.//Configuration') do |n|
+        n.elements.delete('./ParentNetwork')
+      end
       @node.elements.each('.//OneToOneVmRule') do |n|
         n.elements.delete('./VAppScopedVmId')
         n.elements.delete('./ExternalIP')

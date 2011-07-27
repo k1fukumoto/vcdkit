@@ -76,7 +76,7 @@ export PATH=$VCDKIT:$PATH
 vCloud Datacenterの各種システムへ接続する際に使用するパスワードを、暗号化した上でローカルディスクに保存します。
 保存されたパスワードファイルは vcdkit 利用アカウントと root アカウントのみが読み取り出来るように設定する事を推奨します。
 
-以下に設定例を示します。パスワードファイルはシステム毎に\$VCDKITディレクトリに保存されます。
+以下に設定例を示します。パスワードファイルはシステム毎に\$VCDKITディレクトリ直下に保存されます。
 
  \begin{verbatim}
 $ vcd-pass.rb -vcb
@@ -87,7 +87,7 @@ $ chmod go-r $VCDKIT/.vc*
 \end{verbatim}
 
 \item cronジョブの設定。\\
-vApp設定のリストアを行うためには、バックアップジョブのスケジュールと同期して vcd-dump.rbを実行します。
+vApp設定のリストアを行うためにバックアップジョブのスケジュールと同期して vcd-dump.rbを実行します。
 \$VCDKIT/cron/crontab.conf には標準的な毎時バックアップのスケジュール例が記述されています。
 crontab.conf を適切に編集後、crontab コマンドで cron ジョブをスケジュールします。
 
@@ -123,7 +123,7 @@ TIMESTAMP の生成にはコマンド実行開始時の時間が利用されます。（例：2011-07-20\_12
 {\tt -l} オプションはログ出力先ファイルを指定します。無指定の場合は標準出力に出力されます。
 
 \subsubsection{データファイルの構造}
-vcd-dump.rb は \$VCDKIT/data/vcd-dump 配下に以下の形で抽出データをダンプします。
+vcd-dump.rb は \$VCDKIT/data/vcd-dump/TIMESTAMP 配下に以下の形で抽出データをダンプします。
 データファイルはすべて vCloud API を用いて取得されるオブジェクト毎の XML形式です。
 \footnote{XMLデータの詳細についてはvCloud APIの仕様を参照ください。
 \url{http://communities.vmware.com/community/vmtn/developer/forums/vcloudapi}}
@@ -134,32 +134,32 @@ $VCDKIT/data/vcd-dump/TIMESTAMP
 `-- ORG
   |-- VCD.xml
   |-- VCenter.xml
-  `-- Org-01
+  `-- [Org Name]
      |-- Org.xml
      |-- VDC
-     | `-- OrgVDC-01
+     | `-- [vDC Name]
      |   |-- Vdc.xml
      |   |-- VAPP
-     |   | `-- MyApp-01
+     |   | `-- [vApp Name]
      |   |   |-- VApp.xml
      |   |   |-- ControlAccessParams.xml
      |   |   `-- VM
-     |   |     `-- Web-01
+     |   |     `-- [VM Name]
      |   |       `-- Vm.xml     
      |   `-- VAPPTEMPLATE
-     |     `-- MyTemplate-01
+     |     `-- [vApp Template Name]
      |       |-- VAppTemplate.xml
      |       `-- VMTEMPLATE
-     |         `-- DB-01
+     |         `-- [VM Template Name]
      |            `-- VmTempalte.xml     
      |-- CATALOG
      | `-- Public
      |    |-- Catalog.xml
      |    `-- CATALOGITEM
-     |      `-- Win2003R2
+     |      `-- [Catalog Item Name]
      |        `-- CatalogItem.xml
      `-- USER
-       `-- MyUser
+       `-- [User Name]
          `-- User.xml
 \end{verbatim}
 }
@@ -209,20 +209,20 @@ $VCDKIT/data/vcd-report/TIMESTAMP
 `-- ORG
    |-- VMList.xml
    |-- MediaList.xml
-   `-- Org-01
+   `-- [Org Name]
      `-- VDC
-       `-- OrgVDC-01
+       `-- [vDC Name]
          |-- VAPP
-         | `-- MyApp-01
+         | `-- [vApp Name]
          |   |-- VAppParams.xml
          |   `-- VM
-         |     `-- Web-01
+         |     `-- [VM Name]
          |       `-- VmParams.xml     
          `-- VAPPTEMPLATE
-           `-- MyTemplate-01
+           `-- [vApp Template Name]
              |-- VAppTemplateParams.xml
              `-- VMTEMPLATE
-               `-- DB-01
+               `-- [VM Template Name]
                   `-- VmTemplateParams.xml     
 
 \end{verbatim}
@@ -250,20 +250,147 @@ VmTemplateParams.xml & vApp Template内仮想マシンのパラメータ一覧 \\
 
 {\footnotesize
 \begin{verbatim}
-$ vcd-dump.rb -h
-Usage: vcd-dump.rb [options]
+$ vcd-report.rb -h
+Usage: vcd-report.rb [cmd-options]
     -v, --vcd HOST,ORG,USER          vCD login parameters
-    -c, --vcenter HOST,USER          vCenter login parameters
-    -A, --all                        Dump all data
-    -a, --vapp ORG,VDC,VAPP          Dump specified vApp data
-    -o, --org ORG                    Dump specified organization data
-    -t, --tree TREENAME              Dump tree directory name
+    -i, --input DIR                  Specify root directory of the vCD dump data
+    -o, --output DIR                 Specify directory for reports
+    -a, --vapp ORG,VDC,VAPP          Create report for vApp
+    -T ORG,VDC,VAPPTEMPLATE          Create report for vApp Template
+        --vapptemplate
+    -A, --all                        Create report for entire dump tree
+    -t, --tree TREENAME              Directory name to identify dump tree
+    -f, --force                      Force to recreate reports to exisiting tree
     -l, --logfile LOGFILEPATH        Log file name
     -h, --help                       Display this help
 \end{verbatim}
 }
 
-\section{データファイル} 
-\section{vApp設定のリストア} 
+%
+% vcd-restore.rb
+%
+\subsection{vcd-restore.rb} 
+vcd-dump.rb で抽出した XMLデータをもとにvApp設定情報のリストアを行います。
 
+\subsubsection{使用例}
+\paragraph{リストア日時とvApp名を指定してvApp設定情報をリストアする（インタラクティブモード）}
+
+\begin{description}
+\item[ステップ1] ターゲットの指定
+\end{description}
+
+{\footnotesize
+\begin{verbatim}
+$ vcd-report.rb
+Select restart target directory:
+1. 2011-07-26_20-04-10
+2. Specify date
+3. Change name pattern. Current pattern='*'
+?  1
+Enter vApp name pattern: RESTORE
+Select VAPP:
+1. CustomerDemo-02 | Basic Backup - Customer Demo-02 | RESTORE-000
+2. CustomerDemo-02 | Basic Backup - Customer Demo-02 | RESTORE-001
+3. Change name pattern. Current pattern='*RESTORE*'
+?  2
+\end{verbatim}
+}
+
+\begin{description}
+\item[ステップ2] 現時点での差分表示、およびリストア実行の確認
+\end{description}
+
+{\footnotesize
+\begin{verbatim}
+...
+（vApp情報取得動作のログ）
+...
+***************
+*** 4,10 ****
+        DB-02
+      </FullName>
+      <Description>
+!       Testing..
+      </Description>
+      <OperatingSystemType>
+         winNetEnterpriseGuest 
+--- 4,10 ----
+        DB-02
+      </FullName>
+      <Description>
+!       CHANGE DESCRIPTION
+      </Description>
+      <OperatingSystemType>
+         winNetEnterpriseGuest 
+<<
+Continue (yN)? y
+\end{verbatim}
+}
+
+\begin{description}
+\item[ステップ3] リストア実施、およびリストア完了後の差分表示
+\end{description}
+{\footnotesize
+\begin{verbatim}
+...
+（vAppリストア動作のログ）
+...
+2011-07-26 21:22:03 | INFO | [DIFF AFTER RESTORE]: >><<
+\end{verbatim}
+}
+
+\subsubsection{コマンドオプション一覧}
+利用できるコマンドオプションの一覧は引数に{\tt -h}を指定すると表示されます。
+
+{\footnotesize
+\begin{verbatim}
+$ vcd-restore.rb -h
+Usage: vcd-restore.rb [cmd-options]
+    -v, --vcd HOST,ORG,USER          vCD login parameters
+    -i, --input DIR                  Root directory of the vCD dump data
+    -t, --tree TREENAME              Directory name to identify dump tree
+    -o, --output DIR                 Specify directory for reports
+    -a, --vapp ORG,VDC,VAPP          Restore source vApp
+    -l, --logfile LOGFILEPATH        Log file name
+    -h, --help                       Display this help
+
+\end{verbatim}
+}
+
+%
+% vcd-ex.rb
+%
+\subsection{vcd-ex.rb}
+vCloud Director Cell と vCenter 間、および vCloud Director Cellと ESXホスト間のセッションを維持するために以下の操作を行います。
+
+\begin{itemize}
+\item vAppのリスタート
+\item 仮想マシンサムネールの取得
+\end{itemize}
+
+このコマンドはファイアウォールによるアイドルコネクションタイムアウトによる接続障害を回避する目的で
+使用されます。ファイアウォールのタイムアウト間隔より十分短い間隔で実行する必要があります。
+
+\subsubsection{操作対象となるvApp}
+
+vCloud Director CellとすべてのESXi ホスト間でのセッションを維持するために、各ESXiに
+サムネール取得対象のVMを配置する必要があります。以下に現在の配置状態を記します。
+(各仮想マシンはDRSのアフィニティルールを用いてホストに紐付けされています)
+
+\begin{table}[H]
+\begin{tabular}{lllll}
+\toprule
+\textbf{ORG}　& \textbf{VDC} & \textbf{VAPP} & \textbf{VM} & \textbf{ESX} \\ 
+\midrule
+Admin & Basic - Admin & VCDEX-B01 & VCDEX-158$\sim$ &  CGSdhb-158$\sim$ \\
+ &  &  & VCDEX-171 &  CGSdhb-171 \\
+Admin & Basic Backup - Admin & VCDEX-BB01 & VCDEX-172$\sim$ &  CGSdhb-172$\sim$ \\
+ &  &  & VCDEX-177 &  CGSdhb-177 \\
+Admin & Committed - Admin & VCDEX-C01 & VCDEX-138$\sim$ &  CGSdhb-138$\sim$ \\
+ &  &  & VCDEX-151 &  CGSdhb-151 \\
+Admin & Committed Backup - Admin & VCDEX-CB01 & VCDEX-152$\sim$ &  CGSdhb-152$\sim$ \\
+ &  &  & VCDEX-157 &  CGSdhb-157 \\
+\bottomrule
+\end{tabular}
+\end{table}
 \end{document}
