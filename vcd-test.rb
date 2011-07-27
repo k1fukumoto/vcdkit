@@ -21,7 +21,7 @@ require 'pp'
 # Process command args
 #
 vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl']
-vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin']
+vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
 
 options={
   :vcd => vcd2
@@ -30,7 +30,7 @@ options={
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-test.rb -T TESTNUMBER CMD [options]"
 
-  opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
+  opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
     case o[0]
     when "1"
       options[:vcd] = vcd1
@@ -81,11 +81,11 @@ TESTCFG = {
   1 => {
     :ORG  => 'CustomerDemo-06',
     :CAT  => 'Demo',
-    :CI   => 'SL-XP-00',
-    :CIVM => 'SL-XP-00',
+    :CI   => 'WL-XP-00',
+    :CIVM => 'WL-XP-00',
     :NTWK => 'Org Private - CustomerDemo-06',
     :VDC  => 'Committed - Customer Demo-06',
-    :PREFIX => 'SL-XP-',
+    :PREFIX => 'WL-XP-',
   },
   2 => {
     :ORG  => 'Admin',
@@ -99,11 +99,11 @@ TESTCFG = {
   3 => {
     :ORG  => 'VMTest',
     :CAT  => 'Test',
-    :CI   => 'WIN2003-STD-R2-32',
-    :CIVM => 'WIN2003-STD-R2-32',
-    :NTWK => 'Org Private - VMTest',
+    :CI   => 'P1TMPL-WIN2K3',
+    :CIVM => 'P1TMPL-WIN2K3',
+    :NTWK => 'Customization Test',
     :VDC  => 'Basic - VMTest',
-    :PREFIX => 'CBSCALE-',
+    :PREFIX => 'GC-',
   },
   10 => {
     :ORG  => 'VMTest',
@@ -160,12 +160,15 @@ when 1..3
       vdc = vcd.org(cfg[:ORG]).vdc(cfg[:VDC])
 
       (start..(start+sz-1)).inject({}) do |h,n|
+       begin
         vapp = vdc.vapp("#{cfg[:PREFIX]}#{n}")
         vcd.wait(vapp.powerOff)
         vcd.wait(vapp.undeploy)
 
         # Pull the latest vApp XML to ensure the link for delete
         vdc.vapp("#{cfg[:PREFIX]}#{n}").delete
+       rescue Exception => e
+       end
       end
       start += sz
     end
