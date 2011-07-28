@@ -18,8 +18,10 @@ require 'optparse'
 require 'vcdkit'
 
 options={
-  :vcd => ['vcd.vcdc.whitecloud.jp','System','vcdadminl'],
 }
+
+vcd1 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
+vcd2 = ['tvcd.vcdc.whitecloud.jp','System','vcdadminl']
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-ex.rb [options]"
@@ -57,56 +59,65 @@ class Target
   end
 end
 
-VCDEX_ORG   = 'Admin'
 VCDEX_DIR   = './data/vcd-ex'
-VCDEX_TARGETS  = 
+VCDEX_ORG   = 'Admin'
+VCDEX_JOBS  = 
   [
-   Target.new('Basic - Admin','VCDEX-B01'),
-   Target.new('Basic Backup - Admin','VCDEX-BB01'),
-   Target.new('Committed - Admin','VCDEX-C01'),
-   Target.new('Committed Backup - Admin','VCDEX-CB01'),
-   ]
+   { :vcd => vcd2,
+     :vapps => [
+                Target.new('Admin','VCDEX-01'),
+                ]
+   },
+   { :vcd => vcd1,
+     :vapps => [
+                Target.new('Basic Backup - Admin','VCDEX-BB01'),
+                Target.new('Basic - Admin','VCDEX-B01'),
+                Target.new('Committed Backup - Admin','VCDEX-CB01'),
+                Target.new('Committed - Admin','VCDEX-C01'),
+               ]
+   },
+]
 
 #
 # MAIN
 #
 $log = VCloud::Logger.new(options[:logfile])
+FileUtils.mkdir_p(VCDEX_DIR) unless File.exists? VCDEX_DIR
 
 begin
-  vcd = VCloud::VCD.new
-  vcd.connect(*options[:vcd])
-  org = vcd.org(VCDEX_ORG)
+  VCDEX_JOBS.each do |job|
+    vcd = VCloud::VCD.new
+    vcd.connect(*job[:vcd])
+    org = vcd.org(VCDEX_ORG)
 
-  FileUtils.mkdir_p(VCDEX_DIR) unless File.exists? VCDEX_DIR
+    # Get thumbnails from all ESX hosts
+    job[:vapps].each do |t|
+      vapp = org.vdc(t.vdc).vapp(t.vapp)
 
-  # Get thumbnails from all ESX hosts
-  VCDEX_TARGETS.each do |t|
-    vapp = org.vdc(t.vdc).vapp(t.vapp)
+      if(vapp.status == "Powered Off")
+        vcd.wait(vapp.powerOn)
+      end
 
-    if(vapp.status == "Powered Off")
-      vcd.wait(vapp.powerOn)
-    end
-
-    vapp.each_vm do |vm|
-      open("#{VCDEX_DIR}/#{vm.name}.png",'w') do |f|
-        f.write vm.thumbnail
+      vapp.each_vm do |vm|
+        open("#{VCDEX_DIR}/#{vm.name}.png",'w') do |f|
+          f.write vm.thumbnail
+        end
       end
     end
+
+    # Recycle power of one of vApp
+    t = job[:vapps][0]
+    vdc = org.vdc(t.vdc)
+
+    vapp = vdc.vapp(t.vapp)
+    vcd.wait(vapp.powerOff)
+
+    vapp = vdc.vapp(t.vapp)
+    vcd.wait(vapp.undeploy)
+
+    vapp = vdc.vapp(t.vapp)
+    vcd.wait(vapp.powerOn)
   end
-
-  # Recycle power of one of vApp
-  t = VCDEX_TARGETS[1]
-  vdc = org.vdc(t.vdc)
-
-  vapp = vdc.vapp(t.vapp)
-  vcd.wait(vapp.powerOff)
-
-  vapp = vdc.vapp(t.vapp)
-  vcd.wait(vapp.undeploy)
-
-  vapp = vdc.vapp(t.vapp)
-  vcd.wait(vapp.powerOn)
-
 rescue Exception => e
   $log.error("vcd-ex failed: #{e}")
   $log.error(e.backtrace)
