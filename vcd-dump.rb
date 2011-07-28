@@ -23,11 +23,11 @@ options={
   :target => :all,
 }
 
-vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl']
-vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
+vcd1 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
+vcd2 = ['tvcd.vcdc.whitecloud.jp','System','vcdadminl']
 
-vsp1 = ['10.127.11.51','vcdadmin']
-vsp2 = ['10.128.0.57','vcdadmin']
+vsp1 = ['10.128.0.57','vcdadmin']
+vsp2 = ['10.128.1.57','vcdadmin']
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-dump.rb [options]"

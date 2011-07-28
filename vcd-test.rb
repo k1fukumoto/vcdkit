@@ -20,8 +20,8 @@ require 'pp'
 #
 # Process command args
 #
-vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl']
-vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
+vcd1 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
+vcd2 = ['tvcd.vcdc.whitecloud.jp','System','vcdadminl']
 
 options={
   :vcd => vcd2

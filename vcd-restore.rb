@@ -23,13 +23,13 @@ require 'vcdkit'
 #
 # Process command args
 #
-vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl']
-vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
+vcd1 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
+vcd2 = ['tvcd.vcdc.whitecloud.jp','System','vcdadminl']
 
 options = {
   :input => "#{$VCDKIT}/data/vcd-dump",
   :output => "#{$VCDKIT}/data/vcd-report",
-  :vcd => vcd2
+  :vcd => vcd1
 }
 
 optparse = OptionParser.new do |opt|
