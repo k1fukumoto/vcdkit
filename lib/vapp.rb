@@ -141,6 +141,10 @@ module VCloud
       @parent = parent; @name = name
     end
 
+    def moref
+      @doc.elements["//VCloudExtension/vmext:VimObjectRef/vmext:MoRef/text()"]
+    end
+    
     def path
       "#{@parent.path}/VMTEMPLATE/#{@name}"
     end
