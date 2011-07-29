@@ -1,0 +1,1335 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Author>vcd-report</Author>
+  <LastAuthor>vcd-report</LastAuthor>
+  <Created>Fri Jul 29 23:12:54 +0900 2011</Created>
+  <Company>VMware</Company>
+  <Version>1.0</Version>
+ </DocumentProperties>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>8445</WindowHeight>
+  <WindowWidth>19095</WindowWidth>
+  <WindowTopX>120</WindowTopX>
+  <WindowTopY>60</WindowTopY>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Center"/>
+   <Borders/>
+   <Font ss:FontName="Arial" x:CharSet="128" x:Family="Modern" ss:Size="11"
+    ss:Color="#000000"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s100">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Font ss:Size="11" ss:Color="#000000" ss:Bold="1"/>
+   <Interior ss:Color="#C0C0C0" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Sheet1">
+  <Table>
+   <Column ss:AutoFitWidth="1" ss:Width="100"/>
+   <Column ss:AutoFitWidth="1" ss:Width="100"/>
+   <Column ss:AutoFitWidth="1" ss:Width="160"/>
+   <Column ss:AutoFitWidth="1" ss:Width="120"/>
+   <Column ss:AutoFitWidth="1" ss:Width="300"/>
+   <Column ss:AutoFitWidth="1" ss:Width="300"/>
+   <Column ss:AutoFitWidth="1" ss:Width="300"/>
+   <Column ss:AutoFitWidth="1" ss:Width="100"/>
+   <Column ss:AutoFitWidth="1" ss:Width="100"/>
+   <Column ss:AutoFitWidth="1" ss:Width="100"/>
+   <Column ss:AutoFitWidth="1" ss:Width="100"/>
+   <Row>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">TYPE</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">ORG</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">VDC</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">VAPP</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">VM</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OS Type</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">OS</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">Status</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">VM Name</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">ESX</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">Datastore</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-170</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1407875353-VCDEX-170</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-170.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-165</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">2119904895-VCDEX-165</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-165.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-171</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0767921088-VCDEX-171</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-171.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-159</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1485750920-VCDEX-159</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-159.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-163</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1061251182-VCDEX-163</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-163.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-167</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">2103499709-VCDEX-167</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-167.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-161</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1954439798-VCDEX-161</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-161.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-168</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1891787527-VCDEX-168</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-168.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-162</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0345648903-VCDEX-162</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-162.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-164</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0219675383-VCDEX-164</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-164.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-160</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0777875134-VCDEX-160</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-160.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-169</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1421182821-VCDEX-169</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-169.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-166</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0801362014-VCDEX-166</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-166.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-B01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-158</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1941898057-VCDEX-158</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-158.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-142</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1392263268-VCDEX-142</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-142.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-138</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0211418499-VCDEX-138</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-138.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-141</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1547812213-VCDEX-141</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-141.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-139</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0719847943-VCDEX-139</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-139.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-151</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1857691256-VCDEX-151</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-151.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-150</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1417398263-VCDEX-150</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-150.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-144</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1342334058-VCDEX-144</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-144.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-146</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1529320509-VCDEX-146</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-146.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-145</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0366091429-VCDEX-145</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-145.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-149</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1548941796-VCDEX-149</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-149.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-140</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1870097404-VCDEX-140</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-140.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-143</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1693963067-VCDEX-143</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-143.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-148</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1914493667-VCDEX-148</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-148.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-C01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-147</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1936444642-VCDEX-147</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-147.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-CB01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-154</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0527326163-VCDEX-154</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-154.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpcv1501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-CB01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-152</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0059934957-VCDEX-152</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-152.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpcv1301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-CB01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-157</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1784732506-VCDEX-157</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-157.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpcv1401</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-CB01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-153</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1253930787-VCDEX-153</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-153.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpcv1401</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-CB01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-155</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0388753315-VCDEX-155</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-155.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpcv1601</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Committed Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-CB01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-156</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1265472264-VCDEX-156</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-156.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpcv1301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-BB01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-174</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">2093346879-VCDEX-174</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-174.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-BB01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-173</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1259671686-VCDEX-173</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-173.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-BB01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-172</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1526997096-VCDEX-172</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-172.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-BB01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-177</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0964017753-VCDEX-177</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-177.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-BB01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-175</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1325540690-VCDEX-175</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-175.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0801</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-BB01</Data></Cell>
+    <Cell><Data ss:Type="String">VCDEX-176</Data></Cell>
+    <Cell><Data ss:Type="String">otherGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1006078969-VCDEX-176</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-176.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0601</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">CentOS 5.6 32bit (30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">CentOS 5.6 32bit (30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">centosGuest</Data></Cell>
+    <Cell><Data ss:Type="String">CentOS 4/5 (32 ビット)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1866807248-CentOS_5.6_32bit_(30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-177.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 32bit (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 32bit (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0846165985-Windows_2003_Standard_32b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-175.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 64bit (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 64bit (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winLonghorn64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1136605099-Windows_2008_Standard_64b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-172.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 32bit (30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 32bit (30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0733786072-Windows_2003_Standard_32b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-174.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 32bit (10GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 32bit (10GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0442364357-Windows_2003_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-177.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 64bit (10GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 64bit (10GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandard64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">2031036592-Windows_2003_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-175.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 32bit (80GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 32bit (80GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winLonghornGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0812663085-Windows_2008_Standard_32b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-177.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 64bit (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 64bit (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandard64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1884012513-Windows_2003_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-172.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 64bit (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 64bit (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winLonghorn64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0731488406-Windows_2008_Standard_64b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-175.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 32bit (60GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 32bit (60GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winLonghornGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0232303004-Windows_2008_Standard_32b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-177.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 64bit (60GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 64bit (60GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winLonghorn64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1619358377-Windows_2008_Standard_64b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-177.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard R2 (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard R2 (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">windows7Server64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 R2 (64-bit) </Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0566381774-Windows_2008_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-173.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 32bit (30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 32bit (30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0019226920-Windows_2003_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-173.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 64bit (100GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 64bit (100GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winLonghorn64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1763084954-Windows_2008_Standard_64b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-174.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 64bit (20GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 64bit (20GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandard64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0564609990-Windows_2003_Standard_64b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-175.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard R2 (60GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard R2 (60GB)</Data></Cell>
+    <Cell><Data ss:Type="String">windows7Server64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 R2 (64-bit) </Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1109194451-Windows_2008_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-175.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard R2 (100GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard R2 (100GB)</Data></Cell>
+    <Cell><Data ss:Type="String">windows7Server64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 R2 (64-bit) </Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0167515255-Windows_2008_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-172.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">RHEL 5.6 32bit (100GB)</Data></Cell>
+    <Cell><Data ss:Type="String">RHEL 5.6 32bit (100GB)</Data></Cell>
+    <Cell><Data ss:Type="String">rhel5Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Red Hat Enterprise Linux 5 (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0717273398-RHEL_5.6_32bit_(100GB)</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-176.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 32bit (10GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 32bit (10GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0686147857-Windows_2003_Standard_32b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-173.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 32bit (20GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 32bit (20GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0923677453-Windows_2003_Standard_32b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-177.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 64bit (30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 64bit (30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandard64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0407564299-Windows_2003_Standard_64b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-177.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 64bit (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 64bit (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandard64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0759992724-Windows_2003_Standard_64b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-177.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 32bit (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 32bit (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0316268433-Windows_2003_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-172.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 64bit (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 64bit (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandard64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1584294708-Windows_2003_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-175.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">CentOS 5.6 32bit (100GB)</Data></Cell>
+    <Cell><Data ss:Type="String">CentOS 5.6 32bit (100GB)</Data></Cell>
+    <Cell><Data ss:Type="String">centosGuest</Data></Cell>
+    <Cell><Data ss:Type="String">CentOS 4/5 (32 ビット)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0504853769-CentOS_5.6_32bit_(100GB)</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-176.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">RHEL 5.6 32bit (30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">RHEL 5.6 32bit (30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">rhel5Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Red Hat Enterprise Linux 5 (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0323451882-RHEL_5.6_32bit_(30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-176.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 32bit (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 32bit (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winLonghornGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1154295572-Windows_2008_Standard_32b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-175.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard R2 (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard R2 (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">windows7Server64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 R2 (64-bit) </Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">2135018270-Windows_2008_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-175.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 32bit (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 32bit (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winLonghornGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">2139598297-Windows_2008_Standard_32b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-173.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 32bit (100GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 32bit (100GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winLonghornGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0515303003-Windows_2008_Standard_32b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-177.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard R2 (80GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard R2 (80GB)</Data></Cell>
+    <Cell><Data ss:Type="String">windows7Server64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 R2 (64-bit) </Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0400491852-Windows_2008_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-175.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 64bit (80GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2008 Standard 64bit (80GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winLonghorn64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2008 (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">2082771239-Windows_2008_Standard_64b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-172.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 32bit (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 32bit (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1153466442-Windows_2003_Standard_32b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-176.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 64bit (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 64bit (40GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandard64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">2122299031-Windows_2003_Standard_64b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-177.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 64bit (20GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 64bit (20GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandard64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1760800449-Windows_2003_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-173.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 64bit (10GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 64bit (10GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandard64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">2117968256-Windows_2003_Standard_64b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-176.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 32bit (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 32bit (50GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0271929137-Windows_2003_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-174.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 64bit (30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 64bit (30GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandard64Guest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (64-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1350964174-Windows_2003_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-177.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp Template</Data></Cell>
+    <Cell><Data ss:Type="String">Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Admin</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 32bit (20GB)</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard R2 32bit (20GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003、Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1071339175-Windows_2003_Standard_R2_</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-175.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">s1107xxx</Data></Cell>
+    <Cell><Data ss:Type="String">Committed Backup s1107xxx</Data></Cell>
+    <Cell><Data ss:Type="String">s107xxx_1</Data></Cell>
+    <Cell><Data ss:Type="String">sasaki_survey_1</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003, Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0372317957-sasaki_survey_1</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-152.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpcv1501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-01</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Customer Demo-01</Data></Cell>
+    <Cell><Data ss:Type="String">RESTORE-TEST01</Data></Cell>
+    <Cell><Data ss:Type="String">RESTORE-TEST01</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003, Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0574990523-RESTORE-TEST01</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-177.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0701</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-01</Data></Cell>
+    <Cell><Data ss:Type="String">Committed Backup - Customer Demo-01</Data></Cell>
+    <Cell><Data ss:Type="String">WinMerge</Data></Cell>
+    <Cell><Data ss:Type="String">WinMerge</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003, Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0838551598-WinMerge</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-153.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpcv1301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-06</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Customer Demo-06</Data></Cell>
+    <Cell><Data ss:Type="String">SBTM_0013</Data></Cell>
+    <Cell><Data ss:Type="String">WIN2003-003</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003, Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1180972352-WIN2003-003</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-170.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0101</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-06</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Customer Demo-06</Data></Cell>
+    <Cell><Data ss:Type="String">Morikawa TEST</Data></Cell>
+    <Cell><Data ss:Type="String">Ava-Virtual</Data></Cell>
+    <Cell><Data ss:Type="String">other26xLinuxGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other 2.6x Linux (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0333168819-Ava-Virtual</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-168.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0101</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-06</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Customer Demo-06</Data></Cell>
+    <Cell><Data ss:Type="String">Morikawa TEST</Data></Cell>
+    <Cell><Data ss:Type="String">SL-XP-00</Data></Cell>
+    <Cell><Data ss:Type="String">winXPProGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows XP Professional (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">0003916191-SL-XP-00</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-167.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0101</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-06</Data></Cell>
+    <Cell><Data ss:Type="String">Basic - Customer Demo-06</Data></Cell>
+    <Cell><Data ss:Type="String">Ava-Virtual</Data></Cell>
+    <Cell><Data ss:Type="String">Ava-Virtual</Data></Cell>
+    <Cell><Data ss:Type="String">other26xLinuxGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Other 2.6x Linux (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered On</Data></Cell>
+    <Cell><Data ss:Type="String">1688552839-Ava-Virtual</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-170.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpbv0101</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-05</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Customer Demo-05</Data></Cell>
+    <Cell><Data ss:Type="String">SBTM_0012</Data></Cell>
+    <Cell><Data ss:Type="String">Windows 2003 Standard 32bit (10GB)</Data></Cell>
+    <Cell><Data ss:Type="String">winNetEnterpriseGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003, Enterprise Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1714150119-Windows_2003_Standard_32b</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-175.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-05</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup - Customer Demo-05</Data></Cell>
+    <Cell><Data ss:Type="String">SBTM_0012</Data></Cell>
+    <Cell><Data ss:Type="String">WIN2003-002</Data></Cell>
+    <Cell><Data ss:Type="String">winNetStandardGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows Server 2003, Standard Edition (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1671294393-WIN2003-002</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-172.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpbv0501</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-03</Data></Cell>
+    <Cell><Data ss:Type="String">Committed Backup - Customer Demo-03</Data></Cell>
+    <Cell><Data ss:Type="String">Basic Backup</Data></Cell>
+    <Cell><Data ss:Type="String">BBtest03</Data></Cell>
+    <Cell><Data ss:Type="String">winXPProGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows XP Professional (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-03</Data></Cell>
+    <Cell><Data ss:Type="String">Committed Backup - Customer Demo-03</Data></Cell>
+    <Cell><Data ss:Type="String">Committed Backup</Data></Cell>
+    <Cell><Data ss:Type="String">CBtest03</Data></Cell>
+    <Cell><Data ss:Type="String">winXPProGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows XP Professional (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">2026038081-CBtest03</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-139.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpcv1301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-03</Data></Cell>
+    <Cell><Data ss:Type="String">Committed Backup - Customer Demo-03</Data></Cell>
+    <Cell><Data ss:Type="String">Committed Backup</Data></Cell>
+    <Cell><Data ss:Type="String">CBtest01</Data></Cell>
+    <Cell><Data ss:Type="String">winXPProGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows XP Professional (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1386246450-CBtest01</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-153.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hdpcv1301</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-03</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Customer Demo-03</Data></Cell>
+    <Cell><Data ss:Type="String">committed</Data></Cell>
+    <Cell><Data ss:Type="String">CNtest06</Data></Cell>
+    <Cell><Data ss:Type="String">winXPProGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows XP Professional (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1699598311-CNtest06</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-139.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-03</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Customer Demo-03</Data></Cell>
+    <Cell><Data ss:Type="String">committed</Data></Cell>
+    <Cell><Data ss:Type="String">CNtest02</Data></Cell>
+    <Cell><Data ss:Type="String">winXPProGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows XP Professional (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0774782032-CNtest02</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-139.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv1101</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-03</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Customer Demo-03</Data></Cell>
+    <Cell><Data ss:Type="String">committed</Data></Cell>
+    <Cell><Data ss:Type="String">CNtest03</Data></Cell>
+    <Cell><Data ss:Type="String">winXPProGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows XP Professional (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0330937614-CNtest03</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-139.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-03</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Customer Demo-03</Data></Cell>
+    <Cell><Data ss:Type="String">committed</Data></Cell>
+    <Cell><Data ss:Type="String">CNtest05</Data></Cell>
+    <Cell><Data ss:Type="String">winXPProGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows XP Professional (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">1075625374-CNtest05</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-139.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv1101</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-03</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Customer Demo-03</Data></Cell>
+    <Cell><Data ss:Type="String">committed</Data></Cell>
+    <Cell><Data ss:Type="String">CNtest01</Data></Cell>
+    <Cell><Data ss:Type="String">winXPProGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows XP Professional (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0189982602-CNtest01</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-139.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv0901</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">vApp</Data></Cell>
+    <Cell><Data ss:Type="String">CustomerDemo-03</Data></Cell>
+    <Cell><Data ss:Type="String">Committed - Customer Demo-03</Data></Cell>
+    <Cell><Data ss:Type="String">committed</Data></Cell>
+    <Cell><Data ss:Type="String">CNtest04</Data></Cell>
+    <Cell><Data ss:Type="String">winXPProGuest</Data></Cell>
+    <Cell><Data ss:Type="String">Microsoft Windows XP Professional (32-bit)</Data></Cell>
+    <Cell><Data ss:Type="String">Powered Off</Data></Cell>
+    <Cell><Data ss:Type="String">0545361608-CNtest04</Data></Cell>
+    <Cell><Data ss:Type="String">cgsdhb-139.vcpr.vcdc.whitecloud.jp</Data></Cell>
+    <Cell><Data ss:Type="String">hnpcv1101</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.3"/>
+    <Footer x:Margin="0.3"/>
+    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
+   </PageSetup>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>
