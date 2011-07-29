@@ -87,7 +87,6 @@ VCDEX_JOBS  = {
 $log = VCloud::Logger.new(options[:logfile])
 FileUtils.mkdir_p(VCDEX_DIR) unless File.exists? VCDEX_DIR
 
-pp options
 begin
   vcd = VCloud::VCD.new
   vcd.connect(*options[:vcd])
