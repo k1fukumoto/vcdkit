@@ -90,6 +90,8 @@ module VSphere
   end
 
   class VCenter
+    attr_reader :root
+
     def connect(host,user)
       pass = VCloud::SecurePass.new().decrypt(File.new('.vc','r').read)
       @name = host

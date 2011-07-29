@@ -473,3 +473,10 @@ EOS
     end  
   end
 end
+
+$VCD1 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
+$VCD2 = ['tvcd.vcdc.whitecloud.jp','System','vcdadminl']
+
+$VSP1 = ['10.128.0.57','vcdadmin']
+$VSP2 = ['10.128.1.57','vcdadmin']
+

@@ -13,26 +13,39 @@
 # QUALITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. 
 #
 #######################################################################################
+$: << File.dirname(__FILE__) + "/lib"
 require 'optparse'
 require 'vcdkit'
 
-#
-# Process command args
-#
 options = {
-  :command => nil,
-  :dir => nil,
 }
 
 optparse = OptionParser.new do |opt|
-  opt.banner = "Usage: vcd-vm.rb CMD [cmd-options]"
+  opt.banner = "Usage: vcd-vm.rb [cmd-options]"
   
-  opt.on('-l','--list','CMD: List all virtual machines (default)') do 
-    options[:command] = :list
+  opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
+    case o[0]
+    when "1"
+      options[:vcd] = $VCD1
+    when "2"
+      options[:vcd] = $VCD2
+    else
+      options[:vcd] = o
+    end
+  end
+  opt.on('-c','--vcenter HOST,USER',Array,'vCenter login parameters') do |o|
+    case o[0]
+    when "1"
+      options[:vsp] = $VSP1
+    when "2"
+      options[:vsp] = $VSP2
+    else
+      options[:vsp] = o
+    end
   end
 
-  opt.on('-d','--dir DIR','Specify root directory of the dump data') do |o|
-    options[:dir] = o
+  opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Target vApp') do |o|
+    options[:target] = o
   end
 
   opt.on('-h','--help','Display this help') do
@@ -43,23 +56,37 @@ end
 
 begin
   optparse.parse!
-  raise OptionParser::MissingArgument.new("CMD") if options[:command].nil?
 rescue Exception => e
   puts e
   puts optparse
   exit 1
 end
 
-#
-# MAIN
-#
-vcd = VCloud::VCD.new
-vcd.load(options[:dir])
+$log = VCloud::Logger.new(options[:logfile])
 
-vc = VSphere::VCenter.new
-vc.load(options[:dir])
+begin
+  vcd = VCloud::VCD.new
+  vcd.connect(*options[:vcd])
 
-ERB.new(File.new("template/vcd-vm_csv.erb").read,0,'>').run
+  ot = options[:target]
+  vcd.org(ot[0]).vdc(ot[1]).vapptemplate(ot[2]).each_vm do |vm|
+    puts vm.moref
+  end
+
+  vc = VSphere::VCenter.new
+  vc.connect(*options[:vsp])
+  vc.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
+    dc.vmFolder.childEntity.grep(RbVmomi::VIM::VirtualMachine).each do |vm|
+      next unless vm.moref == vm._ref
+      pp vm
+    end
+  end
+
+rescue Exception => e
+  $log.error("vcd-vm.rb failed: #{e}")
+  $log.error(e.backtrace)
+  exit 1
+end
 
 
 
