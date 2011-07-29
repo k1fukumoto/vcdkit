@@ -69,16 +69,21 @@ begin
   vcd.connect(*options[:vcd])
 
   ot = options[:target]
+  moref = ''
   vcd.org(ot[0]).vdc(ot[1]).vapptemplate(ot[2]).each_vm do |vm|
-    puts vm.moref
+    moref = vm.moref
   end
 
   vc = VSphere::VCenter.new
   vc.connect(*options[:vsp])
   vc.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
-    dc.vmFolder.childEntity.grep(RbVmomi::VIM::VirtualMachine).each do |vm|
-      next unless vm.moref == vm._ref
-      pp vm
+    dc.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).each do |cr|
+      cr.host.each do |h|
+        h.vm.each do |vm|
+#          next unless vm.moref == vm._ref
+          puts "#{moref} <=> #{vm._ref} #{vm.name}"
+        end
+      end
     end
   end
 
