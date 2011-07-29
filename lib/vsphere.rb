@@ -104,7 +104,7 @@ module VSphere
     end
 
     def vm(moref)
-      @index_vm[moref.to_s]　||　Vm.new
+      @index_vm[moref.to_s] || Vm.new
     end
 
     def media(id)
@@ -138,7 +138,3 @@ module VSphere
     end
   end
 end
-
-
-
-
