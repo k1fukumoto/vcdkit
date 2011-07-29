@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ######################################################################################
 #
 # Copyright 2011 Kaoru Fukumoto All Rights Reserved
@@ -103,7 +104,7 @@ module VSphere
     end
 
     def vm(moref)
-      @index_vm[moref.to_s]
+      @index_vm[moref.to_s]　||　Vm.new
     end
 
     def media(id)
