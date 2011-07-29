@@ -33,6 +33,11 @@ module VSphere
   class Vm 
     attr_reader :name,:esx,:datastore,:guestFullName,:guestFamily
 
+    def initialize
+      # ensure never returns nil for attributes
+      @name = @esx = @datastore = @guestFullName = @guestFamily = ''
+    end
+
     def load(node)
       @name = node.attributes['name']
       @esx = node.elements["../@name"].value
