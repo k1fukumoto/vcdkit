@@ -68,6 +68,9 @@ class XMLElement
   def basename()
     self.class.name.sub(/VCloud::/,'') + ".xml"
   end
+  def altname()
+    self.class.name.sub(/VCloud::/,'') + "Alt.xml"
+  end
   def paramsname()
     self.class.name.sub(/VCloud::/,'') + "Params.xml"
   end
@@ -79,6 +82,16 @@ class XMLElement
     FileUtils.mkdir_p(dir) unless File.exists? dir
     path = "#{dir}/#{self.basename}"
     open(path,'w') {|f| f.puts @xml}
+  end
+
+  def savealt(dir)
+    $log.info("SAVEALT: #{self.path}/#{self.altname}")
+
+    dir = "#{dir}/#{self.path}"
+    FileUtils.mkdir_p(dir) unless File.exists? dir
+    path = "#{dir}/#{self.altname}"
+    xml = @vcd.get(@doc.elements["//Link[@rel='alternate']/@href"].value)
+    open(path,'w') {|f| f.puts xml}
   end
 
   def saveparam(dir)

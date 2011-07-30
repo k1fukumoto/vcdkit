@@ -20,6 +20,8 @@ require 'vclouddata'
 require 'pp'
 
 module VCloud
+  class InvalidNameException < Exception
+  end
 
   class Task < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.task+xml'
@@ -80,6 +82,7 @@ module VCloud
 
     def save(dir)
       super
+      # self.savealt(dir) - TEST ONLY
       self.each_vapp {|vapp| vapp.save(dir)}
       self.each_vapptemplate {|vat| vat.save(dir)}
     end
@@ -113,7 +116,6 @@ module VCloud
                    {:content_type => ComposeVAppParams::TYPE})
       
     end
-
   end
 
   class Media < XMLElement
@@ -175,6 +177,7 @@ module VCloud
 
     def save(dir)
       super
+      # self.savealt(dir) - TEST ONLY
       self.each_catalogitem {|ci| ci.save(dir)}
     end
 
@@ -200,7 +203,17 @@ module VCloud
 
     def vdc(name) 
       vdc = Vdc.new(@name,name)
-      vdc.connect(@vcd,@doc.elements["//Vdcs/Vdc[ @name='#{name}']"])
+      n = @doc.elements["//Vdcs/Vdc[ @name='#{name}']"]
+      if(n.nil?)
+        $log.error("Cannot find vdc '#{name}': Available vdcs '#{self.vdcs.join(',')}'")
+        raise InvalidNameException.new
+      else
+        vdc.connect(@vcd,n)
+      end
+    end
+
+    def vdcs 
+      @doc.elements.collect("//Vdcs/Vdc") {|n| n.attributes['name']}
     end
 
     def each_vdc
@@ -275,6 +288,7 @@ module VCloud
 
     def save(dir)
       super
+      # self.savealt(dir) -- TEST ONLY
       self.each_vdc {|vdc| vdc.save(dir)}
       self.each_catalog {|cat| cat.save(dir)}
       self.each_user {|user| user.save(dir)}
