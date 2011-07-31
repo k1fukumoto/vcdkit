@@ -1,0 +1,93 @@
+#!/usr/bin/ruby
+#######################################################################################
+#
+# Copyright 2011 Kaoru Fukumoto All Rights Reserved
+#
+# You may freely use and redistribute this script as long as this 
+# copyright notice remains intact 
+#
+#
+# DISCLAIMER. THIS SCRIPT IS PROVIDED TO YOU "AS IS" WITHOUT WARRANTIES OR CONDITIONS 
+# OF ANY KIND, WHETHER ORAL OR WRITTEN, EXPRESS OR IMPLIED. THE AUTHOR SPECIFICALLY 
+# DISCLAIMS ANY IMPLIED WARRANTIES OR CONDITIONS OF MERCHANTABILITY, SATISFACTORY 
+# QUALITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. 
+#
+#######################################################################################
+$: << File.dirname(__FILE__) + "/lib"
+require 'optparse'
+require 'vcdkit'
+
+options = {
+  :input => "#{$VCDKIT}/data/vcd-report",
+  :output => "#{$VCDKIT}/data/vcd-trend",
+  :target => :all,
+}
+
+optparse = OptionParser.new do |opt|
+  opt.banner = "Usage: vcd-report.rb [cmd-options]"
+  
+  opt.on('-i','--input DIR','Specify root directory of the report data') do |o|
+    options[:input] = o
+  end
+  opt.on('-o','--output DIR','Specify directory for trend datad') do |o|
+    options[:output] = o
+  end
+
+  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
+    options[:logfile] = o
+  end
+  opt.on('-h','--help','Display this help') do
+    puts opt
+    exit
+  end
+end
+
+begin
+  optparse.parse!
+rescue SystemExit => e
+  exit(e.status)
+rescue Exception => e
+  puts e
+  puts optparse
+  exit 1
+end
+
+$log = VCloud::Logger.new(options[:logfile])
+
+repdirs = Dir.glob("#{options[:input]}/*").select{|d| File.directory?(d)}.sort
+outdir = "#{options[:output]}/#{File.basename(repdirs.first)}__#{File.basename(repdirs.last)}"
+FileUtils.mkdir_p(outdir) unless File.exists? outdir
+
+data = {}
+repdirs.each do |d|
+  doc = REXML::Document.new(File.new("#{d}/VMList.xml").read)
+  tree = File.basename(d)
+  $log.info("Start processing '#{tree}'")
+  r = -1
+  doc.elements.each('//Row') do |row|
+    r += 1
+    next if r == 0
+
+    c = 0
+    rd = []
+    row.elements.each('./Cell') do |cell|
+      rd[c] = cell.elements['./Data'].text
+      c += 1
+    end
+    next if rd[6].nil?
+
+    data[rd[1]] = {} if (data[rd[1]].nil?)
+    data[rd[1]][rd[2]] = {} if (data[rd[1]][rd[2]].nil?)
+    data[rd[1]][rd[2]][rd[6]] = {} if (data[rd[1]][rd[2]][rd[6]].nil?)
+    data[rd[1]][rd[2]][rd[6]][tree] = 0 if (data[rd[1]][rd[2]][rd[6]][tree].nil?)
+
+    data[rd[1]][rd[2]][rd[6]][tree] += 1
+  end
+end
+
+$log.info("Saving WinGuest.xml")
+open("#{outdir}/WinGuest.xml",'w') do |f|
+  f.puts ERB.new(File.new("template/vcd-trend/WinGuest_Excel.erb").
+                 read,0,'>').result(binding)
+end
+
