@@ -54,12 +54,13 @@ end
 
 $log = VCloud::Logger.new(options[:logfile])
 
-repdirs = Dir.glob("#{options[:input]}/*").select{|d| File.directory?(d)}.sort
+repdirs = Dir.glob("#{options[:input]}/*-*-*_*-*-*").select{|d| File.directory?(d)}.sort
 outdir = "#{options[:output]}/#{File.basename(repdirs.first)}__#{File.basename(repdirs.last)}"
 FileUtils.mkdir_p(outdir) unless File.exists? outdir
 
 data = {}
 repdirs.each do |d|
+  next unless File.exists?("#{d}/VMList.xml")
   doc = REXML::Document.new(File.new("#{d}/VMList.xml").read)
   tree = File.basename(d)
   $log.info("Start processing '#{tree}'")
