@@ -29,7 +29,7 @@ optparse = OptionParser.new do |opt|
   opt.on('-i','--input DIR','Specify root directory of the report data') do |o|
     options[:input] = o
   end
-  opt.on('-o','--output DIR','Specify directory for trend datad') do |o|
+  opt.on('-o','--output DIR','Specify directory for trend data') do |o|
     options[:output] = o
   end
 

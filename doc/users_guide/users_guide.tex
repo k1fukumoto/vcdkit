@@ -3,7 +3,7 @@
 \newcommand{\thetitle}{vCloud Datacenter Toolkit - Users Guide}
 \newcommand{\theauthor}{Kaoru Fukumoto}
 \newcommand{\email}{kfukumot@vmware.com}
-\newcommand{\version}{0.1}
+\newcommand{\version}{1.0}
 \newcommand{\customer}{SoftBank Telecom}
 \newcommand{\COMMON}{../common}
 
@@ -24,7 +24,7 @@
 \textbf{ÊÑ¹¹¼Ô} & 
 \textbf{¥³¥á¥ó¥È}\\
 
-2011/07/25 & 0.1 & Ê¡ËÜ¡¡·° & 
+2011/08/18 & 1.0 & Ê¡ËÜ¡¡·° & 
 ºÇ½é¤Î¥Ð¡¼¥¸¥ç¥ó\\
 
 \hline
@@ -52,18 +52,19 @@ vcdkit¤ò¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë¤¿¤á¤Ë¤Ï³Æ¼ïLiunx·ÏOS¤â¤·¤¯¤ÏMac OSX¤È°Ê²¼¤Îruby¼Â¹Ô´Ä¶­
 \end{itemize}
 
 \subsection{¥¤¥ó¥¹¥È¡¼¥ë¼ê½ç}
-vcdkit ¤Î¥¤¥ó¥¹¥È¡¼¥ë¤Ï vcdkit ¤òÍøÍÑ¤¹¤ë¥¢¥«¥¦¥ó¥È¤Ç¹Ô¤¤¤Þ¤¹¡£root ¸¢¸Â¤ÏÉ¬Í×¤¢¤ê¤Þ¤»¤ó¡£
+\label{sec:install}
+vcdkit ¤Î¥¤¥ó¥¹¥È¡¼¥ë¤Ï vcdkit ¤òÍøÍÑ¤¹¤ë°ìÈÌ¥æ¡¼¥¶¥¢¥«¥¦¥ó¥È¤Ç¹Ô¤¤¤Þ¤¹¡£root ¸¢¸Â¤ÏÉ¬Í×¤¢¤ê¤Þ¤»¤ó¡£
 \begin{enumerate}
-\item ÇÛÉÛ¥Ñ¥Ã¥±¡¼¥¸(vcdkit-x.x.tgz)¤ò¥¤¥ó¥¹¥È¡¼¥ëÀè¥µ¡¼¥Ð¤Î¥í¡¼¥«¥ë¥Ç¥£¥¹¥¯¤Ë¥³¥Ô¡¼¡£
-\item ÇÛÉÛ¥Ñ¥Ã¥±¡¼¥¸¤ò¥¤¥ó¥¹¥È¡¼¥ë¥Ç¥£¥ì¥¯¥È¥êÇÛ²¼¤ËÅ¸³«¡£\\
+\item ÇÛÉÛ¥Ñ¥Ã¥±¡¼¥¸(vcdkit-1.0.1.tgz)¤ò¥¤¥ó¥¹¥È¡¼¥ëÀè¥µ¡¼¥Ð¤Î¥í¡¼¥«¥ë¥Ç¥£¥¹¥¯¤Ë¥³¥Ô¡¼
+\item ÇÛÉÛ¥Ñ¥Ã¥±¡¼¥¸¤ò¥¤¥ó¥¹¥È¡¼¥ë¥Ç¥£¥ì¥¯¥È¥êÇÛ²¼¤ËÅ¸³«\\
 /opt/vmware/vcdkit¥Ç¥£¥ì¥¯¥È¥ê¤Ë¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ëÎã¤ò°Ê²¼¤Ë¼¨¤·¤Þ¤¹¡£
 °Ê²¼¥¤¥ó¥¹¥È¡¼¥ë¥Ç¥£¥ì¥¯¥È¥ê¤ò\$VCDKIT¤È¤·¤Æ»²¾È¤·¤Þ¤¹¡£
 \begin{verbatim}
 $ cd /opt/vmware/vcdkit
-$ tar zcvf /tmp/vcdkit-0.1.tgz
+$ tar zcvf /tmp/vcdkit-1.0.1.tgz
 \end{verbatim}
 
-\item ´Ä¶­ÊÑ¿ô VCDKIT¤òÀßÄê¡£\\
+\item ´Ä¶­ÊÑ¿ô VCDKIT¤òÀßÄê\\
 vcdkit¤Î¥³¥Þ¥ó¥É¤ò¼Â¹Ô¤¹¤ë¤¿¤á¤Ë¤Ï´Ä¶­ÊÑ¿ô \$VCDKIT ¤òÀßÄê¤¹¤ëÉ¬Í×¤¬¤¢¤ê¤Þ¤¹¡£
 ¤Þ¤¿¡¢¤¹¤Ù¤Æ¤Î¥³¥Þ¥ó¥É¤Ï \$VCDKIT ¥Ç¥£¥ì¥¯¥È¥êÄ¾²¼¤Ë¥¤¥ó¥¹¥È¡¼¥ë¤µ¤ì¤ë¤Î¤Ç¡¢
 PATHÊÑ¿ô¤Ë \$ VCDKIT¤òÄÉ²Ã¤¹¤ë»ö¤ò¤ª´«¤á¤·¤Þ¤¹¡£.bashrc¤ÎÊÔ½¸Îã¤ò°Ê²¼¤Ë¼¨¤·¤Þ¤¹¡£
@@ -97,7 +98,8 @@ $ crontab -l
 0 * * * * /opt/vmware/vcdkit/cron/vcd-dump.sh
 15 * * * * /opt/vmware/vcdkit/cron/vcd-report.sh
 30 * * * * /opt/vmware/vcdkit/cron/archive.sh
-45 * * * * /opt/vmware/vcdkit/cron/vcd-ex.sh
+0 1 */2 * * /opt/vmware/vcdkit/cron/vcd-trend.sh
+0 2 * * * /opt/vmware/vcdkit/cron/vcd-ex.sh
 \end{verbatim}
 
 \end{enumerate}
@@ -110,17 +112,30 @@ $ crontab -l
 vCloud Director¤ÈvCenter¤«¤é¥Ç¡¼¥¿¤ÎÃê½Ð¤ò¹Ô¤¤¤Þ¤¹¡£
 
 \subsubsection{»ÈÍÑÎã}
-\paragraph{¥Õ¥§¡¼¥º£²´Ä¶­¤¹¤Ù¤Æ¤Î¥Ç¡¼¥¿¤ò¼«Æ°¥¿¥¤¥à¥¹¥¿¥ó¥×ÉÕ¤­¥Ç¥£¥ì¥¯¥È¥ê¤Ë¥À¥ó¥×¤¹¤ë¡£}
+\paragraph{¥Õ¥§¡¼¥º£²ËÜÈÖ´Ä¶­¤¹¤Ù¤Æ¤Î¥Ç¡¼¥¿¤ò¼«Æ°¥¿¥¤¥à¥¹¥¿¥ó¥×ÉÕ¤­¥Ç¥£¥ì¥¯¥È¥ê¤Ë¥À¥ó¥×¤¹¤ë}
 
 \begin{verbatim}
-$ vcd-dump-rb -v2 -c2 -l $VCDKIT/logs/vcd-dump.log
+$ vcd-dump-rb -v1 -c1 -l $VCDKIT/logs/vcd-dump.log
 \end{verbatim}
 
-{\tt -v2 -c2} ¥ª¥×¥·¥ç¥ó¤Ï vCloud Director, vCenter ¶¦¤Ë¥Õ¥§¡¼¥º£²ËÜÈÖ´Ä¶­¤òÍøÍÑ¤¹¤ë»ö¤ò»ØÄê¤·¤Þ¤¹¡£
-¥À¥ó¥×¥Ç¡¼¥¿¤Ï \$VCDKIT/data/vcd-report/TIMESTAMP °Ê²¼¤ËÊÝÂ¸¤µ¤ì¤Þ¤¹¡£
-TIMESTAMP ¤ÎÀ¸À®¤Ë¤Ï¥³¥Þ¥ó¥É¼Â¹Ô³«»Ï»þ¤Î»þ´Ö¤¬ÍøÍÑ¤µ¤ì¤Þ¤¹¡£¡ÊÎã¡§2011-07-20\_12-00-00¡Ë
+\begin{itemize}
+\item {\tt -v1, -c1} ¥ª¥×¥·¥ç¥ó¤Ï vCloud Director, vCenter ¶¦¤Ë¥Õ¥§¡¼¥º£²ËÜÈÖ´Ä¶­¤Î
+¥µ¡¼¥Ð¤ª¤è¤ÓÀÜÂ³¥¢¥«¥¦¥ó¥È¤òÍøÍÑ¤¹¤ë»ö¤ò»ØÄê¤·¤Þ¤¹¡£°Ê²¼¤Î{\tt -v, -c}¥ª¥×¥·¥ç¥ó¤ò»ØÄê¤¹¤ë»ö¤ÈÆ±Åù¤Ç¤¹¡£
 
-{\tt -l} ¥ª¥×¥·¥ç¥ó¤Ï¥í¥°½ÐÎÏÀè¥Õ¥¡¥¤¥ë¤ò»ØÄê¤·¤Þ¤¹¡£Ìµ»ØÄê¤Î¾ì¹ç¤ÏÉ¸½à½ÐÎÏ¤Ë½ÐÎÏ¤µ¤ì¤Þ¤¹¡£
+\begin{verbatim}
+$ vcd-dump-rb \
+   -v vcd.vcdc.whitecloud.jp,System,vcdadminl \
+   -c 10.128.0.57,vcdadmin \
+   -l $VCDKIT/logs/vcd-dump.log
+\end{verbatim}
+
+\item ¥³¥Þ¥ó¥É°ú¿ô¥Õ¥©¡¼¥Þ¥Ã¥È¤Î¾ÜºÙ¤Ë¤Ä¤¤¤Æ¤Ï\ref{sec:vcd-dump-opts}¤ò»²¾È²¼¤µ¤¤¡£
+\item ÀÜÂ³¤ËÍÑ¤¤¤ë¥Ñ¥¹¥ï¡¼¥É¤Ï¥³¥Þ¥ó¥É°ú¿ô¤Ç¤Ï»ØÄê¤·¤Þ¤»¤ó¡£¥Ñ¥¹¥ï¡¼¥É¤ÎÀßÄê¡¿ÊÝÂ¸ÊýË¡¤Ë¤Ä¤¤¤Æ¤Ï\ref{sec:install}¤ò»²¾È²¼¤µ¤¤¡£
+\item ¥À¥ó¥×¥Ç¡¼¥¿¤Ï¥Ç¥Õ¥©¥ë¥È¤Ç \$VCDKIT/data/vcd-report/TIMESTAMP °Ê²¼¤ËÊÝÂ¸¤µ¤ì¤Þ¤¹¡£
+\item TIMESTAMP Ì¾¤ÎÀ¸À®¤Ë¤Ï¥³¥Þ¥ó¥É¼Â¹Ô³«»Ï»þ¤Î»þ´Ö¤¬ÍøÍÑ¤µ¤ì¤Þ¤¹¡£¡ÊÎã¡§2011-07-20\_12-00-00¡Ë
+\item {\tt -l} ¥ª¥×¥·¥ç¥ó¤Ï¥í¥°½ÐÎÏÀè¥Õ¥¡¥¤¥ë¤ò»ØÄê¤·¤Þ¤¹¡£Ìµ»ØÄê¤Î¾ì¹ç¤ÏÉ¸½à½ÐÎÏ¤Ë½ÐÎÏ¤µ¤ì¤Þ¤¹¡£
+\end{itemize}
+
 
 \subsubsection{¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë¤Î¹½Â¤}
 vcd-dump.rb ¤Ï \$VCDKIT/data/vcd-dump/TIMESTAMP ÇÛ²¼¤Ë°Ê²¼¤Î·Á¤ÇÃê½Ð¥Ç¡¼¥¿¤ò¥À¥ó¥×¤·¤Þ¤¹¡£
@@ -165,6 +180,7 @@ $VCDKIT/data/vcd-dump/TIMESTAMP
 }
 
 \subsubsection{¥³¥Þ¥ó¥É¥ª¥×¥·¥ç¥ó°ìÍ÷}
+\label{sec:vcd-dump-opts}
 ÍøÍÑ¤Ç¤­¤ë¥³¥Þ¥ó¥É¥ª¥×¥·¥ç¥ó¤Î°ìÍ÷¤Ï°ú¿ô¤Ë{\tt -h}¤ò»ØÄê¤¹¤ë¤ÈÉ½¼¨¤µ¤ì¤Þ¤¹¡£
 
 {\footnotesize
@@ -189,16 +205,21 @@ Usage: vcd-dump.rb [options]
 vcd-dump.rb ¤ÇÃê½Ð¤·¤¿ XML¥Ç¡¼¥¿¤ò¤â¤È¤Ë³Æ¼ï¥ì¥Ý¡¼¥ÈºîÀ®¤·¤Þ¤¹¡£
 
 \subsubsection{»ÈÍÑÎã}
-\paragraph{¥ì¥Ý¡¼¥ÈÌ¤ºîÀ®¤Î¤¹¤Ù¤Æ¤Î¥À¥ó¥×¥Ç¡¼¥¿¤«¤é¥ì¥Ý¡¼¥È¤òºîÀ®¤¹¤ë¡£}
+\paragraph{¥ì¥Ý¡¼¥ÈÌ¤ºîÀ®¤Î¤¹¤Ù¤Æ¤Î¥À¥ó¥×¥Ç¡¼¥¿¤«¤é¥ì¥Ý¡¼¥È¤òºîÀ®¤¹¤ë}
 
 \begin{verbatim}
 $ vcd-report.rb
 \end{verbatim}
 
-vcd-report.rb ¤Ï¥Ç¥Õ¥©¥ë¥È¤Ç \$VCDKIT/data/vcd-dump°Ê²¼¤Î¤¹¤Ù¤Æ¤Î¥Ç¥£¥ì¥¯¥È¥ê¤ò¸¡º÷¤·¡¢
-\$VCDKIT/data/vcd-report °Ê²¼¤Ë¥ì¥Ý¡¼¥È¤òºîÀ®¤·¤Þ¤¹¡£¡ÊÎã¡§\$VCDKIT/data/vcd-dump/2011-07-01\_00-00-00
-¤Î¥ì¥Ý¡¼¥È¤ò \$VCDKIT/data/vcd-report/2011-07-01\_00-00-00¤ËºîÀ®¡Ë´û¤Ë¥ì¥Ý¡¼¥ÈºîÀ®¤¬¹Ô¤ï¤ì¤Æ¤¤¤ë
-¥À¥ó¥×¥Ç¡¼¥¿¤Ï¥¹¥­¥Ã¥×¤µ¤ì¤Þ¤¹¡£
+\begin{itemize}
+\item \$VCDKIT/data/vcd-dump°Ê²¼¤Î¤¹¤Ù¤Æ¤Î¥Ç¥£¥ì¥¯¥È¥ê¤ò¸¡º÷¤·¡ÊTIMESTAMP¤òÊÝ»ý¤·¤¿·Á¤Ç¡Ë
+Æ±¤¸¥Ç¥£¥ì¥¯¥È¥ê¹½À®¤Ç \$VCDKIT/data/vcd-report °Ê²¼¤Ë¥ì¥Ý¡¼¥È¤òºîÀ®¤·¤Þ¤¹¡£
+¡ÊÎã¡§\$VCDKIT/data/vcd-dump/2011-07-01\_00-00-00
+¤Î¥ì¥Ý¡¼¥È¤ò \$VCDKIT/data/vcd-report/2011-07-01\_00-00-00¤ËºîÀ®¡Ë
+\item ¥Ç¥Õ¥©¥ë¥È¤Ç¤Ï ´û¤Ë¥ì¥Ý¡¼¥ÈºîÀ®¤¬¹Ô¤ï¤ì¤Æ¤¤¤ë¥À¥ó¥×¥Ç¡¼¥¿¤Ï¥¹¥­¥Ã¥×¤µ¤ì¤Þ¤¹¡£¶¯À©Åª¤Ë
+¥ì¥Ý¡¼¥È¤ÎºÆºîÀ®¤ò¹Ô¤¦¾ì¹ç¤Ë¤Ï{\tt -f (--force)}¥ª¥×¥·¥ç¥ó¤ò»ØÄê¤·¤Þ¤¹¡£
+\item ¥³¥Þ¥ó¥É¥ª¥×¥·¥ç¥ó¤Î¾ÜºÙ¤Ë¤Ä¤¤¤Æ¤Ï\ref{sec:vcd-report-opts}¤ò»²¾È²¼¤µ¤¤¡£
+\end{itemize}
 
 \subsubsection{¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë¤Î¹½Â¤}
 vcd-report.rb ¤Ï \$VCDKIT/data/vcd-report ÇÛ²¼¤Ë°Ê²¼¤Î·Á¤Ç³Æ¼ï¥ì¥Ý¡¼¥È¥Õ¥¡¥¤¥ë¤òºîÀ®¤·¤Þ¤¹¡£
@@ -246,6 +267,7 @@ VmTemplateParams.xml & vApp TemplateÆâ²¾ÁÛ¥Þ¥·¥ó¤Î¥Ñ¥é¥á¡¼¥¿°ìÍ÷ \\
 \end{table}
 
 \subsubsection{¥³¥Þ¥ó¥É¥ª¥×¥·¥ç¥ó°ìÍ÷}
+\label{sec:vcd-report-opts}
 ÍøÍÑ¤Ç¤­¤ë¥³¥Þ¥ó¥É¥ª¥×¥·¥ç¥ó¤Î°ìÍ÷¤Ï°ú¿ô¤Ë{\tt -h}¤ò»ØÄê¤¹¤ë¤ÈÉ½¼¨¤µ¤ì¤Þ¤¹¡£
 
 {\footnotesize
@@ -275,9 +297,7 @@ vcd-dump.rb ¤ÇÃê½Ð¤·¤¿ XML¥Ç¡¼¥¿¤ò¤â¤È¤ËvAppÀßÄê¾ðÊó¤Î¥ê¥¹¥È¥¢¤ò¹Ô¤¤¤Þ¤¹¡£
 \subsubsection{»ÈÍÑÎã}
 \paragraph{¥ê¥¹¥È¥¢Æü»þ¤ÈvAppÌ¾¤ò»ØÄê¤·¤ÆvAppÀßÄê¾ðÊó¤ò¥ê¥¹¥È¥¢¤¹¤ë¡Ê¥¤¥ó¥¿¥é¥¯¥Æ¥£¥Ö¥â¡¼¥É¡Ë}
 
-\begin{description}
-\item[¥¹¥Æ¥Ã¥×1] ¥¿¡¼¥²¥Ã¥È¤Î»ØÄê
-\end{description}
+\subparagraph{¥¹¥Æ¥Ã¥×1:  ¥¿¡¼¥²¥Ã¥È¤Î»ØÄê}
 
 {\footnotesize
 \begin{verbatim}
@@ -296,9 +316,7 @@ Select VAPP:
 \end{verbatim}
 }
 
-\begin{description}
-\item[¥¹¥Æ¥Ã¥×2] ¸½»þÅÀ¤Ç¤Îº¹Ê¬É½¼¨¡¢¤ª¤è¤Ó¥ê¥¹¥È¥¢¼Â¹Ô¤Î³ÎÇ§
-\end{description}
+\subparagraph{¥¹¥Æ¥Ã¥×2:  ¸½»þÅÀ¤Ç¤Îº¹Ê¬É½¼¨¡¢¤ª¤è¤Ó¥ê¥¹¥È¥¢¼Â¹Ô¤Î³ÎÇ§}
 
 {\footnotesize
 \begin{verbatim}
@@ -327,9 +345,7 @@ Continue (yN)? y
 \end{verbatim}
 }
 
-\begin{description}
-\item[¥¹¥Æ¥Ã¥×3] ¥ê¥¹¥È¥¢¼Â»Ü¡¢¤ª¤è¤Ó¥ê¥¹¥È¥¢´°Î»¸å¤Îº¹Ê¬É½¼¨
-\end{description}
+\subparagraph{¥¹¥Æ¥Ã¥×3: ¥ê¥¹¥È¥¢¼Â»Ü¡¢¤ª¤è¤Ó¥ê¥¹¥È¥¢´°Î»¸å¤Îº¹Ê¬É½¼¨}
 {\footnotesize
 \begin{verbatim}
 ...
@@ -358,6 +374,42 @@ Usage: vcd-restore.rb [cmd-options]
 }
 
 %
+% vcd-trend.rb
+%
+\subsection{vcd-trend.rb} 
+vcd-report.rb ¤ÇºîÀ®¤·¤¿¥ì¥Ý¡¼¥È¥Ç¡¼¥¿¤ò¤â¤È¤Ë¥È¥ì¥ó¥ÉÊ¬ÀÏ¤ò¹Ô¤¦¤¿¤á¤Î³Æ¼ï¥ì¥Ý¡¼¥È¤òºîÀ®¤·¤Þ¤¹¡£
+
+\subsubsection{»ÈÍÑÎã}
+\paragraph{´ûÂ¸¤Î¥ì¥Ý¡¼¥È¥Ç¡¼¥¿¤«¤éWindows¥²¥¹¥ÈOS¤Î»ÈÍÑ¾õ¶·¥ê¥¹¥È¤òºîÀ®¤¹¤ë}
+
+\begin{verbatim}
+$ vcd-trend.rb
+\end{verbatim}
+
+\begin{itemize}
+\item \$VCDKIT/data/vcd-report°Ê²¼¤Î¤¹¤Ù¤Æ¤Î¥Ç¥£¥ì¥¯¥È¥ê¤ò¸¡º÷¤·¡¢¸¡ÃÎ¤µ¤ì¤¿¥ì¥Ý¡¼¥È¥Ç¡¼¥¿¶è´ÖÆâ¤Î¥È¥ì¥ó¥É¥ì¥Ý¡¼¥È¤òºîÀ®¤·¤Þ¤¹¡£
+
+Îã¡§
+\begin{quote}
+\$VCDKIT/data/vcd-report ÇÛ²¼¤Ë 2011-07-01\_00-00-00 ¤«¤é 2011-07-31\_00-00-00¤Þ¤Ç¤Î¥ì¥Ý¡¼¥È¥Ç¥£¥ì¥¯¥È¥ê¤¬¤¢¤ë¾ì¹ç¡¢
+\$VCDKIT/data/vcd-trend/2011-07-01\_00-00-00\_\_2011-07-31\_00-00-00ÇÛ²¼¤Ë¥È¥ì¥ó¥É¥ì¥Ý¡¼¥È¤òºîÀ®¤·¤Þ¤¹¡£
+\end{quote}
+
+\end{itemize}
+
+\subsubsection{ºîÀ®¤µ¤ì¤ë¥ì¥Ý¡¼¥È¤Î¼ïÎà}
+
+\begin{table}[H]
+\begin{tabular}{lm{7.5cm}}
+\toprule
+\textbf{¥Õ¥¡¥¤¥ëÌ¾}¡¡& \textbf{ÀâÌÀ} \\ 
+\midrule
+WinGuest.XML & ³ÆVDCËè/³Æ¥²¥¹¥ÈOS¥¿¥¤¥×Ëè¤ÎVM¿ô¤ÎÆâÌõ¡ÊºÇ¾¯¿ô¡¢ºÇÂç¿ô¡¢Ê¿¶ÑÃÍ¡Ë\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%
 % vcd-ex.rb
 %
 \subsection{vcd-ex.rb}
@@ -375,21 +427,21 @@ vCloud Director Cell ¤È vCenter ´Ö¡¢¤ª¤è¤Ó vCloud Director Cell¤È ESX¥Û¥¹¥È´Ö¤Î¥
 
 vCloud Director Cell¤È¤¹¤Ù¤Æ¤ÎESXi ¥Û¥¹¥È´Ö¤Ç¤Î¥»¥Ã¥·¥ç¥ó¤ò°Ý»ý¤¹¤ë¤¿¤á¤Ë¡¢³ÆESXi¤Ë
 ¥µ¥à¥Í¡¼¥ë¼èÆÀÂÐ¾Ý¤ÎVM¤òÇÛÃÖ¤¹¤ëÉ¬Í×¤¬¤¢¤ê¤Þ¤¹¡£°Ê²¼¤Ë¸½ºß¤ÎÇÛÃÖ¾õÂÖ¤òµ­¤·¤Þ¤¹¡£
-(³Æ²¾ÁÛ¥Þ¥·¥ó¤ÏDRS¤Î¥¢¥Õ¥£¥Ë¥Æ¥£¥ë¡¼¥ë¤òÍÑ¤¤¤Æ¥Û¥¹¥È¤ËÉ³ÉÕ¤±¤µ¤ì¤Æ¤¤¤Þ¤¹)
+³Æ²¾ÁÛ¥Þ¥·¥ó¤ÏDRS¤Î¥¢¥Õ¥£¥Ë¥Æ¥£¥ë¡¼¥ë¤òÍÑ¤¤¤Æ¥Û¥¹¥È¤ËÉ³ÉÕ¤±¤µ¤ì¤Æ¤¤¤Þ¤¹¡£
 
 \begin{table}[H]
 \begin{tabular}{lllll}
 \toprule
-\textbf{ORG}¡¡& \textbf{VDC} & \textbf{VAPP} & \textbf{VM} & \textbf{ESX} \\ 
+\textbf{VDC} & \textbf{VAPP} & \textbf{VM} & \textbf{ESX} \\ 
 \midrule
-Admin & Basic - Admin & VCDEX-B01 & VCDEX-158$\sim$ &  CGSdhb-158$\sim$ \\
- &  &  & VCDEX-171 &  CGSdhb-171 \\
-Admin & Basic Backup - Admin & VCDEX-BB01 & VCDEX-172$\sim$ &  CGSdhb-172$\sim$ \\
- &  &  & VCDEX-177 &  CGSdhb-177 \\
-Admin & Committed - Admin & VCDEX-C01 & VCDEX-138$\sim$ &  CGSdhb-138$\sim$ \\
- &  &  & VCDEX-151 &  CGSdhb-151 \\
-Admin & Committed Backup - Admin & VCDEX-CB01 & VCDEX-152$\sim$ &  CGSdhb-152$\sim$ \\
- &  &  & VCDEX-157 &  CGSdhb-157 \\
+Basic - Admin & VCDEX-B01 & VCDEX-158$\sim$ &  CGSdhb-158$\sim$ \\
+ &  & VCDEX-171 &  CGSdhb-171 \\
+Basic Backup - Admin & VCDEX-BB01 & VCDEX-172$\sim$ &  CGSdhb-172$\sim$ \\
+ &  & VCDEX-177 &  CGSdhb-177 \\
+Committed - Admin & VCDEX-C01 & VCDEX-138$\sim$ &  CGSdhb-138$\sim$ \\
+ &  & VCDEX-151 &  CGSdhb-151 \\
+Committed Backup - Admin & VCDEX-CB01 & VCDEX-152$\sim$ &  CGSdhb-152$\sim$ \\
+ &  & VCDEX-157 &  CGSdhb-157 \\
 \bottomrule
 \end{tabular}
 \end{table}
