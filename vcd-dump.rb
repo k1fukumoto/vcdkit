@@ -23,21 +23,15 @@ options={
   :target => :all,
 }
 
-vcd1 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
-vcd2 = ['tvcd.vcdc.whitecloud.jp','System','vcdadminl']
-
-vsp1 = ['10.128.0.57','vcdadmin']
-vsp2 = ['10.128.1.57','vcdadmin']
-
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-dump.rb [options]"
 
   opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
     case o[0]
     when "1"
-      options[:vcd] = vcd1
+      options[:vcd] = $VCD1
     when "2"
-      options[:vcd] = vcd2
+      options[:vcd] = $VCD2
     else
       options[:vcd] = o
     end
@@ -45,9 +39,9 @@ optparse = OptionParser.new do |opt|
   opt.on('-c','--vcenter HOST,USER',Array,'vCenter login parameters') do |o|
     case o[0]
     when "1"
-      options[:vsp] = vsp1
+      options[:vsp] = $VSP1
     when "2"
-      options[:vsp] = vsp2
+      options[:vsp] = $VSP2
     else
       options[:vsp] = o
     end

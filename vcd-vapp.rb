@@ -24,18 +24,15 @@ options = {
   :input => "./data/vcd-dump",
 }
 
-vcd1 = ['vcd.vhost.ultina.jp','System','vcdadminl']
-vcd2 = ['vcd.vcdc.whitecloud.jp','System','vcdadmin']
-
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-vapp.rb CMD [cmd-options]"
   
   opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
     case o[0]
     when "1"
-      options[:vcd] = vcd1
+      options[:vcd] = $VCD1
     when "2"
-      options[:vcd] = vcd2
+      options[:vcd] = $VCD2
     else
       options[:vcd] = o
     end

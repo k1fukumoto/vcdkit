@@ -17,11 +17,7 @@ $: << File.dirname(__FILE__) + "/lib"
 require 'optparse'
 require 'vcdkit'
 
-options={
-}
-
-vcd1 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
-vcd2 = ['tvcd.vcdc.whitecloud.jp','System','vcdadminl']
+options={}
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-ex.rb [options]"
@@ -29,9 +25,9 @@ optparse = OptionParser.new do |opt|
   opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
     case o[0]
     when "1"
-      options[:vcd] = vcd1
+      options[:vcd] = $VCD1
     when "2"
-      options[:vcd] = vcd2
+      options[:vcd] = $VCD2
     else
       options[:vcd] = o
     end
@@ -69,11 +65,11 @@ end
 VCDEX_DIR   = './data/vcd-ex'
 VCDEX_ORG   = 'Admin'
 VCDEX_JOBS  = {
-  vcd2 => [
+  $VCD2 => [
            Target.new('Basic Backup - Admin','VCDEX-BB01'),
            Target.new('Committed Backup - Admin','VCDEX-CB01'),
           ],
-  vcd1 => [
+  $VCD1 => [
            Target.new('Basic Backup - Admin','VCDEX-BB01'),
            Target.new('Committed Backup - Admin','VCDEX-CB01'),
            Target.new('Basic - Admin','VCDEX-B01'),

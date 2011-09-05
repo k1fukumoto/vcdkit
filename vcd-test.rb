@@ -20,11 +20,9 @@ require 'pp'
 #
 # Process command args
 #
-vcd1 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
-vcd2 = ['tvcd.vcdc.whitecloud.jp','System','vcdadminl']
 
 options={
-  :vcd => vcd2
+  :vcd => $VCD1
 }
 
 optparse = OptionParser.new do |opt|
@@ -33,9 +31,9 @@ optparse = OptionParser.new do |opt|
   opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
     case o[0]
     when "1"
-      options[:vcd] = vcd1
+      options[:vcd] = $VCD1
     when "2"
-      options[:vcd] = vcd2
+      options[:vcd] = $VCD2
     else
       options[:vcd] = o
     end

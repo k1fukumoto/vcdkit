@@ -23,18 +23,15 @@ options = {
   :target => :all,
 }
 
-vcd1 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
-vcd2 = ['tvcd.vcdc.whitecloud.jp','System','vcdadminl']
-
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-report.rb [cmd-options]"
   
   opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
     case o[0]
     when "1"
-      options[:vcd] = vcd1
+      options[:vcd] = $VCD1
     when "2"
-      options[:vcd] = vcd2
+      options[:vcd] = $VCD2
     else
       options[:vcd] = o
     end
