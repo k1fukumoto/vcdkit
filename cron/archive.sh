@@ -11,5 +11,9 @@ do
     echo "Creating tar archive: $t"
       tar zcf $dir/$file.tgz -C $dir $file && rm -fr $t
   done
-  mv $VCDDATA/$d/*.tgz $VCDDATA/$d/archive
+
+  for tgz in `ls $VCDDATA/$d/*.tgz 2>/dev/null`
+  do
+    mv $tgz $VCDDATA/$d/archive
+  done
 done
