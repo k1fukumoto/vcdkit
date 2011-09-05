@@ -3,7 +3,7 @@
 \newcommand{\thetitle}{vCloud Datacenter Toolkit - Users Guide}
 \newcommand{\theauthor}{Kaoru Fukumoto}
 \newcommand{\email}{kfukumot@vmware.com}
-\newcommand{\version}{1.0}
+\newcommand{\version}{1.1}
 \newcommand{\customer}{SoftBank Telecom}
 \newcommand{\COMMON}{../common}
 
@@ -26,6 +26,9 @@
 
 2011/08/18 & 1.0 & 福本　薫 & 
 最初のバージョン\\
+
+2011/08/25 & 1.1 & 福本　薫 & 
+データアーカイビングの項追加\\
 
 \hline
 \end{tabular}
@@ -445,4 +448,27 @@ Committed Backup - Admin & VCDEX-CB01 & VCDEX-152$\sim$ &  CGSdhb-152$\sim$ \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\section{管理}
+\subsection{データアーカイビング}
+vcdkitインストール時に、以下のスクリプト(\$VCDKIT/cron/archive.sh)が毎時30分に実行するように設定されます。
+{\footnotesize 
+\begin{verbatim}
+1 | for d in vcd-dump vcd-report
+2 | do
+3 |   for t in `find $VCDDATA/$d -maxdepth 1 -mindepth 1 -mtime +7 -type d`
+4 |   do
+5 |     file=`basename $t`
+6 |     dir=`dirname $t`
+7 |     echo "Creating tar archive: $t"
+8 |     tar zcf $dir/$file.tgz -C $dir $file && rm -fr $t
+9 |   done
+10|   mv $VCDDATA/$d/*.tgz $VCDDATA/$d/archive
+11| done
+\end{verbatim}
+}
+\$VCDDATA/vcd-dumpおよび\$VCDDATA/vcd-report直下の、７日前より古いすべてのディレクトリ
+（3行目のfindコマンド）が、圧縮されたtarアーカイブに変換されます。何らかの理由でアーカイブ作成に
+失敗した場合には元のディレクトリはそのまま残ります（8行目の\&\&で連結されたtarおよびrmコマンド）。
+作成されたtarアーカイブはarchiveディレクトリに移動します（10行目のmvコマンド）。
 \end{document}
