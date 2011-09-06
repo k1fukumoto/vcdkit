@@ -54,7 +54,23 @@ end
 
 $log = VCloud::Logger.new(options[:logfile])
 
-repdirs = Dir.glob("#{options[:input]}/*-*-*_*-*-*").select{|d| File.directory?(d)}.sort
+# Determine target report data range
+pm = (Date.parse(Time.now.to_s) << 1) # previous month
+first = Date.civil(pm.year,pm.month,1) 
+last = Date.civil(pm.year,pm.month,-1)
+
+repdirs = Dir.glob("#{options[:input]}/*-*-*_*-*-*").select do |d| 
+  if (File.directory?(d))
+    d =~ /\/(\d{4})-(\d{2})-(\d{2})/
+    dt = Date.civil($1.to_i,$2.to_i,$3.to_i)
+    first < dt && dt < last
+  else
+    false
+  end
+end.sort
+puts repdirs
+exit
+
 outdir = "#{options[:output]}/#{File.basename(repdirs.first)}__#{File.basename(repdirs.last)}"
 FileUtils.mkdir_p(outdir) unless File.exists? outdir
 
