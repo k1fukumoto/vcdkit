@@ -1,19 +1,24 @@
 #!/bin/sh
 
-VCDDATA=/opt/vmware/vcdkit/data
+export VCDDATA=/opt/vmware/vcdkit/data
 
-for d in vcd-dump vcd-report
-do
-  for t in `find $VCDDATA/$d -maxdepth 1 -mindepth 1 -mtime +7 -type d`
-  do
-    file=`basename $t`
-    dir=`dirname $t`
-    echo "Creating tar archive: $t"
-      tar zcf $dir/$file.tgz -C $dir $file && rm -fr $t
-  done
+archive() {
+    tooldir=$1
+    days=$2
 
-  for tgz in `ls $VCDDATA/$d/*.tgz 2>/dev/null`
-  do
-    mv $tgz $VCDDATA/$d/archive
-  done
-done
+    for t in `find $VCDDATA/$tooldir -maxdepth 1 -mindepth 1 -mtime +$days -type d`
+    do
+	file=`basename $t`
+	dir=`dirname $t`
+	echo "Creating tar archive: $t"
+        echo tar zcf $dir/$file.tgz -C $dir && \\
+            rm -fr $t && \\
+            mv $dir/$file.tgz $VCDDATA/$tooldir/archive
+    done
+}
+
+# Archive vcd-dump data which is older than 7 days
+archive vcd-dump 7
+# Archive vcd-report data which is older than 31 days
+archive vcd-report 31
+
