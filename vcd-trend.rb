@@ -15,6 +15,7 @@
 #######################################################################################
 $: << File.dirname(__FILE__) + "/lib"
 require 'optparse'
+require 'date'
 require 'vcdkit'
 
 options = {
@@ -63,13 +64,11 @@ repdirs = Dir.glob("#{options[:input]}/*-*-*_*-*-*").select do |d|
   if (File.directory?(d))
     d =~ /\/(\d{4})-(\d{2})-(\d{2})/
     dt = Date.civil($1.to_i,$2.to_i,$3.to_i)
-    first < dt && dt < last
+    first <= dt && dt <= last
   else
     false
   end
 end.sort
-puts repdirs
-exit
 
 outdir = "#{options[:output]}/#{File.basename(repdirs.first)}__#{File.basename(repdirs.last)}"
 FileUtils.mkdir_p(outdir) unless File.exists? outdir
