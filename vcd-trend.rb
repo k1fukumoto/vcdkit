@@ -107,3 +107,27 @@ open("#{outdir}/WinGuest.xml",'w') do |f|
                  read,0,'>').result(binding)
 end
 
+require 'pony'
+if false
+Pony.mail(:to => 'k1fukumoto@gmail.com',
+          :from => 'kfukumot@vmware.com', 
+
+          :subject => 'Monthly Win Guest Usage Report', 
+          :body => 'Monthly Win Guest Usage Report',
+
+          :attachments => {
+            "WinGuest.xml" =>
+            File.read("#{outdir}/WinGuest.xml")
+          },
+
+          :via => :smtp,
+          :via_options => { 
+            :address              => 'smtp.gmail.com',
+            :port                 => '587',
+            :enable_starttls_auto => true,
+            :user_name            => 'k1fukumoto@gmail.com',
+            :password             => '****',
+            :authentication       => :plain,
+            :domain               => "localhost.localdomain"
+          })
+end
