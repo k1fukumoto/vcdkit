@@ -11,8 +11,8 @@ archive() {
 	file=`basename $t`
 	dir=`dirname $t`
 	echo "Creating tar archive: $t"
-        echo tar zcf $dir/$file.tgz -C $dir && \\
-            rm -fr $t && \\
+        tar zcf $dir/$file.tgz -C $dir $file && \
+            rm -fr $t && \
             mv $dir/$file.tgz $VCDDATA/$tooldir/archive
     done
 }
