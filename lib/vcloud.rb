@@ -488,9 +488,9 @@ EOS
   end
 end
 
-$VCD1 = ['vcd.vcdc.whitecloud.jp','System','vcdadminl']
+$VCD1 = ['vcd.vcdc.whitecloud.jp','System','vcloud-sc']
 $VCD2 = ['tvcd.vcdc.whitecloud.jp','System','vcloud-sc']
 
-$VSP1 = ['10.128.0.57','vcdadmin']
+$VSP1 = ['10.128.0.57','vcloud-vcd']
 $VSP2 = ['10.128.1.57','vcloud-vcd']
 
