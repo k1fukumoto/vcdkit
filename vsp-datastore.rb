@@ -66,15 +66,19 @@ begin
     dc.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).each do |c|
       c.host.each do |h|
         esx = VSphere::VCenter.new
-puts h.name
         esx.connect(h.name,'root',esxpass)
         fm = esx.scon.fileManager
         esx.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
           dc.datastore.each do |ds|
             dspath = "[#{ds.name}] VCDKIT_TMPDIR"
             $log.info("Test datastore access #{h.name} >> #{ds.name}")
-#            fm.MakeDirectory('name' => dspath)
-#            fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
+            begin
+            # ensure no left-overs from the last run
+              fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
+            rescue Exception => e
+            end
+            fm.MakeDirectory('name' => dspath)
+            fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
           end
         end
       end
