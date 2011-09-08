@@ -27,6 +27,17 @@ options = {
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-report.rb [cmd-options]"
   
+  opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
+    case o[0]
+    when "1"
+      options[:vcd] = $VCD1
+    when "2"
+      options[:vcd] = $VCD2
+    else
+      options[:vcd] = o
+    end
+  end
+
   opt.on('-i','--input DIR','Specify root directory of the report data') do |o|
     options[:input] = o
   end
@@ -108,12 +119,20 @@ open("#{outdir}/WinGuest.xml",'w') do |f|
 end
 
 require 'pony'
-if false
-Pony.mail(:to => 'k1fukumoto@gmail.com',
-          :from => 'kfukumot@vmware.com', 
+hname = `hostname`.chomp
+vcdhost = options[:vcd][0]
 
-          :subject => 'Monthly Win Guest Usage Report', 
-          :body => 'Monthly Win Guest Usage Report',
+subject = "vCDC guest OS usage report: [#{vcdhost}] #{pm.year}/#{pm.month}"
+body = <<EOS
+TARGET VCD: #{vcdhost}
+REPORT CREATED: #{Time.now}
+EOS
+
+Pony.mail(:to => 'k1fukumoto@gmail.com',
+          :from => "#{hname}@dhs.jtidc.jp", 
+
+          :subject => subject,
+          :body => body,
 
           :attachments => {
             "WinGuest.xml" =>
@@ -122,12 +141,7 @@ Pony.mail(:to => 'k1fukumoto@gmail.com',
 
           :via => :smtp,
           :via_options => { 
-            :address              => 'smtp.gmail.com',
-            :port                 => '587',
-            :enable_starttls_auto => true,
-            :user_name            => 'k1fukumoto@gmail.com',
-            :password             => '****',
-            :authentication       => :plain,
+            :address              => '10.121.0.113',
             :domain               => "localhost.localdomain"
           })
-end
+
