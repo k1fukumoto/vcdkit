@@ -62,18 +62,19 @@ begin
 
   esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
 
-  fm = vc.scon.fileManager
   vc.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
     dc.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).each do |c|
       c.host.each do |h|
         esx = VSphere::VCenter.new
+puts h.name
         esx.connect(h.name,'root',esxpass)
+        fm = esx.scon.fileManager
         esx.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
           dc.datastore.each do |ds|
             dspath = "[#{ds.name}] VCDKIT_TMPDIR"
-            $log.info("Testing datastore access from #{h.name} to #{ds.name}")
-            # fm.MakeDirectory('name' => dspath)
-            # fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
+            $log.info("Test datastore access #{h.name} >> #{ds.name}")
+#            fm.MakeDirectory('name' => dspath)
+#            fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
           end
         end
       end
