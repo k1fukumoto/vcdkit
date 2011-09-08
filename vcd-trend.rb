@@ -119,7 +119,7 @@ repdirs.each do |d|
           when /Microsoft Windows/
             'Other Windows'
           else
-            rd[6]
+            'Other OS'
           end
     summary[rd[1]][ostype] = {} if (summary[rd[1]][ostype].nil?)
 
@@ -163,7 +163,9 @@ Pony.mail(:to => 'k1fukumoto@gmail.com',
 
           :attachments => {
             "GuestList.xml" =>
-            File.read("#{outdir}/GuestList.xml")
+            File.read("#{outdir}/GuestList.xml"),
+            "GuestSummary.xml" =>
+            File.read("#{outdir}/GuestSummary.xml")
           },
 
           :via => :smtp,
