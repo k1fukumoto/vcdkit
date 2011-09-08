@@ -85,6 +85,7 @@ outdir = "#{options[:output]}/#{File.basename(repdirs.first)}__#{File.basename(r
 FileUtils.mkdir_p(outdir) unless File.exists? outdir
 
 data = {}
+summary = {}
 repdirs.each do |d|
   next unless File.exists?("#{d}/VMList.xml")
   doc = REXML::Document.new(File.new("#{d}/VMList.xml").read)
@@ -103,18 +104,43 @@ repdirs.each do |d|
     end
     next if rd[6].nil?
 
+    # org
     data[rd[1]] = {} if (data[rd[1]].nil?)
+    summary[rd[1]] = {} if (summary[rd[1]].nil?)
+    
+    # vdc
     data[rd[1]][rd[2]] = {} if (data[rd[1]][rd[2]].nil?)
-    data[rd[1]][rd[2]][rd[6]] = {} if (data[rd[1]][rd[2]][rd[6]].nil?)
-    data[rd[1]][rd[2]][rd[6]][tree] = 0 if (data[rd[1]][rd[2]][rd[6]][tree].nil?)
 
+    # os
+    data[rd[1]][rd[2]][rd[6]] = {} if (data[rd[1]][rd[2]][rd[6]].nil?)
+    ostype = case rd[6]
+          when /^Microsoft Windows Server/
+            'Windows Server'
+          when /Microsoft Windows/
+            'Other Windows'
+          else
+            rd[6]
+          end
+    summary[rd[1]][ostype] = {} if (summary[rd[1]][ostype].nil?)
+
+    # tree
+    data[rd[1]][rd[2]][rd[6]][tree] = 0 if (data[rd[1]][rd[2]][rd[6]][tree].nil?)
     data[rd[1]][rd[2]][rd[6]][tree] += 1
+
+    summary[rd[1]][ostype][tree] = 0 if (summary[rd[1]][ostype][tree].nil?)
+    summary[rd[1]][ostype][tree] += 1
   end
 end
 
 $log.info("Saving GuestList.xml...")
 open("#{outdir}/GuestList.xml",'w') do |f|
   f.puts ERB.new(File.new("template/vcd-trend/GuestList_Excel.erb").
+                 read,0,'>').result(binding)
+end
+
+$log.info("Saving GuestSummary.xml...")
+open("#{outdir}/GuestSummary.xml",'w') do |f|
+  f.puts ERB.new(File.new("template/vcd-trend/GuestSummary_Excel.erb").
                  read,0,'>').result(binding)
 end
 
