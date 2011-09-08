@@ -68,11 +68,13 @@ begin
       c.host.each do |h|
         esx = VSphere::VCenter.new
         esx.connect(h.name,'root',esxpass)
-        esx.root.childEntity.grep(RbVmomi::VIM::Datastore).each do |ds|
-          dspath = "[#{ds.name}] VCDKIT_TMPDIR"
-          $log.info("Testing datastore access from #{h.name} to #{ds.name}")
-#          fm.MakeDirectory('name' => dspath)
-#          fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
+        esx.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
+          dc.datastore.each do |ds|
+            dspath = "[#{ds.name}] VCDKIT_TMPDIR"
+            $log.info("Testing datastore access from #{h.name} to #{ds.name}")
+            # fm.MakeDirectory('name' => dspath)
+            # fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
+          end
         end
       end
     end
