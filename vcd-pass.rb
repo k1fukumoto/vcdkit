@@ -29,6 +29,9 @@ optparse = OptionParser.new do |opt|
   opt.on('-c','--vcenter','Change login password for vCenter') do |o|
     options[:apps] << {:name => 'vCenter', :file => '.vc'}
   end
+  opt.on('-e','--esx','Change login password for ESX') do |o|
+    options[:apps] << {:name => 'ESX', :file => '.esx'}
+  end
   opt.on('-b','--chargeback','Change login password for vCenter Chargeback') do |o|
     options[:apps] << {:name => 'vCenter Chargeback', :file =>'.vcb'}
   end

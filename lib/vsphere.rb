@@ -92,8 +92,8 @@ module VSphere
   class VCenter
     attr_reader :root,:scon
 
-    def connect(host,user)
-      pass = VCloud::SecurePass.new().decrypt(File.new('.vc','r').read)
+    def connect(host,user,pass=nil)
+      pass ||= VCloud::SecurePass.new().decrypt(File.new('.vc','r').read)
       @name = host
 
       @vim = RbVmomi::VIM.
