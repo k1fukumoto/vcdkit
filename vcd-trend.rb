@@ -112,19 +112,20 @@ repdirs.each do |d|
   end
 end
 
-$log.info("Saving WinGuest.xml")
-open("#{outdir}/WinGuest.xml",'w') do |f|
-  f.puts ERB.new(File.new("template/vcd-trend/WinGuest_Excel.erb").
+$log.info("Saving GuestList.xml...")
+open("#{outdir}/GuestList.xml",'w') do |f|
+  f.puts ERB.new(File.new("template/vcd-trend/GuestList_Excel.erb").
                  read,0,'>').result(binding)
 end
 
+$log.info("Sending Emails...")
 require 'pony'
 hname = `hostname`.chomp
 vcdhost = options[:vcd][0]
 
 subject = "vCDC guest OS usage report: [#{vcdhost}] #{pm.year}/#{pm.month}"
 body = <<EOS
-TARGET VCD: #{vcdhost}
+VCD: #{vcdhost}
 REPORT CREATED: #{Time.now}
 EOS
 
@@ -135,8 +136,8 @@ Pony.mail(:to => 'k1fukumoto@gmail.com',
           :body => body,
 
           :attachments => {
-            "WinGuest.xml" =>
-            File.read("#{outdir}/WinGuest.xml")
+            "GuestList.xml" =>
+            File.read("#{outdir}/GuestList.xml")
           },
 
           :via => :smtp,
@@ -144,4 +145,5 @@ Pony.mail(:to => 'k1fukumoto@gmail.com',
             :address              => '10.121.0.113',
             :domain               => "localhost.localdomain"
           })
+$log.info("Emails sent")
 
