@@ -90,7 +90,7 @@ module VSphere
   end
 
   class VCenter
-    attr_reader :root
+    attr_reader :root,:scon
 
     def connect(host,user)
       pass = VCloud::SecurePass.new().decrypt(File.new('.vc','r').read)
@@ -102,7 +102,8 @@ module VSphere
                   :password => pass, 
                   :insecure => true,
                 })
-      @root = @vim.serviceInstance.content.rootFolder
+      @scon = @vim.serviceInstance.content
+      @root = @scon.rootFolder
     end
 
     def vm(moref)
