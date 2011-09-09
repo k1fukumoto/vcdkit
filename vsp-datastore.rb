@@ -34,6 +34,10 @@ optparse = OptionParser.new do |opt|
     end
   end
 
+  opt.on('-c','--conf CONFFILE','Configuration file name') do |o|
+    options[:conf] = o
+  end
+
   opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
     options[:logfile] = o
   end
