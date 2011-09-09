@@ -34,7 +34,7 @@ optparse = OptionParser.new do |opt|
     end
   end
 
-  opt.on('-c','--conf CONFFILE','Configuration file name') do |o|
+  opt.on('-C','--conf CONFFILE','Configuration file name') do |o|
     options[:conf] = o
   end
 
@@ -78,11 +78,11 @@ begin
             $log.info("Test datastore access #{h.name} >> #{ds.name}")
             begin
             # ensure no left-overs from the last run
-              fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
+#              fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
             rescue Exception => e
             end
-            fm.MakeDirectory('name' => dspath)
-            fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
+#            fm.MakeDirectory('name' => dspath)
+#            fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
           end
         end
       end
