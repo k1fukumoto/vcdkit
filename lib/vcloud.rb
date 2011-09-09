@@ -354,10 +354,25 @@ EOS
 
     def connect(host,org,user)
       pass = VCloud::SecurePass.new().decrypt(File.new('.vcd','r').read)
-      @apiurl = "https://#{host}/api/v1.0"
-      resp = RestClient::Resource.new("#{@apiurl}/login",
-                                      :user => "#{user}@#{org}",
-                                      :password => pass).post(nil)
+
+      versions = REXML::Document.new(self.get("https://#{host}/api/versions")).
+        elements.inject('/SupportedVersions/VersionInfo/Version',{}) {|h,vi| h.update(vi.text=>true); h}
+
+      resp = nil
+      if(versions['1.5']) 
+        @apiurl = "https://#{host}/api"
+        resp = RestClient::Resource.new("#{@apiurl}/sessions",
+                                        :user => "#{user}@#{org}",
+                                        :password => pass).post(nil)
+
+      elsif(versions['1.0'])
+        @apiurl = "https://#{host}/api/v1.0"
+        resp = RestClient::Resource.new("#{@apiurl}/login",
+                                        :user => "#{user}@#{org}",
+                                        :password => pass).post(nil)
+      else
+        raise "No supported API versions found: #{versions.keys.join(',')}"
+      end
       @auth_token = {:x_vcloud_authorization => resp.headers[:x_vcloud_authorization]}
 
       @xml = self.get("#{@apiurl}/admin")
@@ -490,7 +505,39 @@ end
 
 $VCD1 = ['vcd.vcdc.whitecloud.jp','System','vcloud-sc']
 $VCD2 = ['tvcd.vcdc.whitecloud.jp','System','vcloud-sc']
+$VCD3 = ['vcd.vhost.ultina.jp','System','vcdadminl']
 
 $VSP1 = ['10.128.0.57','vcloud-vcd']
 $VSP2 = ['10.128.1.57','vcloud-vcd']
+$VSP3 = ['10.127.11.51','vcdadmin']
 
+
+def vcdopts(options,opt) 
+  opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
+    case o[0]
+    when "1"
+      options[:vcd] = $VCD1
+    when "2"
+      options[:vcd] = $VCD2
+    when "3"
+      options[:vcd] = $VCD3
+    else
+      options[:vcd] = o
+    end
+  end
+end
+
+def vcopts(options,opt)
+  opt.on('-c','--vcenter HOST,USER',Array,'vCenter login parameters') do |o|
+    case o[0]
+    when "1"
+      options[:vsp] = $VSP1
+    when "2"
+      options[:vsp] = $VSP2
+    when "3"
+      options[:vsp] = $VSP3
+    else
+      options[:vsp] = o
+    end
+  end
+end
