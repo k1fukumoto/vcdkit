@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dslist>
+  <esx>cgsdhb-136.vcst.vcdc.whitecloud.jp</esx>
+  <esx>cgsdhb-137.vcst.vcdc.whitecloud.jp</esx>
+  <datastore>DAS-CGSdhb-136</datastore>
+  <datastore>hdtbv1801</datastore>
+  <datastore>hdtcv2001</datastore>
+  <datastore>hntbv1701</datastore>
+  <datastore>hntcv1901</datastore>
+</dslist>
+

@@ -59,38 +59,69 @@ rescue Exception => e
 end
 
 $log = VCloud::Logger.new(options[:logfile])
+$testrun = true
+$esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
 
-begin
-  vc = VSphere::VCenter.new
-  vc.connect(*options[:vsp])
+def each_datastore(fm,ds)
+  dspath = "[#{ds.name}] VCDKIT_TMPDIR"
+  $log.info("Test datastore access: Datastore Path '#{dspath}'")
+  begin
+    # ensure no left-overs from the last run
+    unless ($testrun)
+      fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
+    end
+  rescue Exception => e
+  end
+  unless ($testrun)
+    fm.MakeDirectory('name' => dspath)
+    fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
+  end
+end
 
-  esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
+def each_esx(hostname,datastores=nil)
+  esx = VSphere::VCenter.new
+  esx.connect(hostname,'root',$esxpass)
 
-  vc.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
-    dc.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).each do |c|
-      c.host.each do |h|
-        esx = VSphere::VCenter.new
-        esx.connect(h.name,'root',esxpass)
-        fm = esx.scon.fileManager
-        esx.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
-          dc.datastore.each do |ds|
-            dspath = "[#{ds.name}] VCDKIT_TMPDIR"
-            $log.info("Test datastore access #{h.name} >> #{ds.name}")
-            begin
-            # ensure no left-overs from the last run
-#              fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
-            rescue Exception => e
-            end
-#            fm.MakeDirectory('name' => dspath)
-#            fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
-          end
+  fm = esx.scon.fileManager
+  $log.info("Test datastore access: ESX '#{esx.name}'")
+  esx.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
+    if (datastores.nil?)
+      dc.datastore.each do |ds|
+        each_datastore(fm,ds)
+      end
+    else
+      datastores.each do |dsname|
+        ds = dc.find_datastore(dsname)
+        if(ds.nil?)
+          raise "Datastore '#{dsname}' cannot be found"
+        else
+          each_datastore(fm,ds)
         end
       end
     end
   end
-  
+end
+
+begin
+  if(options[:conf])
+    conf = REXML::Document.new(File.new(options[:conf],'r').read)
+    ds = conf.elements.collect('//dslist/datastore') {|n| n.text}
+    conf.elements.each('//dslist/esx') do |h|
+      each_esx(h.text,ds)
+    end
+  else
+    vc = VSphere::VCenter.new
+    vc.connect(*options[:vsp])
+    vc.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
+      dc.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).each do |c|
+        c.host.each do |h|
+          each_esx(h.name)
+        end
+      end
+    end
+  end
 rescue Exception => e
-  $log.error("vcd-datastore failed: #{e}")
+  $log.error("vsp-datastore failed: #{e}")
   $log.error(e.backtrace)
   exit 1
 end
