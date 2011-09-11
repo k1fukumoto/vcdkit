@@ -27,16 +27,7 @@ options = {
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-report.rb [cmd-options]"
   
-  opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
-    case o[0]
-    when "1"
-      options[:vcd] = $VCD1
-    when "2"
-      options[:vcd] = $VCD2
-    else
-      options[:vcd] = o
-    end
-  end
+  vcdopts(options,opt)
 
   opt.on('-i','--input DIR','Specify root directory of the report data') do |o|
     options[:input] = o

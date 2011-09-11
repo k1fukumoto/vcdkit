@@ -22,16 +22,7 @@ options={}
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-ex.rb [options]"
 
-  opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
-    case o[0]
-    when "1"
-      options[:vcd] = $VCD1
-    when "2"
-      options[:vcd] = $VCD2
-    else
-      options[:vcd] = o
-    end
-  end
+  vcdopts(options,opt)
 
   opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
     options[:logfile] = o

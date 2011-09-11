@@ -23,16 +23,7 @@ options={
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-datastore.rb [options]"
 
-  opt.on('-c','--vcenter HOST,USER',Array,'vCenter login parameters') do |o|
-    case o[0]
-    when "1"
-      options[:vsp] = $VSP1
-    when "2"
-      options[:vsp] = $VSP2
-    else
-      options[:vsp] = o
-    end
-  end
+  vcopts(options,opt)
 
   opt.on('-C','--conf CONFFILE','Configuration file name') do |o|
     options[:conf] = o

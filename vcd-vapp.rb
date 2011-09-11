@@ -27,26 +27,12 @@ options = {
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-vapp.rb CMD [cmd-options]"
   
-  opt.on('-v','--vcd HOST,ORG,USER,PASS',Array,'vCD login parameters') do |o|
-    case o[0]
-    when "1"
-      options[:vcd] = $VCD1
-    when "2"
-      options[:vcd] = $VCD2
-    else
-      options[:vcd] = o
-    end
+  vcdopts(options,opt)
+
+  opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Restore source vApp') do |o|
+    options[:target] = o
   end
 
-  opt.on('-i','--input DIR','Root directory of the vCD dump data') do |o|
-    options[:input] = o
-  end
-  opt.on('-t','--tree TREENAME',Array,'Directory name to identify dump tree') do |o|
-    options[:tree] = o
-  end
-  opt.on('-c','--clone ORG,VDC,VAPP',Array,'Src vApp') do |o|
-    options[:src] = o
-  end
   opt.on('-h','--help','Display this help') do
     puts opt
     exit
@@ -62,8 +48,10 @@ rescue Exception => e
   exit 1
 end
 
+$log = VCloud::Logger.new(options[:logfile])
+
 vcd = VCloud::VCD.new()
 vcd.connect(*options[:vcd])
+ot = options[:target]
+vcd.org(ot[0]).vdc(ot[1]).vapp(ot[2]).delete
 
-src = VCloud::VCD.new().load("#{options[:input]}/#{options[:tree]}",*options[:src])
-vcd.wait(vcd.org(options[:src][0]).vdc(options[:src][1]).composeVApp(src,'BACKUPTEST-01R'))

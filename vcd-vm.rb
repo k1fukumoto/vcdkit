@@ -23,26 +23,8 @@ options = {
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-vm.rb [cmd-options]"
   
-  opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
-    case o[0]
-    when "1"
-      options[:vcd] = $VCD1
-    when "2"
-      options[:vcd] = $VCD2
-    else
-      options[:vcd] = o
-    end
-  end
-  opt.on('-c','--vcenter HOST,USER',Array,'vCenter login parameters') do |o|
-    case o[0]
-    when "1"
-      options[:vsp] = $VSP1
-    when "2"
-      options[:vsp] = $VSP2
-    else
-      options[:vsp] = o
-    end
-  end
+  vcdopts(options,opt)
+  vcopts(options,opt)
 
   opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Target vApp') do |o|
     options[:target] = o

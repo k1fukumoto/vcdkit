@@ -20,24 +20,13 @@ require 'pp'
 #
 # Process command args
 #
-
 options={
-  :vcd => $VCD1
 }
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-test.rb -T TESTNUMBER CMD [options]"
 
-  opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
-    case o[0]
-    when "1"
-      options[:vcd] = $VCD1
-    when "2"
-      options[:vcd] = $VCD2
-    else
-      options[:vcd] = o
-    end
-  end
+  vcdopts(options,opt)
 
   opt.on('-T','--test TESTNUMBER','Test number') do |o|
     options[:test] = o.to_i

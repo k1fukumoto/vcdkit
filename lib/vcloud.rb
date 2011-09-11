@@ -503,24 +503,24 @@ EOS
   end
 end
 
-$VCD1 = ['vcd.vcdc.whitecloud.jp','System','vcloud-sc']
-$VCD2 = ['tvcd.vcdc.whitecloud.jp','System','vcloud-sc']
-$VCD3 = ['vcd.vhost.ultina.jp','System','vcdadminl']
+$VCD = [
+        ['vcd.vcdc.whitecloud.jp','System','vcloud-sc'],
+        ['tvcd.vcdc.whitecloud.jp','System','vcloud-sc'],
+        ['vcd.vhost.ultina.jp','System','vcdadminl'],
+        ['172.16.180.40','System','vcdadmin'],
+        ]
 
-$VSP1 = ['10.128.0.57','vcloud-vcd']
-$VSP2 = ['10.128.1.57','vcloud-vcd']
-$VSP3 = ['10.127.11.51','vcdadmin']
-
+$VSP = [
+        ['10.128.0.57','vcloud-vcd'],
+        ['10.128.1.57','vcloud-vcd'],
+        ['10.127.11.51','vcdadmin'],
+        ['172.16.180.30','vcdadmin'],
+        ]
 
 def vcdopts(options,opt) 
   opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
-    case o[0]
-    when "1"
-      options[:vcd] = $VCD1
-    when "2"
-      options[:vcd] = $VCD2
-    when "3"
-      options[:vcd] = $VCD3
+    if(o[0].size == 1)
+      options[:vcd] = $VCD[o[0].to_i - 1]
     else
       options[:vcd] = o
     end
@@ -529,13 +529,8 @@ end
 
 def vcopts(options,opt)
   opt.on('-c','--vcenter HOST,USER',Array,'vCenter login parameters') do |o|
-    case o[0]
-    when "1"
-      options[:vsp] = $VSP1
-    when "2"
-      options[:vsp] = $VSP2
-    when "3"
-      options[:vsp] = $VSP3
+    if(o[0].size == 1)
+      options[:vsp] = $VSP[o[0].to_i - 1]
     else
       options[:vsp] = o
     end
