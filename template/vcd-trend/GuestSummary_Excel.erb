@@ -81,9 +81,9 @@ summary.each_pair do |org, h|
    <Row>
     <Cell><Data ss:Type="String"><%= org %></Data></Cell>
     <Cell><Data ss:Type="String"><%= ostype %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= min %></Data></Cell>
+    <Cell><Data ss:Type="Number"><%= min %></Data></Cell>
     <Cell ss:StyleID="dt"><Data ss:Type="DateTime"><%= t_min.strftime('%Y-%m-%dT%H:%M:%S.000') %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= max %></Data></Cell>
+    <Cell><Data ss:Type="Number"><%= max %></Data></Cell>
     <Cell ss:StyleID="dt"><Data ss:Type="DateTime"><%= t_max.strftime('%Y-%m-%dT%H:%M:%S.000') %></Data></Cell>
     <Cell ss:StyleID="avg"><Data ss:Type="Number"><%= avg %></Data></Cell>
    </Row>
