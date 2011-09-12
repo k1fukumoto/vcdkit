@@ -35,6 +35,12 @@
    <Font ss:Size="11" ss:Color="#000000" ss:Bold="1"/>
    <Interior ss:Color="#C0C0C0" ss:Pattern="Solid"/>
   </Style>
+  <Style ss:ID="dt">
+    <NumberFormat ss:Format="[$-409]yyyy/m/d\ h:mm\ AM/PM;@"/>
+  </Style>
+  <Style ss:ID="avg">
+    <NumberFormat ss:Format="0.0_ "/>
+  </Style>
  </Styles>
  <Worksheet ss:Name="Sheet1">
   <Table>
@@ -49,23 +55,40 @@
     <Cell ss:StyleID="s100"><Data ss:Type="String">VDC</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">OS</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">MIN</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">MIN TIME</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">MAX</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">MAX TIME</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">AVG</Data></Cell>
    </Row>
 <% 
 data.each_pair do |org, h|
   h.each_pair do |vdc, h|
     h.each_pair do |os, h|
-      cnts = h.values
-      avg = cnts.inject(0.0){|sum,e| sum + e} / cnts.size
+      min=Float::MAX
+      max=Float::MIN
+      cnt=sum=0
+      t_min=t_max=nil
+      h.keys.sort.each do |t|
+        c = h[t]
+        sum += c; cnt += 1
+        (min = c; t_min = t) if min > c
+        (max = c; t_max = t) if max < c
+      end
+      avg = sum.to_f / cnt
+      t_min =~ /(\d+)-(\d+)-(\d+)_(\d+)-(\d+)-(\d+)/
+      t_min = Time.local($1,$2,$3,$4,$5,$6)
+      t_max =~ /(\d+)-(\d+)-(\d+)_(\d+)-(\d+)-(\d+)/
+      t_max = Time.local($1,$2,$3,$4,$5,$6)
 %>
    <Row>
     <Cell><Data ss:Type="String"><%= org %></Data></Cell>
     <Cell><Data ss:Type="String"><%= vdc %></Data></Cell>
     <Cell><Data ss:Type="String"><%= os %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= cnts.min %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= cnts.max %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= avg %></Data></Cell>
+    <Cell><Data ss:Type="Number"><%= min %></Data></Cell>
+    <Cell ss:StyleID="dt"><Data ss:Type="DateTime"><%= t_min.strftime('%Y-%m-%dT%H:%M:%S.000') %></Data></Cell>
+    <Cell><Data ss:Type="Number"><%= max %></Data></Cell>
+    <Cell ss:StyleID="dt"><Data ss:Type="DateTime"><%= t_max.strftime('%Y-%m-%dT%H:%M:%S.000') %></Data></Cell>
+    <Cell ss:StyleID="avg"><Data ss:Type="Number"><%= avg %></Data></Cell>
    </Row>
 <%
     end

@@ -48,20 +48,32 @@
     <Cell ss:StyleID="s100"><Data ss:Type="String">ORG</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">OS TYPE</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">MIN</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">MIN TIME</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">MAX</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">MAX TIME</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">AVG</Data></Cell>
    </Row>
 <% 
 summary.each_pair do |org, h|
   h.each_pair do |ostype, h|
-    cnts = h.values
-    avg = cnts.inject(0.0){|sum,e| sum + e} / cnts.size
+    min=Float::MAX
+    max=Float::MIN
+    sum=cnt=0
+    t_min=t_max=nil
+    h.each_pair do |t,c|
+      sum += c; cnt += 1
+      (min = c; t_min = t) if min > c
+      (max = c; t_max = t) if max < c
+    end
+    avg = sum / cnt
 %>
    <Row>
     <Cell><Data ss:Type="String"><%= org %></Data></Cell>
     <Cell><Data ss:Type="String"><%= ostype %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= cnts.min %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= cnts.max %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= min %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= t_min %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= max %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= t_max %></Data></Cell>
     <Cell><Data ss:Type="String"><%= avg %></Data></Cell>
    </Row>
 <%
