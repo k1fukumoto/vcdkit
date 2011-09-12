@@ -55,7 +55,6 @@
     <Cell ss:StyleID="s100"><Data ss:Type="String">VDC</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">OS</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">MIN</Data></Cell>
-    <Cell ss:StyleID="s100"><Data ss:Type="String">MIN TIME</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">MAX</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">MAX TIME</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">AVG</Data></Cell>
@@ -72,7 +71,7 @@ data.each_pair do |org, h|
         c = h[t]
         sum += c; cnt += 1
         (min = c; t_min = t) if min > c
-        (max = c; t_max = t) if max < c
+        (max = c; t_max = t) if max <= c
       end
       avg = sum.to_f / cnt
       t_min =~ /(\d+)-(\d+)-(\d+)_(\d+)-(\d+)-(\d+)/
@@ -85,7 +84,6 @@ data.each_pair do |org, h|
     <Cell><Data ss:Type="String"><%= vdc %></Data></Cell>
     <Cell><Data ss:Type="String"><%= os %></Data></Cell>
     <Cell><Data ss:Type="Number"><%= min %></Data></Cell>
-    <Cell ss:StyleID="dt"><Data ss:Type="DateTime"><%= t_min.strftime('%Y-%m-%dT%H:%M:%S.000') %></Data></Cell>
     <Cell><Data ss:Type="Number"><%= max %></Data></Cell>
     <Cell ss:StyleID="dt"><Data ss:Type="DateTime"><%= t_max.strftime('%Y-%m-%dT%H:%M:%S.000') %></Data></Cell>
     <Cell ss:StyleID="avg"><Data ss:Type="Number"><%= avg %></Data></Cell>
