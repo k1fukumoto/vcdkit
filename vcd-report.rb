@@ -55,9 +55,11 @@ optparse = OptionParser.new do |opt|
     options[:force] = true
   end
 
-  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
-    options[:logfile] = o
+  opt.on('-s','--skip','Skip processing vSphere data') do |o|
+    options[:skipvs] = true
   end
+
+  logopts(options,opt)
 
   opt.on('-h','--help','Display this help') do
     puts opt
@@ -108,18 +110,20 @@ else # Load dump tree from directory
       vcd = VCloud::VCD.new
       if(ot == :all)
         vcd.load(d).saveparam(outdir)
-        
-        vc = VSphere::VCenter.new
-        vc.load(d)
 
-        FileUtils.mkdir_p(outdir)
-        open("#{outdir}/MediaList.xml",'w') do |f|
-          f.puts ERB.new(File.new("template/vcd-report/MediaList_Excel.erb").
-                         read,0,'>').result(binding)
-        end
-        open("#{outdir}/VMList.xml",'w') do |f|
-          f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
-                         read,0,'>').result(binding)
+        unless(options[:skipvs])
+          vc = VSphere::VCenter.new
+          vc.load(d)
+
+          FileUtils.mkdir_p(outdir)
+          open("#{outdir}/MediaList.xml",'w') do |f|
+            f.puts ERB.new(File.new("template/vcd-report/MediaList_Excel.erb").
+                           read,0,'>').result(binding)
+          end
+          open("#{outdir}/VMList.xml",'w') do |f|
+            f.puts ERB.new(File.new("template/vcd-report/VMList_Excel.erb").
+                           read,0,'>').result(binding)
+          end
         end
 
       elsif(ot.size == 3)
