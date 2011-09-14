@@ -69,7 +69,7 @@ summary.each_pair do |org, h|
       c = h[t]
       sum += c; cnt += 1
       (min = c; t_min = t) if min > c
-      (max = c; t_max = t) if max <= c
+      (max = c; t_max = t) if max < c
     end
     avg = sum.to_f / cnt
     t_min =~ /(\d+)-(\d+)-(\d+)_(\d+)-(\d+)-(\d+)/
