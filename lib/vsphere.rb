@@ -71,14 +71,16 @@ module VSphere
     end
 
     def each_media()
-      self.search("[#{@datastore.info.name}] vCDC-02/media/").each do |f|
+      self.search("[#{@datastore.info.name}] ").each do |f|
         orgpath = f.folderPath
-        next unless orgpath =~ /(\d+-org)/
+        next unless (orgpath =~ /.*\/media\/(\d+-org)/ || # 1.0
+                     orgpath =~ /.*\/media\/(org \([0-9a-f\-]+\))/)   # 1.5
         org = $1
 
         self.search(orgpath).each do |f|
           vdcpath = f.folderPath
-          next unless vdcpath =~ /(\d+-vdc)/
+          next unless (vdcpath =~ /(\d+-vdc)/ || # 1.0
+                       vdcpath =~ /(vdc \([0-9a-f\-]+\))/) # 1.5
           vdc = $1
 
           self.search(vdcpath).each do |f|
@@ -128,14 +130,16 @@ module VSphere
       @index_media = @doc.elements.inject("//MediaList/Media",{}) {|h,e|
         m = Media.new
         m.load(e)
-        e.attributes['path'] =~ /(\d+)\-media\.iso/
+        mpath = e.attributes['path']
+        (mpath =~ /(\d+)\-media\.iso/ ||  # 1.0
+         mpath =~ /media\-(.*)\.iso/) # 1.5
         h.update($1 => m)
         h
       }
     end
 
     def save(dir)
-      xml = ERB.new(File.new('template/vsp_xml.erb').read,0,'>').result(binding)
+      xml = ERB.new(File.new("template/vcd-dump/#{self.class.name.sub(/VSphere::/,'')}.erb").read,0,'>').result(binding)
       FileUtils.mkdir_p(dir) unless File.exists? dir
       open("#{dir}/#{self.class.name.sub(/VSphere::/,'')}.xml",'w') {|f| f.puts xml}
     end
