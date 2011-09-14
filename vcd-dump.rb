@@ -43,9 +43,7 @@ optparse = OptionParser.new do |opt|
     options[:tree] = o
   end
 
-  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
-    options[:logfile] = o
-  end
+  logopts(options,opt)
 
   opt.on('-h','--help','Display this help') do
     puts optparse
