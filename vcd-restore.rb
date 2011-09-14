@@ -26,6 +26,7 @@ require 'vcdkit'
 options = {
   :input => "#{$VCDKIT}/data/vcd-dump",
   :output => "#{$VCDKIT}/data/vcd-report",
+  :vcd => $VCD[0]
 }
 
 optparse = OptionParser.new do |opt|
@@ -48,9 +49,11 @@ optparse = OptionParser.new do |opt|
     options[:src] = o
   end
 
-  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
-    options[:logfile] = o
+  opt.on('-s','--skip','Skip interactive questions') do |o|
+    options[:skip] = true
   end
+
+  logopts(options,opt)
 
   opt.on('-h','--help','Display this help') do
     puts opt
@@ -102,7 +105,8 @@ if(options[:tree].nil?)
         Dir.glob("#{options[:input]}/#{options[:tree]}/" +
                  "ORG/*/VDC/*/VAPP/#{pattern}").sort.each do |d|
           next unless File.directory?(d)
-          d =~ /ORG\/(.+)\/VDC\/(.+)\/VAPP/
+
+          d =~ /ORG\/(.+)\/VDC\/(.+)\/VAPP\/.+/
           org=$1; vdc=$2
           vapp = File.basename(d)
           menu.choice("#{org} | #{vdc} | #{vapp}") do
@@ -139,8 +143,10 @@ begin
   vdc.vapp(vapp).saveparam("#{options[:output]}/RESTORE")
   ds = %x(diff -cbr #{diff1} #{diff2})
   $log.info("[DIFF BEFORE RESTORE]: >>#{ds}<<")
-  print "Continue (yN)? "; a = gets
-  raise NoChangesException.new unless (a =~ /[yY]/)
+  unless (options[:skip])
+    print "Continue (yN)? "; a = gets
+    raise NoChangesException.new unless (a =~ /[yY]/)
+  end
 
   vcd.wait(vdc.vapp(vapp).powerOff)
   vcd.wait(vdc.vapp(vapp).undeploy)
@@ -148,7 +154,11 @@ begin
   vdc.vapp(vapp).restore(src)
   vdc.vapp(vapp).saveparam("#{options[:output]}/RESTORE")
   ds = %x(diff -cbr #{diff1} #{diff2})
-  $log.info("[DIFF AFTER RESTORE]: >>#{ds}<<")
+  if (ds.size > 0)
+    $log.warn("[DIFF AFTER RESTORE]: >>#{ds}<<")
+  else
+    $log.info("[NO DIFFs AFTER RESTORE]")
+  end
 
 rescue NoChangesException => e
   $log.info("vcd-restore operation aborted: No changes to restore.")
