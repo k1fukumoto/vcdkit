@@ -278,7 +278,7 @@ module VCloud
 
     def restore(src)
       # Disconnect VMs from networks to avoid 'unabled to delete networks' error
-      self.each_vm {|vm| @vcd.wait(vm.disconnectNetworks())}
+      # self.each_vm {|vm| @vcd.wait(vm.disconnectNetworks())}
 
       # Restore vApps
       @vcd.wait(self.editControlAccessParams(src.cap.doc.root))
