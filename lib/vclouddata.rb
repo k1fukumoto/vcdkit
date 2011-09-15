@@ -284,10 +284,13 @@ EOS
 
     def extractParams
       @node.attributes.each {|name,value| @node.attributes.delete(name)}
-      @node.elements.delete('./IsDeployed')
-      @node.elements.delete('.//AllocatedIpAddresses')
-      @node.elements.delete('.//ovf:Info')
-      @node.elements.delete('.//Link')
+      ['./IsDeployed',
+       './/AllocatedIpAddresses',
+       './ovf:Info',
+       './Link',
+      ].each do |n|
+        @node.elements.delete(n)
+      end
       @node.elements.each('.//Configuration') do |n|
         n.elements.delete('./ParentNetwork')
       end
@@ -299,7 +302,10 @@ EOS
         n.elements.delete('./IsInherited')
       end
       @node.elements.each('.//NetworkConfig') do |n|
-        n.elements.delete('./Link')
+        n.elements.each('./Link') do |l|
+          n.elements.delete(l)
+        end
+        n.elements.delete('./VCloudExtension')
       end
       self
     end
