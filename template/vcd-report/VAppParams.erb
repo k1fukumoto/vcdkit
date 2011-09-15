@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VAppParams 
-  xmlns="http://www.vmware.com/vcloud/v1" 
+  xmlns="<%= self.xmlns %>" 
   xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" 
+  xmlns:vmext="<%= self.vmext %>"
 >
   <Properties>
     <General>
       <Name><%= self['/VApp/@name'].value %></Name>
       <Description><%= self['/VApp/Description/text()'] %></Description>
-      <%= VCloud::LeaseSettingsSection.new(self['/VApp/LeaseSettingsSection']).extractParams.xml(false) %>
+      <%= VCloud::LeaseSettingsSection.new(self,self).extractParams.xml(false) %>
     </General>
     <Running>
       <% self.match('/VApp/ovf:StartupSection/ovf:Item').sort do |x,y| 
@@ -32,9 +33,5 @@
       </AccessSettings>
     </Sharing>
   </Properties>
-  <Networking>
-    <% self.elements.each('/VApp/NetworkConfigSection/NetworkConfig') do |cfg| %>
-      <%= VCloud::NetworkConfigSection.new(cfg).extractParams.xml(false) %>
-    <% end %>
-  </Networking>
+  <%= VCloud::NetworkConfigSection.new(self,self).extractParams.xml(false) %>
 </VAppParams>

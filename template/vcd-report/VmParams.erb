@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VMParams xmlns="http://www.vmware.com/vcloud/v1" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1">
+<VMParams 
+  xmlns="<%= self.xmlns %>" 
+  xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"
+  xmlns:vmext="<%= self.vmext %>"
+>
   <General>
     <FullName><%= self['/Vm/@name'].value %></FullName>
     <Description><%= self['/Vm/Description/text()'] %></Description>
@@ -23,6 +27,6 @@
     </NetworkConnectionSection>
   </Networking>
   <Customization>
-    <%= VCloud::GuestCustomizationSection.new(self).extractParams.xml(false) %>
+    <%= VCloud::GuestCustomizationSection.new(self,self).extractParams.xml(false) %>
   </Customization>
 </VMParams>
