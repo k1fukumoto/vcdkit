@@ -28,10 +28,11 @@
       <IsSharedToEveryone><%= self.cap['/ControlAccessParams/IsSharedToEveryone/text()'] %></IsSharedToEveryone>
       <AccessSettings>
       <% self.cap.elements.each('/ControlAccessParams/AccessSettings/AccessSetting') do |n| %>
-      <%= VCloud::AccessSetting.new(n).extractParams.xml(false) %>
+      <%= VCloud::AccessSetting.new(self,n).extractParams.xml(false) %>
       <% end %>
       </AccessSettings>
     </Sharing>
+    <Owner><%= self['/VApp/Owner/User/@name'].value %></Owner>
   </Properties>
   <%= VCloud::NetworkConfigSection.new(self,self).extractParams.xml(false) %>
 </VAppParams>

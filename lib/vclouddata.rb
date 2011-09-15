@@ -102,6 +102,7 @@ class XMLElement
       end
     rescue Exception => e
       $log.warn("Failed to save parameters: #{path}: #{e}")
+      $log.warn(e.backtrace)
     end
   end
 
@@ -159,6 +160,11 @@ EOS
       if(pass != nil && pass != '')
         @node.elements['./AdminPasswordAuto'].text = 'false'
       end
+      if(@node.elements['//JoinDomainEnabled'].text == 'false')
+        ['DomainName','DomainUserName','DomainUserPassword'].each do |d|
+          @node.elements.delete("//#{d}")
+        end
+      end
     end
     
     def extractParams
@@ -169,12 +175,6 @@ EOS
       pass = @node.elements['./AdminPassword/text()']
       if(pass != '')
         @node.elements.delete('./AdminPasswordAuto')
-      end
-      
-      if(@node.elements['//JoinDomainEnabled'].text == 'false')
-        ['DomainName','DomainUserName','DomainUserPassword'].each do |d|
-          @node.elements.delete("//#{d}")
-        end
       end
       self
     end
@@ -337,19 +337,28 @@ EOS
   end
 
   class AccessSetting < XMLElement
-    def initialize(node)
+    def initialize(vapp,node)
+      @vapp = vapp
       @node = node
     end
 
     def extractParams
-      @node.elements['./Subject'].attributes.delete('type')
+      sub = @node.elements['./Subject']
+      sub.attributes.delete('type')
+      sub.text = @vapp.org.user_by_href(sub.attributes['href']).name
+      sub.attributes.delete('href')
       self
     end
 
     def xml(hdr)
-      self.compose_xml(@node,hdr)
+      @vapp.compose_xml(@node,hdr)
     end
   end
+
+  class Owner < XMLElement
+    TYPE='application/vnd.vmware.vcloud.owner+xml'
+  end
+
 
   class DeployVAppParams < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.deployVAppParams+xml'

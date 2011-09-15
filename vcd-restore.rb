@@ -135,7 +135,7 @@ begin
   diff1 = "'#{options[:output]}/#{options[:tree]}/#{vappdir}'"
   diff2 = "'#{options[:output]}/RESTORE/#{vappdir}'"
 
-  src = VCloud::VApp.new(org,vdc,vapp).load("#{options[:input]}/#{options[:tree]}")
+  src = VCloud::Org.new(org).load("#{options[:input]}/#{options[:tree]}").vdc(vdc).vapp(vapp)
 
   vcd = VCloud::VCD.new()
   vdc = vcd.connect(*options[:vcd]).org(org).vdc(vdc)

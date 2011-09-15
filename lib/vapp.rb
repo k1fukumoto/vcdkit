@@ -140,7 +140,7 @@ module VCloud
     end
       
     def path
-      "/ORG/#{@org}/VDC/#{@vdc}/VAPPTEMPLATE/#{@name}"
+      "#{@vdc.path}/VAPPTEMPLATE/#{@name}"
     end
 
     def vm(name)
@@ -182,32 +182,25 @@ module VCloud
   class ControlAccessParams < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.controlAccess+xml'
 
-    def initialize(org,vdc,name)
-      @org = org; @vdc = vdc; @name = name
+    def initialize(vapp,name)
+      @vapp = vapp
     end
       
     def path
-      "/ORG/#{@org}/VDC/#{@vdc}/VAPP/#{@name}"
-    end
-
-    def each_access_setting
-      @doc.elements.each("//AccessSetting"){|n| 
-        as = AccessSetting.new
-        as.connect(@vcd,n,[:type])
-        yield as
-      }
+      @vapp.path
     end
   end
 
   class VApp < VAppTemplate
     TYPE = 'application/vnd.vmware.vcloud.vApp+xml'
+    attr_reader :org
 
     def initialize(org,vdc,name)
       @org = org; @vdc = vdc; @name = name
     end
       
     def path
-      "/ORG/#{@org}/VDC/#{@vdc}/VAPP/#{@name}"
+      "#{@vdc.path}/VAPP/#{@name}"
     end
 
     def vm(name)
@@ -276,12 +269,20 @@ module VCloud
                     {:content_type => ControlAccessParams::TYPE})
     end
 
+    def editOwner(e)
+      Task.new.put(@vcd,
+                   @doc.elements["/VApp/Link[@type='#{Owner::TYPE}']"],
+                   self.compose_xml(e),
+                   {:content_type => Owner::TYPE})
+    end
+
     def restore(src)
       # Disconnect VMs from networks to avoid 'unabled to delete networks' error
       self.each_vm {|vm| @vcd.wait(vm.disconnectNetworks())}
 
       # Restore vApps
       @vcd.wait(self.editControlAccessParams(src.cap.doc.root))
+      @vcd.wait(self.editOwner(src['/VApp/Owner']))
       @vcd.wait(self.editStartupSection(src['//ovf:StartupSection']))
       @vcd.wait(self.editNetworkConfigSection(src))
       @vcd.wait(self.editLeaseSettingsSection(src))
@@ -307,7 +308,7 @@ module VCloud
 
     def cap()
       unless(@cap)
-        @cap = ControlAccessParams.new(@org,@vdc,@name)
+        @cap = ControlAccessParams.new(self,@name)
         if(@vcd)
           n = REXML::XPath.first(@doc, "/VApp/Link[@type='#{ControlAccessParams::TYPE}' and @rel='down']")
           @cap.connect(@vcd,n)

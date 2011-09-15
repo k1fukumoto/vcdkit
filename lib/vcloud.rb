@@ -49,24 +49,28 @@ module VCloud
 
   class Vdc < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.vdc+xml'
-    attr_reader :org
 
     def initialize(org,name)
       @org = org; @name = name
     end
 
     def path
-      "/ORG/#{@org}/VDC/#{@name}"
+      "#{@org.path}/VDC/#{@name}"
     end
 
     def vapp(name)
-      vapp = VApp.new(@org,@name,name)
-      vapp.connect(@vcd,@doc.elements["//ResourceEntity[@type='#{VApp::TYPE}' and @name='#{name}']"])
+      vapp = VApp.new(@org,self,name)
+      if(@vcd)
+        vapp.connect(@vcd,@doc.elements["//ResourceEntity[@type='#{VApp::TYPE}' and @name='#{name}']"])
+      elsif(@dir)
+        vapp.load(@dir)
+      end
+      vapp
     end
 
     def each_vapp
       @doc.elements.each("//ResourceEntity[@type='#{VApp::TYPE}']"){|n|
-        vapp = VApp.new(@org,@name,n.attributes['name'].to_s)
+        vapp = VApp.new(@org,self,n.attributes['name'].to_s)
         if(@vcd)
           vapp.connect(@vcd,n)
         elsif(@dir)
@@ -77,13 +81,13 @@ module VCloud
     end
 
     def vapptemplate(name)
-      vat = VAppTemplate.new(@org,@name,name)
+      vat = VAppTemplate.new(@org,self,name)
       vat.connect(@vcd,@doc.elements["//ResourceEntity[@type='#{VAppTemplate::TYPE}' and @name='#{name}']"])
     end
 
     def each_vapptemplate
       @doc.elements.each("//ResourceEntity[@type='#{VAppTemplate::TYPE}']"){|n|
-        vat = VAppTemplate.new(@org,@name,n.attributes['name'].to_s)
+        vat = VAppTemplate.new(@org,self,n.attributes['name'].to_s)
         if(@vcd)
           vat.connect(@vcd,n)
         elsif(@dir)
@@ -101,8 +105,8 @@ module VCloud
     end
 
     def saveparam(dir)
-      self.each_vapptemplate {|vat| vat.saveparam(dir)}
       self.each_vapp {|vapp| vapp.saveparam(dir)}
+      self.each_vapptemplate {|vat| vat.saveparam(dir)}
     end
 
     def cloneVApp(src,name,desc='')
@@ -139,7 +143,7 @@ module VCloud
     end
       
     def path
-      "/ORG/#{@org}/CATALOG/#{@cat}/CATALOGITEM/#{@name}"
+      "#{@cat.path}/CATALOGITEM/#{@name}"
     end
 
     def type
@@ -171,17 +175,17 @@ module VCloud
     end
       
     def path
-      "/ORG/#{@org}/CATALOG/#{@name}"
+      "#{@org.path}/CATALOG/#{@name}"
     end
 
     def catalogitem(name)
-      ci = CatalogItem.new(@org,@name,name)
+      ci = CatalogItem.new(@org,self,name)
       ci.connect(@vcd,@doc.elements["//CatalogItem[@name='#{name}']"])
     end
 
     def each_catalogitem
       @doc.elements.each("//CatalogItem") do |n|
-        ci = CatalogItem.new(@org,@name,n.attributes['name'].to_s)
+        ci = CatalogItem.new(@org,self,n.attributes['name'].to_s)
         if(@vcd)
           ci.connect(@vcd,n)
         elsif(@dir)
@@ -208,6 +212,7 @@ module VCloud
 
   class Org < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.org+xml'
+    attr_reader :org
 
     def initialize(name)
       @name = name
@@ -218,14 +223,17 @@ module VCloud
     end
 
     def vdc(name) 
-      vdc = Vdc.new(@name,name)
+      vdc = Vdc.new(self,name)
       n = @doc.elements["//Vdcs/Vdc[ @name='#{name}']"]
       if(n.nil?)
         $log.error("Cannot find vdc '#{name}': Available vdcs '#{self.vdcs.join(',')}'")
         raise InvalidNameException.new
-      else
+      elsif(@vcd)
         vdc.connect(@vcd,n)
+      elsif(@dir)
+        vdc.load(@dir)
       end
+      vdc
     end
 
     def vdcs 
@@ -234,7 +242,7 @@ module VCloud
 
     def each_vdc
       @doc.elements.each("//Vdcs/Vdc") {|n| 
-        vdc = Vdc.new(@name,n.attributes['name'].to_s)
+        vdc = Vdc.new(self,n.attributes['name'].to_s)
         if(@vcd)
           vdc.connect(@vcd,n)
         elsif(@dir)
@@ -246,9 +254,19 @@ module VCloud
 
     USERPATH ='//Users/UserReference'
 
+    def user_by_href(href)
+      unless(@user_index)
+        @user_index = {}
+        self.each_user do |u|
+          @user_index[u.href] = u
+        end
+      end
+      @user_index[href]
+    end
+
     def user(name)
       name.downcase!
-      user = User.new(@name,name)
+      user = User.new(self,name)
       if(@vcd)
         user.connect(@vcd,@doc.elements["#{USERPATH}[@name='#{name}']"])
       elsif(@dir)
@@ -258,7 +276,7 @@ module VCloud
 
     def each_user
       @doc.elements.each(USERPATH) { |n| 
-        user = User.new(@name,n.attributes['name'].to_s)
+        user = User.new(self,n.attributes['name'].to_s)
         if(@vcd)
           user.connect(@vcd,n)
         elsif(@dir)
@@ -284,13 +302,13 @@ module VCloud
     CATPATH = '//Catalogs/CatalogReference'
 
     def catalog(name)
-      cat = Catalog.new(@name,name)
+      cat = Catalog.new(self,name)
       cat.connect(@vcd,@doc.elements["#{CATPATH}[@name='#{name}']"])
     end
 
     def each_catalog
       @doc.elements.each(CATPATH) {|n| 
-        cat = Catalog.new(@name,n.attributes['name'].to_s)
+        cat = Catalog.new(self,n.attributes['name'].to_s)
         if(@vcd)
           cat.connect(@vcd,n)
         elsif(@dir)
@@ -336,7 +354,7 @@ EOS
     end
 
     def path
-      "/ORG/#{@org}/USER/#{@name}"
+      "#{@org.path}/USER/#{@name}"
     end
 
     def disable
