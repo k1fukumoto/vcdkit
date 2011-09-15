@@ -170,6 +170,12 @@ EOS
       if(pass != '')
         @node.elements.delete('./AdminPasswordAuto')
       end
+      
+      if(@node.elements['//JoinDomainEnabled'].text == 'false')
+        ['DomainName','DomainUserName','DomainUserPassword'].each do |d|
+          @node.elements.delete("//#{d}")
+        end
+      end
       self
     end
 
@@ -215,6 +221,7 @@ EOS
 
     def extractParams
       @node.elements.delete('./ExternalIpAddress')
+      @node.attributes.delete('needsCustomization')
       self
     end
 
