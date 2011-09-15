@@ -32,6 +32,19 @@ module VCloud
         @doc.elements["//Task/@status"].value
       end
     end
+
+    def post(vcd,node,payload=nil,hdrs={})
+      init_attrs(node)
+      @xml = vcd.post(@href,payload,hdrs)
+      @doc = REXML::Document.new(@xml)
+      self
+    end
+    def put(vcd,node,payload=nil,hdrs={})
+      init_attrs(node)
+      @xml = vcd.put(@href,payload,hdrs)
+      @doc = REXML::Document.new(@xml)
+      self
+    end
   end
 
   class Vdc < XMLElement
@@ -99,21 +112,17 @@ module VCloud
     end
 
     def deployVApp(ci,name,ntwk,desc='')
-      task = Task.new
-      task.connect(@vcd,
-                   self.alt.elements["//Link[@type='#{InstantiateVAppTemplateParams::TYPE}' and @rel='add']"],
-                   [], :post,
-                   InstantiateVAppTemplateParams.new(ci,name,ntwk,desc).xml,
-                   {:content_type => InstantiateVAppTemplateParams::TYPE})
+      Task.new.post(@vcd,
+                    self.alt.elements["//Link[@type='#{InstantiateVAppTemplateParams::TYPE}' and @rel='add']"],
+                    InstantiateVAppTemplateParams.new(ci,name,ntwk,desc).xml,
+                    {:content_type => InstantiateVAppTemplateParams::TYPE})
     end
 
     def composeVApp(src,name)
-      task = Task.new
-      task.connect(@vcd,
-                   self.alt.elements["//Link[@type='#{ComposeVAppParams::TYPE}' and @rel='add']"],
-                   [], :post,
-                   ComposeVAppParams.new(src,name).xml,
-                   {:content_type => ComposeVAppParams::TYPE})
+      Task.new.post(@vcd,
+                    self.alt.elements["//Link[@type='#{ComposeVAppParams::TYPE}' and @rel='add']"],
+                    ComposeVAppParams.new(src,name).xml,
+                    {:content_type => ComposeVAppParams::TYPE})
       
     end
   end
@@ -138,8 +147,15 @@ module VCloud
     end
 
     def id
-      self.entity_href =~ /media\/(\d+)$/
-      sprintf('%010d',$1)
+      href = self.entity_href
+      if(href =~ /media\/(\d+)$/)
+        sprintf('%010d',$1)
+      elsif(href =~ /media\/([0-9a-f\-]+)$/)
+        $1
+      else
+        $log.error("Cannot find valid Media ID: #{href}")
+        nil
+      end
     end
 
     def entity_href
@@ -253,12 +269,10 @@ module VCloud
     end
 
     def add_user(name,role)
-      task = Task.new
-      task.connect(@vcd,
-                   self.elements["//Link[@type='#{User::TYPE}' and @rel='add']"],
-                   [], :post,
-                   User.compose(name,role),
-                   {:content_type => User::TYPE})
+      Task.new.post(@vcd,
+                    self.elements["//Link[@type='#{User::TYPE}' and @rel='add']"],
+                    User.compose(name,role),
+                    {:content_type => User::TYPE})
       
     end
 
@@ -534,5 +548,15 @@ def vcopts(options,opt)
     else
       options[:vsp] = o
     end
+  end
+end
+
+def logopts(options,opt)
+  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
+    options[:logfile] = o
+  end
+
+  opt.on('-V','--verbose','Verbose logging') do |o|
+    $VERBOSELOG = 1
   end
 end
