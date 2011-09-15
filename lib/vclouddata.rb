@@ -21,12 +21,13 @@ require 'pp'
 class XMLElement
   ATTRS = [:name, :href]
   attr_accessor(*ATTRS)
-  attr_reader :xml, :doc
+  attr_reader :xml, :doc, :xmlns, :vmext
 
-  def init_attrs(node,attrs=[])
-    ATTRS.each { |attr|
+  def init_attrs(node,attrs=ATTRS)
+    attrs.each { |attr|
       s_attr = attr.to_s
       if (node.attributes[s_attr])
+        s_attr.sub!(/^\S+\:/,'')
         eval "@#{s_attr} = node.attributes['#{s_attr}']"
       elsif (node.elements[s_attr])
         eval "@#{s_attr} = node.elements['#{s_attr}'].text"
@@ -34,20 +35,12 @@ class XMLElement
     }
   end
 
-  def connect(vcd,node,attrs=[],method=:get,payload=nil,hdrs={})
-    init_attrs(node,attrs)
+  def connect(vcd,node)
+    init_attrs(node)
     @vcd = vcd
-    if(@href)
-      case method
-      when :get
-        @xml = vcd.get(@href)
-      when :post
-        @xml = vcd.post(@href,payload,hdrs)
-      when :put
-        @xml = vcd.put(@href,payload,hdrs)
-      end
-      @doc = REXML::Document.new(@xml)
-    end
+    @xml = vcd.get(@href)
+    @doc = REXML::Document.new(@xml)
+    init_attrs(@doc.root,[:xmlns,:'xmlns:vmext'])
     self
   end
 
@@ -58,7 +51,7 @@ class XMLElement
     @dir = dir
     begin
       @doc = REXML::Document.new(File.new(file))
-      init_attrs(@doc.root)
+      init_attrs(@doc.root,ATTRS + [:xmlns,:'xmlns:vmext'])
     rescue Exception => e
       $log.error("Failed to load xml file: #{file}: #{e}")
     end
@@ -126,12 +119,12 @@ class XMLElement
   end
 
   def compose_xml(node,hdr=true)
-    return '' if node.nil?
     xml = ''
     if(hdr)
-      node.attributes['xmlns'] = 'http://www.vmware.com/vcloud/v1'
-      node.attributes['xmlns:ovf'] ='http://schemas.dmtf.org/ovf/envelope/1'
       xml = '<?xml version="1.0" encoding="UTF-8"?>'
+      node.attributes['xmlns'] = @xmlns
+      node.attributes['xmlns:ovf'] ='http://schemas.dmtf.org/ovf/envelope/1'
+      node.attributes['xmlns:vmext'] = @vmext
     end
     REXML::Formatters::Default.new.write(node,xml)
     xml
@@ -157,7 +150,8 @@ EOS
   # <DomainUserName><%= args['DomainUserName'] %></DomainUserName>
   # <DomainUserPassword><%= args['DomainUserPassword'] %></DomainUserPassword>
 
-    def initialize(node)
+    def initialize(vm,node)
+      @vm = vm
       @node = node.elements['//GuestCustomizationSection']
       @node.elements.delete('./VirtualMachineId')
       @node.elements.delete('./Link')
@@ -180,7 +174,7 @@ EOS
     end
 
     def xml(hdr)
-      self.compose_xml(@node,hdr)
+      @vm.compose_xml(@node,hdr)
     end
 
     def GuestCustomizationSection.compose(node,args)
@@ -202,14 +196,15 @@ EOS
   class OperatingSystemSection < XMLElement    
     TYPE = 'application/vnd.vmware.vcloud.operatingSystemSection+xml'
 
-    def initialize(node)
+    def initialize(vm,node)
+      @vm = vm
       @node = node.elements['//ovf:OperatingSystemSection']
       @node.elements.delete('./Link')
       @node.attributes.delete('vcloud:href')
     end
 
     def xml(hdr)
-      self.compose_xml(@node,hdr)
+      @vm.compose_xml(@node,hdr)
     end
   end
 
@@ -232,17 +227,19 @@ EOS
     TYPE = 'application/vnd.vmware.vcloud.networkConnectionSection+xml'
     EMPTYXML = <<EOS
 <NetworkConnectionSection 
-  xmlns="http://www.vmware.com/vcloud/v1"
+  xmlns="<%= vm.xmlns %>"
   xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"
   type="application/vnd.vmware.vcloud.networkConnectionSection+xml"
   ovf:required="false">
 <ovf:Info>Specifies the available VM network connections</ovf:Info>
 </NetworkConnectionSection>
 EOS
-
-    def initialize(node)
+    def initialize(vm,node)
+      @vm = vm
       if(node)
         @node = node.elements['//NetworkConnectionSection']
+      else
+        @emptyxml = ERB.new(EMPTYXML).result(binding)
       end
     end
 
@@ -255,9 +252,9 @@ EOS
 
     def xml(hdr)
       if(@node)
-        self.compose_xml(@node,hdr)
+        @vm.compose_xml(@node,hdr)
       else
-        EMPTYXML
+        @emptyxml
       end
     end
   end
@@ -266,8 +263,9 @@ EOS
   class NetworkConfigSection < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.networkConfigSection+xml'
 
-    def initialize(node)
-      @node = node
+    def initialize(vapp,node)
+      @vapp = vapp
+      @node = node.elements['//NetworkConfigSection']
 
       dhcp = @node.elements.each("//DhcpService[IsEnabled = 'false']") do |dhcp|
         dhcp.elements.each('./*') do |n|
@@ -278,8 +276,11 @@ EOS
     end
 
     def extractParams
+      @node.attributes.each {|name,value| @node.attributes.delete(name)}
       @node.elements.delete('./IsDeployed')
       @node.elements.delete('.//AllocatedIpAddresses')
+      @node.elements.delete('.//ovf:Info')
+      @node.elements.delete('.//Link')
       @node.elements.each('.//Configuration') do |n|
         n.elements.delete('./ParentNetwork')
       end
@@ -290,11 +291,14 @@ EOS
       @node.elements.each('.//IpScope') do |n|
         n.elements.delete('./IsInherited')
       end
+      @node.elements.each('.//NetworkConfig') do |n|
+        n.elements.delete('./Link')
+      end
       self
     end
 
     def xml(hdr)
-      self.compose_xml(@node,hdr)
+      @vapp.compose_xml(@node,hdr)
     end
   end
 
@@ -305,8 +309,9 @@ EOS
   class LeaseSettingsSection < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.leaseSettingsSection+xml'
 
-    def initialize(node)
-      @node = node
+    def initialize(vapp,node)
+      @vapp = vapp
+      @node = node.elements['//LeaseSettingsSection']
     end
 
     def extractParams
@@ -320,7 +325,7 @@ EOS
     end
 
     def xml(hdr)
-      self.compose_xml(@node,hdr)
+      @vapp.compose_xml(@node,hdr)
     end
   end
 
@@ -352,9 +357,9 @@ EOS
   class UndeployVAppParams < XMLElement
     TYPE = 'application/vnd.vmware.vcloud.undeployVAppParams+xml'
     XML =<<EOS
-<UndeployVAppParams saveState="false" xmlns="http://www.vmware.com/vcloud/v1"/>
+<UndeployVAppParams xmlns="<%= vapp.xmlns %>"/>
 EOS
-    def initialize()
+    def initialize(vapp)
       @xml = ERB.new(XML).result(binding)
     end
   end
@@ -385,12 +390,12 @@ EOS
     TYPE='application/vnd.vmware.vcloud.vApp+xml'
     XML =<<EOS
 <VApp name="<%= src.doc.root.attributes['name'] %>" 
-  xmlns="http://www.vmware.com/vcloud/v1"
+  xmlns="<%= vapp.xmlns %>"
   xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"> 
 <Description><%= src['/VApp/Description/text()'] %></Description>
 </VApp>
 EOS
-    def initialize(src)
+    def initialize(vapp,src)
       @xml = ERB.new(XML).result(binding)
       @doc = REXML::Document.new(@xml)
     end
@@ -400,12 +405,12 @@ EOS
     TYPE='application/vnd.vmware.vcloud.vm+xml'
     XML =<<EOS
 <Vm name="<%= src.doc.root.attributes['name'] %>" 
-  xmlns="http://www.vmware.com/vcloud/v1"
+  xmlns="<%= vm.xmlns %>"
   xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"> 
 <Description><%= src['/Vm/Description/text()'] %></Description>
 </Vm>
 EOS
-    def initialize(src)
+    def initialize(vm,src)
       @xml = ERB.new(XML).result(binding)
       @doc = REXML::Document.new(@xml)
     end
@@ -415,17 +420,15 @@ EOS
     TYPE='application/vnd.vmware.vcloud.recomposeVAppParams+xml'
     XML =<<EOS
 <RecomposeVAppParams name="<%= src.doc.root.attributes['name'] %>" 
-  xmlns="http://www.vmware.com/vcloud/v1"
+  xmlns="<%= vapp.xmlns %>"
   xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"> 
 <InstantiationParams>
   <%= LeaseSettingsSection.new(src['/VApp/LeaseSettingsSection']).xml(false) %>
-  <%= self.compose_xml(src['/VApp/ovf:StartupSection'],false) %>
   <%= NetworkConfigSection.new(src['/VApp/NetworkConfigSection']).xml(false) %>
 </InstantiationParams>
 </RecomposeVAppParams>
-
 EOS
-    def initialize(src)
+    def initialize(vapp,src)
       @xml = ERB.new(XML).result(binding)
       @doc = REXML::Document.new(@xml)
     end
@@ -478,12 +481,15 @@ EOS
 
     def info(msg)
       @logger.info(msg)
+      puts msg if $VERBOSELOG
     end
     def error(msg)
       @logger.error(msg)
+      puts msg if $VERBOSELOG
     end
     def warn(msg)
       @logger.warn(msg)
+      puts msg if $VERBOSELOG
     end
   end
 end
