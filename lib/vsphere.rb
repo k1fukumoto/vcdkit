@@ -113,7 +113,7 @@ module VSphere
     end
 
     def media(id)
-      @index_media[id]
+      @index_media[id] || Media.new
     end
 
     def load(dir)
