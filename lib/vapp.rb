@@ -48,40 +48,28 @@ module VCloud
     end
     
     def powerOff
-      task = Task.new
-      task.connect(@vcd,
-                   @doc.elements["//Link[@rel='power:powerOff']"],
-                   [], :post)
+      Task.new.post(@vcd,@doc.elements["//Link[@rel='power:powerOff']"])
     end
 
     def editNetworkConnectionSection(ntwkcon)
-      ncs = NetworkConnectionSection.new(ntwkcon)
-      task = Task.new
-      task.connect(@vcd,
+      Task.new.put(@vcd,
                    @doc.elements["//NetworkConnectionSection/Link[@rel='edit']"],
-                   [], :put,
-                   ncs.xml(true),
+                   NetworkConnectionSection.new(self,ntwkcon).xml(true),
                    {:content_type => NetworkConnectionSection::TYPE})
     end
 
     def editGuestCustomizationSection(node)
-      gcs = GuestCustomizationSection.new(node)
-      task = Task.new
-      task.connect(@vcd,
+      Task.new.put(@vcd,
                    @doc.elements["//GuestCustomizationSection/Link[@rel='edit']"],
-                   [], :put,
-                   gcs.xml(true),
+                   GuestCustomizationSection.new(self,node).xml(true),
                    {:content_type => GuestCustomizationSection::TYPE})
     end
 
     def editOperatingSystemSection(node)
-      oss = OperatingSystemSection.new(node)
-      task = Task.new
-      task.connect(@vcd,
+      Task.new.put(@vcd,
                    # Can't locate Link node if @rel='edit' is specified... 
                    @doc.elements["//ovf:OperatingSystemSection/Link"],
-                   [], :put,
-                   oss.xml(true),
+                   OperatingSystemSection.new(self,node).xml(true),
                    {:content_type => OperatingSystemSection::TYPE})
     end
 
@@ -92,10 +80,8 @@ module VCloud
       ncon.elements["//IpAddressAllocationMode"].text = mode
       cfg = ncon.elements["../"]
 
-      task = Task.new
-      task.connect(@vcd,
+      Task.new.put(@vcd,
                    cfg.elements["//Link[@type='#{NetworkConnectionSection::TYPE}']"],
-                   [], :put,
                    self.compose_xml(cfg),
                    :content_type => NetworkConnectionSection::TYPE)
     end
@@ -108,20 +94,16 @@ module VCloud
       cfg = @doc.elements["//GuestCustomizationSection"]
       GuestCustomizationSection.compose(cfg,args)
 
-      task = Task.new
-      task.connect(@vcd,
+      Task.new.put(@vcd,
                    cfg.elements["//Link[@type='#{GuestCustomizationSection::TYPE}']"],
-                   [], :put,
                    self.compose_xml(cfg),
                    :content_type => GuestCustomizationSection::TYPE)
     end
 
     def edit(src)
-      task = Task.new
-      task.connect(@vcd,
+      Task.new.put(@vcd,
                    self.elements["//Link[@type='#{EditVmParams::TYPE}' and @rel='edit']"],
-                   [], :put,
-                   EditVmParams.new(src).xml,
+                   EditVmParams.new(self,src).xml,
                    {:content_type => EditVmParams::TYPE})
       
     end
@@ -259,67 +241,53 @@ module VCloud
     end
 
     def deploy()
-      task = Task.new
-      task.connect(@vcd,
-                   @doc.elements["//Link[@type='#{DeployVAppParams::TYPE}']"],
-                   [], :post,
-                   DeployVAppParams.new().xml,
-                   {:content_type => DeployVAppParams::TYPE})
+      Task.new.post(@vcd,
+                    @doc.elements["//Link[@type='#{DeployVAppParams::TYPE}']"],
+                    DeployVAppParams.new().xml,
+                    {:content_type => DeployVAppParams::TYPE})
     end
 
-    def editNetworkConfigSection(e)
-      task = Task.new
-      task.connect(@vcd,
+    def editNetworkConfigSection(node)
+      Task.new.put(@vcd,
                    @doc.elements["//NetworkConfigSection/Link[@rel='edit']"],
-                   [], :put,
-                   NetworkConfigSection.new(e).xml(true),
+                   NetworkConfigSection.new(self,node).xml(true),
                    {:content_type => NetworkConfigSection::TYPE})
     end
 
-    def editLeaseSettingsSection(e)
-      task = Task.new
-      task.connect(@vcd,
+    def editLeaseSettingsSection(node)
+      Task.new.put(@vcd,
                    @doc.elements["//LeaseSettingsSection/Link[@rel='edit']"],
-                   [], :put,
-                   LeaseSettingsSection.new(e).xml(true),
+                   LeaseSettingsSection.new(self,node).xml(true),
                    {:content_type => LeaseSettingsSection::TYPE})
     end
 
     def editStartupSection(e)
-      task = Task.new
-      task.connect(@vcd,
+      Task.new.put(@vcd,
                    # Adding @rel='edit' breaks the xpath search. Why??
                    @doc.elements["//ovf:StartupSection/Link"],
-                   [], :put,
-                   self.compose_xml(e,true),
+                   self.compose_xml(e),
                    {:content_type => StartupSection::TYPE})
     end
 
     def editControlAccessParams(e)
-      task = Task.new
-      task.connect(@vcd,
-                   @doc.elements["/VApp/Link[@rel='controlAccess']"],
-                   [], :post,
-                   self.compose_xml(e,true),
-                   {:content_type => ControlAccessParams::TYPE})
+      Task.new.post(@vcd,
+                    @doc.elements["/VApp/Link[@rel='controlAccess']"],
+                    self.compose_xml(e),
+                    {:content_type => ControlAccessParams::TYPE})
     end
 
     def restore(src)
       # Disconnect VMs from networks to avoid 'unabled to delete networks' error
       self.each_vm {|vm| @vcd.wait(vm.disconnectNetworks())}
 
-      # Restore control access settings
+      # Restore vApps
       @vcd.wait(self.editControlAccessParams(src.cap.doc.root))
-
-      # StartupSection needs to be edited seperatelly from recompose.
       @vcd.wait(self.editStartupSection(src['//ovf:StartupSection']))
-
-      # Name and Description needs to be changed from "edit" link of vApp.
+      @vcd.wait(self.editNetworkConfigSection(src))
+      @vcd.wait(self.editLeaseSettingsSection(src))
       @vcd.wait(self.edit(src))
 
-      # Use recompose API for the rest of settings.
-      @vcd.wait(self.recomposeVApp(src))
-
+      # Restore VMs
       self.each_vm do |vm|
         srcvm = src.vm(vm.name)
         @vcd.wait(vm.edit(srcvm))
@@ -329,22 +297,10 @@ module VCloud
       end
     end
 
-    def recomposeVApp(src)
-      task = Task.new
-      task.connect(@vcd,
-                   self.elements["//Link[@type='#{RecomposeVAppParams::TYPE}' and @rel='recompose']"],
-                   [], :post,
-                   RecomposeVAppParams.new(src).xml,
-                   {:content_type => RecomposeVAppParams::TYPE})
-      
-    end
-
     def edit(src)
-      task = Task.new
-      task.connect(@vcd,
+      Task.new.put(@vcd,
                    self.elements["//Link[@type='#{EditVAppParams::TYPE}' and @rel='edit']"],
-                   [], :put,
-                   EditVAppParams.new(src).xml,
+                   EditVAppParams.new(self,src).xml,
                    {:content_type => EditVAppParams::TYPE})
       
     end
@@ -365,9 +321,8 @@ module VCloud
     def powerOn
       task = Task.new
       if(@doc.elements["/VApp/@status"].value != "4")
-        task.connect(@vcd,
-                     @doc.elements["/VApp/Link[@rel='power:powerOn']"],
-                     [], :post)
+        task.post(@vcd,
+                  @doc.elements["/VApp/Link[@rel='power:powerOn']"])
       end
       task
     end
@@ -375,9 +330,8 @@ module VCloud
     def powerOff
       task = Task.new
       if(@doc.elements["/VApp/@status"].value != "8")
-        task.connect(@vcd,
-                     @doc.elements["/VApp/Link[@rel='power:powerOff']"],
-                     [], :post)
+        task.post(@vcd,
+                  @doc.elements["/VApp/Link[@rel='power:powerOff']"])
       end
       task
     end
@@ -385,11 +339,10 @@ module VCloud
     def undeploy
       task = Task.new
       if(@doc.elements["VApp/@deployed"].value == "true")
-        task.connect(@vcd,
-                     @doc.elements["//Link[@type='#{UndeployVAppParams::TYPE}']"],
-                     [], :post,
-                     UndeployVAppParams.new().xml,
-                     {:content_type => UndeployVAppParams::TYPE})
+        task.post(@vcd,
+                  @doc.elements["//Link[@type='#{UndeployVAppParams::TYPE}']"],
+                  UndeployVAppParams.new(self).xml,
+                  {:content_type => UndeployVAppParams::TYPE})
       end
       task
     end
