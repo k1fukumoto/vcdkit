@@ -294,7 +294,7 @@ EOS
       end
       @node.elements.each('.//OneToOneVmRule') do |n|
         n.elements.delete('./VAppScopedVmId')
-        n.elements.delete('./ExternalIP')
+        n.elements.delete('./ExternalIpAddress')
       end
       @node.elements.each('.//IpScope') do |n|
         n.elements.delete('./IsInherited')
