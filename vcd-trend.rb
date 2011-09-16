@@ -146,7 +146,7 @@ VCD: #{vcdhost}
 REPORT CREATED: #{Time.now}
 EOS
 
-Pony.mail(:to => 'k1fukumoto@gmail.com',
+Pony.mail(:to => 'SBTMRD-pm-vpf@tm.softbank.co.jp, SBTMRD-eng-vpf@tm.softbank.co.jp',
           :from => "#{hname}@dhs.jtidc.jp", 
 
           :subject => subject,
