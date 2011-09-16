@@ -199,6 +199,15 @@ module VCloud
       @org = org; @vdc = vdc; @name = name
     end
       
+    def owner
+      n = self['/VApp/Owner/User/@name']
+      if (n.nil?)
+        ''
+      else
+        n.value
+      end
+    end
+
     def path
       "#{@vdc.path}/VAPP/#{@name}"
     end
@@ -270,10 +279,15 @@ module VCloud
     end
 
     def editOwner(e)
-      Task.new.put(@vcd,
-                   @doc.elements["/VApp/Link[@type='#{Owner::TYPE}']"],
-                   self.compose_xml(e),
-                   {:content_type => Owner::TYPE})
+      if(e.nil?)
+        # 1.0API payload. Just ignore
+        Task.new
+      else
+        Task.new.put(@vcd,
+                     @doc.elements["/VApp/Link[@type='#{Owner::TYPE}']"],
+                     self.compose_xml(e),
+                     {:content_type => Owner::TYPE})
+      end
     end
 
     def restore(src)

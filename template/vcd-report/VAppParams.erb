@@ -32,7 +32,7 @@
       <% end %>
       </AccessSettings>
     </Sharing>
-    <Owner><%= self['/VApp/Owner/User/@name'].value %></Owner>
+    <Owner><%= self.owner %></Owner>
   </Properties>
   <%= VCloud::NetworkConfigSection.new(self,self).extractParams.xml(false) %>
 </VAppParams>
