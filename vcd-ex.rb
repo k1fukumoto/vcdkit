@@ -56,15 +56,18 @@ end
 VCDEX_DIR   = './data/vcd-ex'
 VCDEX_ORG   = 'Admin'
 VCDEX_JOBS  = {
-  $VCD2 => [
-           Target.new('Basic Backup - Admin','VCDEX-BB01'),
-           Target.new('Committed Backup - Admin','VCDEX-CB01'),
-          ],
-  $VCD1 => [
+  $VCD[0] => [
            Target.new('Basic Backup - Admin','VCDEX-BB01'),
            Target.new('Committed Backup - Admin','VCDEX-CB01'),
            Target.new('Basic - Admin','VCDEX-B01'),
            Target.new('Committed - Admin','VCDEX-C01'),
+          ],
+  $VCD[1] => [
+           Target.new('Basic Backup - Admin','VCDEX-BB01'),
+           Target.new('Committed Backup - Admin','VCDEX-CB01'),
+          ],
+  $VCD[2] => [
+           Target.new('Admin','VCDMON-01'),
           ],
 }
 
