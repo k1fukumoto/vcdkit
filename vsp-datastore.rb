@@ -58,7 +58,11 @@ $esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
 
 def each_datastore(fm,ds,options)
   dspath = "[#{ds.name}] VCDKIT_TMPDIR"
-  $log.info("Test datastore access: Datastore '#{ds.name}'")
+  if(options[:conf])
+    $log.info("Test datastore access: Datastore '#{ds.name}'")
+  else
+    puts "  <datastore>#{ds.name}</datastore>"
+  end
   begin
     # ensure no left-overs from the last run
     if(options[:dir])
@@ -77,7 +81,11 @@ def each_esx(hostname,datastores,options)
   esx.connect(hostname,'root',$esxpass)
 
   fm = esx.scon.fileManager
-  $log.info("Test datastore access: ESX '#{hostname}'")
+  if(options[:conf])
+    $log.info("Test datastore access: ESX '#{hostname}'")
+  else
+    puts "  <esx>#{hostname}</esx>"
+  end
   esx.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
     if (datastores.nil?)
       dc.datastore.each do |ds|
@@ -103,9 +111,15 @@ begin
     conf.elements.each('//dslist/esx') do |h|
       each_esx(h.text,ds,options)
     end
+
+
   else
     vc = VSphere::VCenter.new
     vc.connect(*options[:vsp])
+    puts <<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<dslist>
+EOS
     vc.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
       dc.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).each do |c|
         c.host.each do |h|
@@ -113,6 +127,9 @@ begin
         end
       end
     end
+puts <<EOS
+</dslist>
+EOS
   end
 rescue Exception => e
   $log.error("vsp-datastore failed: #{e}")
