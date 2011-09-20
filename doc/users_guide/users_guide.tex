@@ -17,7 +17,7 @@
 
 \pagenumbering{roman}
 \section*{²þÈÇÍúÎò}
-\begin{tabular}{|cccp{5cm}|}
+\begin{tabular}{|cccp{7cm}|}
 \hline
 \rowcolor[gray]{.8} \textbf{ÊÑ¹¹Æü} & 
 \textbf{\small ¥Ð¡¼¥¸¥ç¥ó} & 
@@ -29,6 +29,10 @@
 
 2011/08/25 & 1.1 & Ê¡ËÜ¡¡·° & 
 ¥Ç¡¼¥¿¥¢¡¼¥«¥¤¥Ó¥ó¥°¤Î¹àÄÉ²Ã\\
+
+2011/09/20 & 1.2 & Ê¡ËÜ¡¡·° & 
+vCloud API v1.5¥µ¥Ý¡¼¥È¡£vcd-trend.rb: ¥ì¥Ý¡¼¥È¥Ç¡¼¥¿¼ý½¸´ü´Ö¤ÎÊÑ¹¹¡¢¥á¡¼¥ëÁ÷¿®ÂÐ±þ¡¢ºÇÂçÃÍ¥¿¥¤¥à¥¹¥¿¥ó¥×¥Õ¥£¡¼¥ë¥ÉÄÉ²Ã¡£
+vsp-datastore.rb: ¥Ç¡¼¥¿¥¹¥È¥¢´Æ»ë¥¹¥¯¥ê¥×¥È¤ÎÄÉ²Ã\\
 
 \hline
 \end{tabular}
@@ -55,17 +59,23 @@ vcdkit¤ò¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë¤¿¤á¤Ë¤Ï³Æ¼ïLiunx·ÏOS¤â¤·¤¯¤ÏMac OSX¤È°Ê²¼¤Îruby¼Â¹Ô´Ä¶­
   \end{itemize}
 \end{itemize}
 
+ËÜ¥Ð¡¼¥¸¥ç¥ó¤Îvcdkit¤Ï°Ê²¼¤ÎvCloud¥½¥Õ¥È¥¦¥§¥¢¤Î¥Ð¡¼¥¸¥ç¥ó¤ò¥µ¥Ý¡¼¥È¤·¤Þ¤¹¡£
+\begin{itemize}
+\item vCloud Directory (version 1.0.1, 1.5)
+\item vSphere (version 4.1)
+\end{itemize}
+
 \subsection{¥¤¥ó¥¹¥È¡¼¥ë¼ê½ç}
 \label{sec:install}
 vcdkit ¤Î¥¤¥ó¥¹¥È¡¼¥ë¤Ï vcdkit ¤òÍøÍÑ¤¹¤ë°ìÈÌ¥æ¡¼¥¶¥¢¥«¥¦¥ó¥È¤Ç¹Ô¤¤¤Þ¤¹¡£root ¸¢¸Â¤ÏÉ¬Í×¤¢¤ê¤Þ¤»¤ó¡£
 \begin{enumerate}
-\item ÇÛÉÛ¥Ñ¥Ã¥±¡¼¥¸(vcdkit-1.0.1.tgz)¤ò¥¤¥ó¥¹¥È¡¼¥ëÀè¥µ¡¼¥Ð¤Î¥í¡¼¥«¥ë¥Ç¥£¥¹¥¯¤Ë¥³¥Ô¡¼
+\item ÇÛÉÛ¥Ñ¥Ã¥±¡¼¥¸(vcdkit-\$VERSION.zip)¤ò¥¤¥ó¥¹¥È¡¼¥ëÀè¥µ¡¼¥Ð¤Î¥í¡¼¥«¥ë¥Ç¥£¥¹¥¯¤Ë¥³¥Ô¡¼
 \item ÇÛÉÛ¥Ñ¥Ã¥±¡¼¥¸¤ò¥¤¥ó¥¹¥È¡¼¥ë¥Ç¥£¥ì¥¯¥È¥êÇÛ²¼¤ËÅ¸³«\\
-/opt/vmware/vcdkit¥Ç¥£¥ì¥¯¥È¥ê¤Ë¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ëÎã¤ò°Ê²¼¤Ë¼¨¤·¤Þ¤¹¡£
+/tmp¥Ç¥£¥ì¥¯¥È¥ê¤Ë¥³¥Ô¡¼¤µ¤ì¤¿ÇÛÉÛ¥Ñ¥Ã¥±¡¼¥¸¤ò/opt/vmware/vcdkit¥Ç¥£¥ì¥¯¥È¥ê¤Ë¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ëÎã¤ò°Ê²¼¤Ë¼¨¤·¤Þ¤¹¡£
 °Ê²¼¥¤¥ó¥¹¥È¡¼¥ë¥Ç¥£¥ì¥¯¥È¥ê¤ò\$VCDKIT¤È¤·¤Æ»²¾È¤·¤Þ¤¹¡£
 \begin{verbatim}
 $ cd /opt/vmware/vcdkit
-$ tar zcvf /tmp/vcdkit-1.0.1.tgz
+$ unzip /tmp/vcdkit-$VERSION.zip
 \end{verbatim}
 
 \item ´Ä¶­ÊÑ¿ô VCDKIT¤òÀßÄê\\
@@ -80,31 +90,42 @@ export PATH=$VCDKIT:$PATH
 \item °Å¹æ²½¤µ¤ì¤¿¥Ñ¥¹¥ï¡¼¥É¤ÎÊÝÂ¸¡£\\
 vCloud Datacenter¤Î³Æ¼ï¥·¥¹¥Æ¥à¤ØÀÜÂ³¤¹¤ëºÝ¤Ë»ÈÍÑ¤¹¤ë¥Ñ¥¹¥ï¡¼¥É¤ò¡¢°Å¹æ²½¤·¤¿¾å¤Ç¥í¡¼¥«¥ë¥Ç¥£¥¹¥¯¤ËÊÝÂ¸¤·¤Þ¤¹¡£
 ÊÝÂ¸¤µ¤ì¤¿¥Ñ¥¹¥ï¡¼¥É¥Õ¥¡¥¤¥ë¤Ï vcdkit ÍøÍÑ¥¢¥«¥¦¥ó¥È¤È root ¥¢¥«¥¦¥ó¥È¤Î¤ß¤¬ÆÉ¤ß¼è¤ê½ÐÍè¤ë¤è¤¦¤ËÀßÄê¤¹¤ë»ö¤ò¿ä¾©¤·¤Þ¤¹¡£
-
 °Ê²¼¤ËÀßÄêÎã¤ò¼¨¤·¤Þ¤¹¡£¥Ñ¥¹¥ï¡¼¥É¥Õ¥¡¥¤¥ë¤Ï¥·¥¹¥Æ¥àËè¤Ë\$VCDKIT¥Ç¥£¥ì¥¯¥È¥êÄ¾²¼¤ËÊÝÂ¸¤µ¤ì¤Þ¤¹¡£
 
+{\footnotesize
  \begin{verbatim}
-$ vcd-pass.rb -vcb
+$ vcd-pass.rb -h
+Usage: vcd-pass.rb [options]
+    -v, --vcd                        Change login password for vCloud Director
+    -c, --vcenter                    Change login password for vCenter
+    -e, --esx                        Change login password for ESX
+    -b, --chargeback                 Change login password for vCenter Chargeback
+    -l, --logfile LOGFILEPATH        Log file name
+    -h, --help                       Display this help
+$ vcd-pass.rb -vc
 Enter vCloud Director password: ********
 Enter vCenter password: ********
-Enter vCenter Chargeback password: ********
-$ chmod go-r $VCDKIT/.vc*
+$ chmod go-r $VCDKIT/.vc # password for vCloud Director
+$ chmod go-r $VCDKIT/.vcd # password for vCenter
 \end{verbatim}
+}
 
 \item cron¥¸¥ç¥Ö¤ÎÀßÄê¡£\\
 vAppÀßÄê¤Î¥ê¥¹¥È¥¢¤ò¹Ô¤¦¤¿¤á¤Ë¥Ð¥Ã¥¯¥¢¥Ã¥×¥¸¥ç¥Ö¤Î¥¹¥±¥¸¥å¡¼¥ë¤ÈÆ±´ü¤·¤Æ vcd-dump.rb¤ò¼Â¹Ô¤·¤Þ¤¹¡£
 \$VCDKIT/cron/crontab.conf ¤Ë¤ÏÉ¸½àÅª¤ÊËè»þ¥Ð¥Ã¥¯¥¢¥Ã¥×¤Î¥¹¥±¥¸¥å¡¼¥ëÎã¤¬µ­½Ò¤µ¤ì¤Æ¤¤¤Þ¤¹¡£
 crontab.conf ¤òÅ¬ÀÚ¤ËÊÔ½¸¸å¡¢crontab ¥³¥Þ¥ó¥É¤Ç cron ¥¸¥ç¥Ö¤ò¥¹¥±¥¸¥å¡¼¥ë¤·¤Þ¤¹¡£
 
+{\footnotesize
  \begin{verbatim}
 $ crontab $VCDKIT/cron/crontab.conf
 $ crontab -l
 0 * * * * /opt/vmware/vcdkit/cron/vcd-dump.sh
 15 * * * * /opt/vmware/vcdkit/cron/vcd-report.sh
 30 * * * * /opt/vmware/vcdkit/cron/archive.sh
-0 1 */2 * * /opt/vmware/vcdkit/cron/vcd-trend.sh
+0 1 1 * * /opt/vmware/vcdkit/cron/vcd-trend.sh
 0 2 * * * /opt/vmware/vcdkit/cron/vcd-ex.sh
 \end{verbatim}
+}
 
 \end{enumerate}
 
@@ -128,8 +149,8 @@ $ vcd-dump-rb -v1 -c1 -l $VCDKIT/logs/vcd-dump.log
 
 \begin{verbatim}
 $ vcd-dump-rb \
-   -v vcd.vcdc.whitecloud.jp,System,vcdadminl \
-   -c 10.128.0.57,vcdadmin \
+   -v vcd.vcdc.whitecloud.jp,System,vcloud-sc \
+   -c 10.128.0.57,vcloud-vcd \
    -l $VCDKIT/logs/vcd-dump.log
 \end{verbatim}
 
@@ -381,7 +402,7 @@ Usage: vcd-restore.rb [cmd-options]
 % vcd-trend.rb
 %
 \subsection{vcd-trend.rb} 
-vcd-report.rb ¤ÇºîÀ®¤·¤¿¥ì¥Ý¡¼¥È¥Ç¡¼¥¿¤ò¤â¤È¤Ë¥È¥ì¥ó¥ÉÊ¬ÀÏ¤ò¹Ô¤¦¤¿¤á¤Î³Æ¼ï¥ì¥Ý¡¼¥È¤òºîÀ®¤·¤Þ¤¹¡£
+vcd-report.rb ¤ÇºîÀ®¤·¤¿¥ì¥Ý¡¼¥È¥Ç¡¼¥¿¤ò¤â¤È¤Ë¥È¥ì¥ó¥ÉÊ¬ÀÏ¤ò¹Ô¤¦¤¿¤á¤Î³Æ¼ï¥ì¥Ý¡¼¥È¤òºîÀ®¤·¥á¡¼¥ë¤ÇÁ÷¿®¤·¤Þ¤¹¡£
 
 \subsubsection{»ÈÍÑÎã}
 \paragraph{´ûÂ¸¤Î¥ì¥Ý¡¼¥È¥Ç¡¼¥¿¤«¤éWindows¥²¥¹¥ÈOS¤Î»ÈÍÑ¾õ¶·¥ê¥¹¥È¤òºîÀ®¤¹¤ë}
@@ -391,12 +412,12 @@ $ vcd-trend.rb
 \end{verbatim}
 
 \begin{itemize}
-\item \$VCDKIT/data/vcd-report°Ê²¼¤Î¤¹¤Ù¤Æ¤Î¥Ç¥£¥ì¥¯¥È¥ê¤ò¸¡º÷¤·¡¢¸¡ÃÎ¤µ¤ì¤¿¥ì¥Ý¡¼¥È¥Ç¡¼¥¿¶è´ÖÆâ¤Î¥È¥ì¥ó¥É¥ì¥Ý¡¼¥È¤òºîÀ®¤·¤Þ¤¹¡£
-
-Îã¡§
+\item \$VCDKIT/data/vcd-report°Ê²¼¤Î¤¹¤Ù¤Æ¤Î¥Ç¥£¥ì¥¯¥È¥ê¤ò¸¡º÷¤·¡¢Á°·îÊ¬¤Î¥È¥ì¥ó¥É¥ì¥Ý¡¼¥È¤òºîÀ®¤·¤Þ¤¹¡£
 \begin{quote}
-\$VCDKIT/data/vcd-report ÇÛ²¼¤Ë 2011-07-01\_00-00-00 ¤«¤é 2011-07-31\_00-00-00¤Þ¤Ç¤Î¥ì¥Ý¡¼¥È¥Ç¥£¥ì¥¯¥È¥ê¤¬¤¢¤ë¾ì¹ç¡¢
-\$VCDKIT/data/vcd-trend/2011-07-01\_00-00-00\_\_2011-07-31\_00-00-00ÇÛ²¼¤Ë¥È¥ì¥ó¥É¥ì¥Ý¡¼¥È¤òºîÀ®¤·¤Þ¤¹¡£
+Îã¡§\\
+\$VCDKIT/data/vcd-report ÇÛ²¼¤Ë 2011-07-15\_00-00-00 ¤«¤é 2011-09-20\_00-00-00¤Þ¤Ç¤Î¥ì¥Ý¡¼¥È¥Ç¥£¥ì¥¯¥È¥ê¤¬¤¢¤ë»þ¤Ë
+2011Ç¯9·î21Æü¤Ë¥¹¥¯¥ê¥×¥È¤ò¼Â¹Ô¤·¤¿¾ì¹ç¡¢Á°·îÊ¬¤Ç¤¢¤ë2011Ç¯8·î1Æü¤«¤é2011Ç¯8·î31Æü¤Î¥Ç¡¼¥¿¤òÂÐ¾Ý¤È¤·¤¿¥È¥ì¥ó¥É¥ì¥Ý¡¼¥È¤ò
+\$VCDKIT/data/vcd-trend/2011-08-01\_00-00-00\_\_2011-08-31\_23-00-00ÇÛ²¼¤ËºîÀ®¤·¤Þ¤¹¡£
 \end{quote}
 
 \end{itemize}
@@ -408,7 +429,8 @@ $ vcd-trend.rb
 \toprule
 \textbf{¥Õ¥¡¥¤¥ëÌ¾}¡¡& \textbf{ÀâÌÀ} \\ 
 \midrule
-WinGuest.XML & ³ÆVDCËè/³Æ¥²¥¹¥ÈOS¥¿¥¤¥×Ëè¤ÎVM¿ô¤ÎÆâÌõ¡ÊºÇ¾¯¿ô¡¢ºÇÂç¿ô¡¢Ê¿¶ÑÃÍ¡Ë\\
+GuestList.xml & ³ÆVDCËè/³Æ¥²¥¹¥ÈOSËè¤ÎVM¿ô¤ÎÆâÌõ¡ÊºÇ¾¯¿ô¡¢ºÇÂç¿ô¡¢ºÇÂç¿ô¤ò¤È¤Ã¤¿»þ¤ÎºÇ¸Å¤Î»þ¹ï¡¢Ê¿¶ÑÃÍ¡Ë\\
+GuestSummary.xml & ³ÆORGËè/³Æ¥²¥¹¥ÈOS¥¿¥¤¥×(¥µ¡¼¥Ð·ÏWindows¡¢Èó¥µ¡¼¥Ð·ÏWindows¡¢ÈóWindows¤Î£³¼ïÎà)Ëè¤ÎVM¿ô¤ÎÆâÌõ¡ÊºÇ¾¯¿ô¡¢ºÇÂç¿ô¡¢ºÇÂç¿ô¤ò¤È¤Ã¤¿»þ¤ÎºÇ¸Å¤Î»þ¹ï¡¢Ê¿¶ÑÃÍ¡Ë\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -430,7 +452,7 @@ vCloud Director Cell ¤È vCenter ´Ö¡¢¤ª¤è¤Ó vCloud Director Cell¤È ESX¥Û¥¹¥È´Ö¤Î¥
 \subsubsection{ÁàºîÂÐ¾Ý¤È¤Ê¤ëvApp}
 
 vCloud Director Cell¤È¤¹¤Ù¤Æ¤ÎESXi ¥Û¥¹¥È´Ö¤Ç¤Î¥»¥Ã¥·¥ç¥ó¤ò°Ý»ý¤¹¤ë¤¿¤á¤Ë¡¢³ÆESXi¤Ë
-¥µ¥à¥Í¡¼¥ë¼èÆÀÂÐ¾Ý¤ÎVM¤òÇÛÃÖ¤¹¤ëÉ¬Í×¤¬¤¢¤ê¤Þ¤¹¡£°Ê²¼¤Ë¸½ºß¤ÎÇÛÃÖ¾õÂÖ¤òµ­¤·¤Þ¤¹¡£
+¥µ¥à¥Í¡¼¥ë¼èÆÀÂÐ¾Ý¤ÎVM¤òÇÛÃÖ¤¹¤ëÉ¬Í×¤¬¤¢¤ê¤Þ¤¹¡£°Ê²¼¤Ë¸½ºß¤ÎÇÛÃÖ¾õ¤Él£±phÂÖ¤òµ­¤·¤Þ¤¹¡£
 ³Æ²¾ÁÛ¥Þ¥·¥ó¤ÏDRS¤Î¥¢¥Õ¥£¥Ë¥Æ¥£¥ë¡¼¥ë¤òÍÑ¤¤¤Æ¥Û¥¹¥È¤ËÉ³ÉÕ¤±¤µ¤ì¤Æ¤¤¤Þ¤¹¡£
 
 \begin{table}[H]
@@ -450,26 +472,90 @@ Committed Backup - Admin & VCDEX-CB01 & VCDEX-152$\sim$ &  CGSdhb-152$\sim$ \\
 \end{tabular}
 \end{table}
 
+%
+% vsp-datastore.rb
+%
+\subsection{vsp-datastore.rb}
+ESX¥Û¥¹¥È¤ÈNFS¥Ç¡¼¥¿¥¹¥È¥¢´Ö¤ÎÀµ¾ïÀÜÂ³¤ò´Æ»ë¤¹¤ë¤¿¤á¤Ë¡¢NFS¥Ç¡¼¥¿¥¹¥È¥¢¤ËÂÐ¤·¤Æ¥Ç¥£¥ì¥¯¥È¥êºîÀ®¡¿ºï½ü¤ÎÁàºî¤ò¹Ô¤¤¤Þ¤¹¡£
+
+\subsubsection{ÁàºîÂÐ¾Ý¤È¤Ê¤ëESX¥Û¥¹¥È¤ª¤è¤Ó¥Ç¡¼¥¿¥¹¥È¥¢}
+´Æ»ëÂÐ¾Ý¤È¤Ê¤ëvCenter¤ÎÀÜÂ³¾ðÊó¤â¤·¤¯¤Ï¥Û¥¹¥È¤È¥Ç¡¼¥¿¥¹¥È¥¢¤Î¥ê¥¹¥È¤òÄêµÁ¤·¤¿¹½À®¥Õ¥¡¥¤¥ë¤ò»ØÄê¤·¤Þ¤¹¡£
+
+vCenter¤ÎÀÜÂ³¾ðÊó¤ò»ØÄê¤·¤¿¾ì¹ç¤Ë¤Ï¡¢¤½¤ÎvCenterÇÛ²¼¤Î¤¹¤Ù¤Æ¤ÎESX¥Û¥¹¥È¡¢¤ª¤è¤Ó³ÆESX¥Û¥¹¥È¤Ë
+¥Þ¥¦¥ó¥È¤µ¤ì¤Æ¤¤¤ë¤¹¤Ù¤Æ¤Î¥Ç¡¼¥¿¥¹¥È¥¢¤¬ÁàºîÂÐ¾Ý¤È¤Ê¤ê¤Þ¤¹¡£
+
+¥Û¥¹¥È¤È¥Ç¡¼¥¿¥¹¥È¥¢¤Î¹½À®¥Õ¥¡¥¤¥ë¤Ï°Ê²¼¤Î¥Õ¥©¡¼¥Þ¥Ã¥È¤ÎXML¤ÇÄêµÁ¤·¤Þ¤¹¡£
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<dslist>
+  <esx>host-1</esx>
+  <esx>host-2</esx>
+          ...
+  <esx>host-N</esx>
+  <datastore>datastore-1</datastore>
+  <datastore>datastore-2</datastore>
+          ...
+  <datastore>datastore-N</datastore>
+</dslist>
+\end{verbatim}
+
+\subsubsection{»ÈÍÑÎã}
+\paragraph{vCenter¤ò»ØÄê¤·¤Æ¹½À®¥Õ¥¡¥¤¥ë¤Î¥Æ¥ó¥×¥ì¡¼¥È¤ò½ÐÎÏ¤¹¤ë}
+
+\begin{verbatim}
+$ vsp-datastore.rb -c1
+\end{verbatim}
+
+\begin{itemize}
+\item {\tt -c1} ¥ª¥×¥·¥ç¥ó¤ÏÀÜÂ³Àè¤ÎvCenter¤È¤·¤Æ¥Õ¥§¡¼¥º£²ËÜÈÖ´Ä¶­¤ÎvCenter¥µ¡¼¥Ð¤ò»ØÄê¤·¤Þ¤¹¡£
+\item É¸½à½ÐÎÏ¤Ë¥Û¥¹¥È¤È¥Ç¡¼¥¿¥¹¥È¥¢¤Î¥ê¥¹¥È¤¬¹½À®¥Õ¥¡¥¤¥ë¤Î¥Õ¥©¡¼¥Þ¥Ã¥È¤Ç½ÐÎÏ¤µ¤ì¤Þ¤¹¡£
+\item ¥Ç¡¼¥¿¥¹¥È¥¢¤ËÂÐ¤·¤Æ¥Ç¥£¥ì¥¯¥È¥êºîÀ®¤Ê¤É¤ÎÊÑ¹¹Áàºî¤Ï¹Ô¤¤¤Þ¤»¤ó¡£
+\item ½ÐÎÏ¤µ¤ì¤¿¹½À®¥Õ¥¡¥¤¥ë¤ò¥³¥Þ¥ó¥É°ú¿ô¤È¤·¤ÆÍÑ¤¤¤ë¤¿¤á¤Ë¤Ï¡¢¥í¡¼¥«¥ë¤Î¥Ç¡¼¥¿¥¹¥È¥¢¤Îºï½ü¤Ê¤É¤ÎÊÔ½¸¤òÅ¬»þ¹Ô¤¦É¬Í×¤¬¤¢¤ê¤Þ¤¹¡£
+\end{itemize}
+
+\paragraph{¹½À®¥Õ¥¡¥¤¥ë¤ò»ØÄê¤·¤Æ¥Ç¡¼¥¿¥¹¥È¥¢¤Ø¤Î¥¢¥¯¥»¥¹¥Æ¥¹¥È¤ò¹Ô¤¦}
+
+\begin{verbatim}
+$ vsp-datastore.rb -C $CONFFILE -D -l $VCDKIT/logs/vsp-datastore.log
+\end{verbatim}
+
+\begin{itemize}
+\item {\tt -D} ¥ª¥×¥·¥ç¥ó¤Ï³Æ¥Ç¡¼¥¿¥¹¥È¥¢¤ËÂÐ¤·¤Æ¥Æ¥ó¥Ý¥é¥ê¥Ç¥£¥ì¥¯¥È¥ê¤ÎºîÀ®¤Èºï½ü¤ò¼Â»Ü¤¹¤ë»ö¤ò»ØÄê¤·¤Þ¤¹¡£
+\item ¥Ç¡¼¥¿¥¹¥È¥¢Áàºî¤Î¼Â¹Ô·ë²Ì¤Ï»ØÄê¤·¤¿¥í¥°¥Õ¥¡¥¤¥ë¤Ëµ­Ï¿¤µ¤ì¤Þ¤¹¡£¼ºÇÔÁàºî¤Ï¥¨¥é¡¼¥í¥°¤È¤·¤Æµ­Ï¿¤µ¤ì¤Þ¤¹¡£
+\end{itemize}
+
 \section{´ÉÍý}
 \subsection{¥Ç¡¼¥¿¥¢¡¼¥«¥¤¥Ó¥ó¥°}
 vcdkit¥¤¥ó¥¹¥È¡¼¥ë»þ¤Ë¡¢°Ê²¼¤Î¥¹¥¯¥ê¥×¥È(\$VCDKIT/cron/archive.sh)¤¬Ëè»þ30Ê¬¤Ë¼Â¹Ô¤¹¤ë¤è¤¦¤ËÀßÄê¤µ¤ì¤Þ¤¹¡£
 {\footnotesize 
 \begin{verbatim}
-1 | for d in vcd-dump vcd-report
-2 | do
-3 |   for t in `find $VCDDATA/$d -maxdepth 1 -mindepth 1 -mtime +7 -type d`
-4 |   do
-5 |     file=`basename $t`
-6 |     dir=`dirname $t`
-7 |     echo "Creating tar archive: $t"
-8 |     tar zcf $dir/$file.tgz -C $dir $file && rm -fr $t
-9 |   done
-10|   mv $VCDDATA/$d/*.tgz $VCDDATA/$d/archive
-11| done
+     1	#!/bin/sh
+     2	
+     3	export VCDDATA=/opt/vmware/vcdkit/data
+     4	
+     5	archive() {
+     6	    tooldir=$1
+     7	    days=$2
+     8	
+     9	    for t in `find $VCDDATA/$tooldir -maxdepth 1 -mindepth 1 -mtime +$days -type d`
+    10	    do
+    11          file=`basename $t`
+    12	         dir=`dirname $t`
+    13	         echo "Creating tar archive: $t"
+    14	         tar zcf $dir/$file.tgz -C $dir $file && \
+    15	            rm -fr $t && \
+    16	            mv $dir/$file.tgz $VCDDATA/$tooldir/archive
+    17	    done
+    18	}
+    19	
+    20	# Archive vcd-dump data which is older than 7 days
+    21	archive vcd-dump 7
+    22	# Archive vcd-report data which is older than 31 days
+    23	archive vcd-report 31
 \end{verbatim}
 }
-\$VCDDATA/vcd-dump¤ª¤è¤Ó\$VCDDATA/vcd-reportÄ¾²¼¤Î¡¢£·ÆüÁ°¤è¤ê¸Å¤¤¤¹¤Ù¤Æ¤Î¥Ç¥£¥ì¥¯¥È¥ê
-¡Ê3¹ÔÌÜ¤Îfind¥³¥Þ¥ó¥É¡Ë¤¬¡¢°µ½Ì¤µ¤ì¤¿tar¥¢¡¼¥«¥¤¥Ö¤ËÊÑ´¹¤µ¤ì¤Þ¤¹¡£²¿¤é¤«¤ÎÍýÍ³¤Ç¥¢¡¼¥«¥¤¥ÖºîÀ®¤Ë
-¼ºÇÔ¤·¤¿¾ì¹ç¤Ë¤Ï¸µ¤Î¥Ç¥£¥ì¥¯¥È¥ê¤Ï¤½¤Î¤Þ¤Þ»Ä¤ê¤Þ¤¹¡Ê8¹ÔÌÜ¤Î\&\&¤ÇÏ¢·ë¤µ¤ì¤¿tar¤ª¤è¤Órm¥³¥Þ¥ó¥É¡Ë¡£
-ºîÀ®¤µ¤ì¤¿tar¥¢¡¼¥«¥¤¥Ö¤Ïarchive¥Ç¥£¥ì¥¯¥È¥ê¤Ë°ÜÆ°¤·¤Þ¤¹¡Ê10¹ÔÌÜ¤Îmv¥³¥Þ¥ó¥É¡Ë¡£
+\$VCDDATA/vcd-dumpÇÛ²¼¤Î¥Ç¡¼¥¿¤Ë¤Ä¤¤¤Æ¤Ï£·ÆüÁ°¡¢\$VCDDATA/vcd-reportÇÛ²¼¤Î¥Ç¡¼¥¿¤Ë¤Ä¤¤¤Æ¤Ï
+£³£±ÆüÁ°¤è¤ê¸Å¤¤¥Ç¡¼¥¿¤¬¡¢°µ½Ì¤µ¤ì¤¿tar¥¢¡¼¥«¥¤¥Ö¤ËÊÑ´¹¤µ¤ì¡¢archive¥Ç¥£¥ì¥¯¥È¥ê¤Ë°ÜÆ°¤·¤Þ¤¹¡£
+¡Ê21¹ÔÌÜ¤È23¹ÔÌÜ¡Ë²¿¤é¤«¤ÎÍýÍ³¤Ç¥¢¡¼¥«¥¤¥ÖºîÀ®¤Ë¼ºÇÔ¤·¤¿¾ì¹ç¤Ë¤Ï¸µ¤Î¥Ç¥£¥ì¥¯¥È¥ê¤Ï¤½¤Î¤Þ¤Þ»Ä¤ê¤Þ¤¹
+¡Ê14¹ÔÌÜ¤«¤é16¹ÔÌÜ¤Þ¤Ç¤Î\&\&¤ÇÏ¢·ë¤µ¤ì¤¿¥³¥Þ¥ó¥É¡Ë¡£
 \end{document}
