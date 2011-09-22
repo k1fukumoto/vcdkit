@@ -131,6 +131,8 @@ end
 $log.info("[RESTORE OPTIONS]: #{options.to_yaml}")
 begin
   org,vdc,vapp = *options[:src]
+  vdc.gsub!('%',' ') # Use '%' to pass spaces from test automation script
+
   vappdir = "ORG/#{org}/VDC/#{vdc}/VAPP/#{vapp}"
   diff1 = "'#{options[:output]}/#{options[:tree]}/#{vappdir}'"
   diff2 = "'#{options[:output]}/RESTORE/#{vappdir}'"
