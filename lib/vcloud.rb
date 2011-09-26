@@ -289,7 +289,7 @@ module VCloud
     def add_user(name,role)
       Task.new.post(@vcd,
                     self.elements["//Link[@type='#{User::TYPE}' and @rel='add']"],
-                    User.compose(name,role),
+                    User.compose(self,name,role),
                     {:content_type => User::TYPE})
       
     end
@@ -336,7 +336,7 @@ module VCloud
     TYPE='application/vnd.vmware.admin.user+xml'
     XML=<<EOS
 <User name="<%= name %>" 
-  xmlns="http://www.vmware.com/vcloud/v1">
+  xmlns="<%= org.xmlns %>">
 <FullName><%= name %></FullName>
 <EmailAddress><%= name %>@vmware.com</EmailAddress>
 <IsEnabled>true</IsEnabled>
@@ -349,7 +349,7 @@ EOS
       @org = org; @name = name
     end
       
-    def User.compose(name,role)
+    def User.compose(org,name,role)
       ERB.new(XML).result(binding)
     end
 
