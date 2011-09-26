@@ -24,7 +24,7 @@ options={
 }
 
 optparse = OptionParser.new do |opt|
-  opt.banner = "Usage: vcd-test.rb -T TESTNUMBER CMD [options]"
+  opt.banner = "Usage: vcd-test.rb -T TESTNUMBER [options]"
 
   vcdopts(options,opt)
 
@@ -93,7 +93,7 @@ TESTCFG = {
     :PREFIX => 'GC2-',
   },
   10 => {
-    :ORG  => 'VMTest',
+    :ORG  => 'Admin',
     :ROLE  => 'vApp Author',
     :PREFIX => 'USER-',
   }
