@@ -531,6 +531,10 @@ EOS
         task = Task.new
         task.connect(self,node)
       end
+      if(task.status != 'success')
+        $log.warn("Task failed to complete:")
+        $log.warn(task.xml)
+      end
     end  
   end
 end
