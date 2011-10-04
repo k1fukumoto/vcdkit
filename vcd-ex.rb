@@ -19,14 +19,14 @@ require 'vcdkit'
 
 options={}
 
+$log = VCloud::Logger.new
+
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-ex.rb [options]"
 
   vcdopts(options,opt)
 
-  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
-    options[:logfile] = o
-  end
+  VCloud::Logger.parseopts(opt)
 
   opt.on('-h','--help','Display this help') do
     puts opt
@@ -74,7 +74,6 @@ VCDEX_JOBS  = {
 #
 # MAIN
 #
-$log = VCloud::Logger.new(options[:logfile])
 FileUtils.mkdir_p(VCDEX_DIR) unless File.exists? VCDEX_DIR
 
 begin
