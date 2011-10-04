@@ -136,6 +136,11 @@ open("#{outdir}/GuestSummary.xml",'w') do |f|
                  read,0,'>').result(binding)
 end
 
+# following local variables can be accessable from inside
+# mailer conf templates via binding
+vcdhost = options[:vcd][0]
+hostname = `hostname`.chomp
+now = Time.now
 $mail.send({"GuestList.xml" =>
              File.read("#{outdir}/GuestList.xml"),
              "GuestSummary.xml" =>
