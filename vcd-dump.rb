@@ -23,6 +23,9 @@ options={
   :target => :all,
 }
 
+$log = VCloud::Logger.new
+$mail = VCloud::Mailer.new
+
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-dump.rb [options]"
 
@@ -43,7 +46,8 @@ optparse = OptionParser.new do |opt|
     options[:tree] = o
   end
 
-  logopts(options,opt)
+  VCloud::Logger.parseopts(opt)
+  VCloud::Mailer.parseopts(opt)
 
   opt.on('-h','--help','Display this help') do
     puts optparse
@@ -53,9 +57,6 @@ end
 
 begin
   optparse.parse!
-  if (options[:target].nil?)
-    raise OptionParser::MissingArgument.new("--target")
-  end
 rescue SystemExit => e
   exit(e.status)
 rescue Exception => e
@@ -63,8 +64,6 @@ rescue Exception => e
   puts optparse
   exit 1
 end
-
-$log = VCloud::Logger.new(options[:logfile])
 
 begin
   vcd = VCloud::VCD.new
@@ -86,8 +85,19 @@ begin
   elsif(ot.size == 3)
     vcd.org(ot[0]).vdc(ot[1]).vapp(ot[2]).save(dir)
   end
+
 rescue Exception => e
   $log.error("vcd-dump failed: #{e}")
   $log.error(e.backtrace)
   exit 1
+ensure
+  if($log.errors>0 && $log.temp)
+    # following local variables can be accessable from inside
+    # mailer conf templates via binding
+    vcdhost = options[:vcd][0]
+    now = Time.now
+    $mail.send({'Log' => File.read($log.temp.path)},
+               binding)
+  end
+  $log.close
 end

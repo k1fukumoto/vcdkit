@@ -29,6 +29,8 @@ options = {
   :vcd => $VCD[0]
 }
 
+$log = VCloud::Logger.new
+
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-report.rb CMD [cmd-options]"
 
@@ -53,7 +55,7 @@ optparse = OptionParser.new do |opt|
     options[:skip] = true
   end
 
-  logopts(options,opt)
+  VCloud::Logger.parseopts(opt)
 
   opt.on('-h','--help','Display this help') do
     puts opt
@@ -70,8 +72,6 @@ rescue Exception => e
   puts optparse
   exit 1
 end
-
-$log = VCloud::Logger.new(options[:logfile])
 
 if(options[:tree].nil?)
   begin

@@ -20,6 +20,8 @@ require 'optparse'
 require 'vcdkit'
 
 options = {:apps => [],:logfile =>"#{$VCDKIT}/logs/vcd-pass.log"}
+$log = VCloud::Logger.new
+
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-pass.rb [options]"
 
@@ -35,9 +37,8 @@ optparse = OptionParser.new do |opt|
   opt.on('-b','--chargeback','Change login password for vCenter Chargeback') do |o|
     options[:apps] << {:name => 'vCenter Chargeback', :file =>'.vcb'}
   end
-  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
-    options[:logfile] = o
-  end
+
+  VCloud::Logger.parseopts(opt)
 
   opt.on('-h','--help','Display this help') do
     puts optparse
@@ -58,7 +59,6 @@ rescue Exception => e
   exit 1
 end
 
-$log = VCloud::Logger.new(options[:logfile])
 options[:apps].each do |a|
   p = ask("Enter #{a[:name]} password: "){|q| q.echo = '*'}
   open(a[:file],'w'){|f| f.puts VCloud::SecurePass.new().encrypt(p)}

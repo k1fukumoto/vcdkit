@@ -24,6 +24,8 @@ options = {
   :target => :all,
 }
 
+$log = VCloud::Logger.new
+
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-report.rb [cmd-options]"
   
@@ -36,9 +38,8 @@ optparse = OptionParser.new do |opt|
     options[:output] = o
   end
 
-  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
-    options[:logfile] = o
-  end
+  VCloud::Logger.parseopts(opt)
+
   opt.on('-h','--help','Display this help') do
     puts opt
     exit
@@ -54,8 +55,6 @@ rescue Exception => e
   puts optparse
   exit 1
 end
-
-$log = VCloud::Logger.new(options[:logfile])
 
 # Determine target report data range
 pm = (Date.parse(Time.now.to_s) << 1) # previous month

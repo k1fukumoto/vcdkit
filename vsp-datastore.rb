@@ -20,6 +20,8 @@ require 'vcdkit'
 options={
 }
 
+$log = VCloud::Logger.new
+
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-datastore.rb [options]"
 
@@ -29,13 +31,11 @@ optparse = OptionParser.new do |opt|
     options[:conf] = o
   end
 
-  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
-    options[:logfile] = o
-  end
-
   opt.on('-D','--dir','Perform directory creation and deletion') do |o|
     options[:dir] = true
   end
+
+  VCloud::Logger.parseopts(opt)
 
   opt.on('-h','--help','Display this help') do
     puts optparse
