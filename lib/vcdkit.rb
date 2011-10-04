@@ -15,6 +15,7 @@
 require 'logger'
 require 'vclouddata.rb'
 require 'securepass.rb'
+require 'service.rb'
 require 'vcloud.rb'
 require 'vapp.rb'
 require 'vsphere.rb'
