@@ -20,6 +20,7 @@ require 'vcdkit'
 options={}
 
 $log = VCloud::Logger.new
+$mail = VCloud::Mailer.new
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-ex.rb [options]"
@@ -27,6 +28,7 @@ optparse = OptionParser.new do |opt|
   vcdopts(options,opt)
 
   VCloud::Logger.parseopts(opt)
+  VCloud::Mailer.parseopts(opt)
 
   opt.on('-h','--help','Display this help') do
     puts opt
@@ -112,4 +114,15 @@ begin
 rescue Exception => e
   $log.error("vcd-ex failed: #{e}")
   $log.error(e.backtrace)
+
+ensure
+  if($log.errors>0 && $log.temp)
+    # following local variables can be accessable from inside
+    # mailer conf templates via binding
+    vcdhost = options[:vcd][0]
+    now = Time.now
+    $mail.send({'Log' => File.read($log.temp.path)},
+               binding)
+  end
+  $log.close
 end
