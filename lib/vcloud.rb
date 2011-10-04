@@ -109,10 +109,11 @@ module VCloud
       self.each_vapptemplate {|vat| vat.saveparam(dir)}
     end
 
-    def cloneVApp(src,name,desc='')
-      href = REXML::XPath.first(@doc, "//Link[@type='#{CloneVAppParams::TYPE}' and @rel='add']").attributes['href']
-      xml = CloneVAppParams.new(src.href,name,desc).xml
-      resp = @vcd.post(href, xml , :content_type => CloneVAppParams::TYPE)
+    def cloneVApp(src,name)
+      Task.new.post(@vcd,
+                    self.alt.elements["//Link[@type='#{CloneVAppParams::TYPE}' and @rel='add']"],
+                    CloneVAppParams.new(src,name).xml,
+                    {:content_type => CloneVAppParams::TYPE})
     end
 
     def deployVApp(ci,name,ntwk,desc='')
@@ -543,7 +544,7 @@ $VCD = [
         ['vcd.vcdc.whitecloud.jp','System','vcloud-sc'],
         ['tvcd.vcdc.whitecloud.jp','System','vcloud-sc'],
         ['vcd.vhost.ultina.jp','System','vcdadminl'],
-        ['172.16.180.40','System','vcdadmin'],
+        ['10.149.64.29','System','vcdadmin'],
         ]
 
 $VSP = [
@@ -573,12 +574,3 @@ def vcopts(options,opt)
   end
 end
 
-def logopts(options,opt)
-  opt.on('-l','--logfile LOGFILEPATH','Log file name') do |o|
-    options[:logfile] = o
-  end
-
-  opt.on('-V','--verbose','Verbose logging') do |o|
-    $VERBOSELOG = 1
-  end
-end
