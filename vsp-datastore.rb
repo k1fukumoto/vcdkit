@@ -148,7 +148,7 @@ ensure
     now = Time.now
     error_host = $ERROR[:host] || ''
     error_datastore = $ERROR[:datastore] || ''
-    $mail.send({'Log' => File.read($log.temp.path)},
+    $mail.send({'vsp-datastore.log' => File.read($log.temp.path)},
                binding)
   end
   $log.close

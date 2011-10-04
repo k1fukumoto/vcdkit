@@ -97,7 +97,7 @@ ensure
     vcdhost = options[:vcd][0]
     hostname = `hostname`.chomp
     now = Time.now
-    $mail.send({'Log' => File.read($log.temp.path)},
+    $mail.send({'vcd-dump.log' => File.read($log.temp.path)},
                binding)
   end
   $log.close
