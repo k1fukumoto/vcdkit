@@ -113,7 +113,7 @@ module VCloud
                 :attachments => attachments,
 
                 :via => :smtp,
-                :via_options => smtp_opts,
+                :via_options => smtp_opts
                 )
     end
   end
