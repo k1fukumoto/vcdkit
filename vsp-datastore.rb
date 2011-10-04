@@ -144,6 +144,7 @@ ensure
     # following local variables can be accessable from inside
     # mailer conf templates via binding
     vcdhost = options[:vcd][0]
+    hostname = `hostname`.chomp
     now = Time.now
     error_host = $ERROR[:host] || ''
     error_datastore = $ERROR[:datastore] || ''

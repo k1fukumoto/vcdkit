@@ -106,7 +106,7 @@ module VCloud
       smtp_opts.update(:password => auth.text) if auth
 
       Pony.mail(:to => e.collect('./to') {|to| to.text}.join(','),
-                :from => e['./from'].text,
+                :from => Mailer.build(e['./from'].text,bind),
 
                 :subject => Mailer.build(e['./subject'].text,bind),
                 :body => Mailer.build(e['./body'].text,bind),

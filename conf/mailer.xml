@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mailerconf>
-  <to>k1fukumoto@gmail.com</to>
-  <from>kfukumot@vmware.com</from>
-  <subject>vCDC vcd-dump error report [{%= vcdhost %}] {%= now.year %}/{%= now.month %} </subject>
+  <to>SBTMRD-pm-vpf@tm.softbank.co.jp</to>
+  <to>SBTMRD-eng-vpf@tm.softbank.co.jp</to>
+  <from>{%= hostname %}@dhs.jtidc.jp</from>
+  <subject>vCDC guest OS usage report: [{%= vcdhost %}] {%= first.year %}/{%= first.month %} </subject>
   <body>VCD: {%= vcdhost %}
-SCRIPT RUN AT: {%= now %}</body>
+REPORT CREATED: {%= now %}</body>
   <smtp>
-    <host>smtp.gmail.com</host>
-    <port>587</port>
-    <user>k1fukumoto@gmail.com</user>
-    <password></password>
-    <authentication>plain</authentication>
+    <host>10.121.0.113</host>
   </smtp>
 </mailerconf>
 

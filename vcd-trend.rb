@@ -25,6 +25,7 @@ options = {
 }
 
 $log = VCloud::Logger.new
+$mail = VCloud::Mailer.new
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-report.rb [cmd-options]"
@@ -39,6 +40,7 @@ optparse = OptionParser.new do |opt|
   end
 
   VCloud::Logger.parseopts(opt)
+  VCloud::Mailer.parseopts(opt)
 
   opt.on('-h','--help','Display this help') do
     puts opt
@@ -134,34 +136,10 @@ open("#{outdir}/GuestSummary.xml",'w') do |f|
                  read,0,'>').result(binding)
 end
 
-$log.info("Sending Emails...")
-require 'pony'
-hname = `hostname`.chomp
-vcdhost = options[:vcd][0]
+$mail.send({"GuestList.xml" =>
+             File.read("#{outdir}/GuestList.xml"),
+             "GuestSummary.xml" =>
+             File.read("#{outdir}/GuestSummary.xml")
+           },binding)
 
-subject = "vCDC guest OS usage report: [#{vcdhost}] #{pm.year}/#{pm.month}"
-body = <<EOS
-VCD: #{vcdhost}
-REPORT CREATED: #{Time.now}
-EOS
-
-Pony.mail(:to => 'SBTMRD-pm-vpf@tm.softbank.co.jp, SBTMRD-eng-vpf@tm.softbank.co.jp',
-          :from => "#{hname}@dhs.jtidc.jp", 
-
-          :subject => subject,
-          :body => body,
-
-          :attachments => {
-            "GuestList.xml" =>
-            File.read("#{outdir}/GuestList.xml"),
-            "GuestSummary.xml" =>
-            File.read("#{outdir}/GuestSummary.xml")
-          },
-
-          :via => :smtp,
-          :via_options => { 
-            :address              => '10.121.0.113',
-            :domain               => "localhost.localdomain"
-          })
-$log.info("Emails sent")
 
