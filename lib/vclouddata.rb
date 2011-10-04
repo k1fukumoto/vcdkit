@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ######################################################################################
 #
 # Copyright 2011 Kaoru Fukumoto All Rights Reserved
@@ -485,32 +486,22 @@ EOS
     end
   end
 
-  class Logger
-    def initialize(logfile=nil)
-      if(logfile)
-        dir = File.dirname(logfile)
-        FileUtils.mkdir_p(dir) unless File.exists? dir
-        @logger = ::Logger.new(logfile,10,20480000) # ~20MB
-      else
-        @logger = ::Logger.new(STDOUT)
-      end
-      @logger.formatter = proc {|sev,time,prog,msg|
-        ts = time.strftime('%Y-%m-%d %H:%M:%S')
-        "#{ts} | #{sev} | #{msg}\n"
-      }
-    end
-
-    def info(msg)
-      @logger.info(msg)
-      puts msg if $VERBOSELOG
-    end
-    def error(msg)
-      @logger.error(msg)
-      puts msg if $VERBOSELOG
-    end
-    def warn(msg)
-      @logger.warn(msg)
-      puts msg if $VERBOSELOG
+  class CloneVAppParams < XMLElement
+    TYPE = 'application/vnd.vmware.vcloud.cloneVAppParams+xml'
+    XML =<<EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<CloneVAppParams 
+  name="<%= name %>" 
+  xmlns="<%= vapp.xmlns %>">
+<Description/>
+<Source href="<%= vapp.href %>"/>
+<IsSourceDelete>false</IsSourceDelete>
+</CloneVAppParams>
+EOS
+    def initialize(vapp,name)
+      @xml = ERB.new(XML).result(binding)
+      @doc = REXML::Document.new(@xml)
     end
   end
+
 end
