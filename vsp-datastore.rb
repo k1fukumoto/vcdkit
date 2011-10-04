@@ -26,6 +26,7 @@ $mail = VCloud::Mailer.new
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-datastore.rb [options]"
 
+  vcdopts(options,opt)
   vcopts(options,opt)
 
   opt.on('-C','--conf CONFFILE','Configuration file name') do |o|
