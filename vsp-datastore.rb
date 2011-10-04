@@ -97,13 +97,14 @@ def each_esx(hostname,datastores,options)
     else
       datastores.each do |dsname|
         ds = dc.find_datastore(dsname)
+        $ERROR[:host] = hostname
+        $ERROR[:datastore] = dsname
         if(ds.nil?)
-          $ERROR[:host] = hostname
-          $ERROR[:datastore] = dsname
           raise "Datastore '#{dsname}' cannot be found"
         else
           each_datastore(fm,ds,options)
         end
+        $ERROR = {}
       end
     end
   end
