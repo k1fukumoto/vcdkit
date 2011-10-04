@@ -91,6 +91,20 @@ module VCloud
     def send(attachments,bind)
       e = @conf.elements['/mailerconf'].elements
 
+      smtp_opts = {
+        :address => e['./smtp/host'].text,
+        :domain => "localhost.localdomain",
+      }
+      port = e['./smtp/port']
+      user = e['./smtp/user']
+      pass = e['./smtp/password']
+      auth = e['./smtp/authentication']
+
+      smtp_opts.update(:port => port.text) if port
+      smtp_opts.update(:user_name => user.text) if user
+      smtp_opts.update(:password => pass.text) if pass
+      smtp_opts.update(:password => auth.text) if auth
+
       Pony.mail(:to => e.collect('./to') {|to| to.text}.join(','),
                 :from => e['./from'].text,
 
@@ -99,14 +113,8 @@ module VCloud
                 :attachments => attachments,
 
                 :via => :smtp,
-                :via_options => { 
-                  :address => e['./smtp/host'].text,
-                  :port => e['./smtp/port'].text,
-                  :user_name => e['./smtp/user'].text,
-                  :password => e['./smtp/password'].text,
-                  :authentication => e['./smtp/authentication'].text,
-                  :domain => "localhost.localdomain",
-                })
+                :via_options => smtp_opts,
+                )
     end
   end
 end
