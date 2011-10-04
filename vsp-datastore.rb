@@ -21,6 +21,7 @@ options={
 }
 
 $log = VCloud::Logger.new
+$mail = VCloud::Mailer.new
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-datastore.rb [options]"
@@ -36,6 +37,7 @@ optparse = OptionParser.new do |opt|
   end
 
   VCloud::Logger.parseopts(opt)
+  VCloud::Mailer.parseopts(opt)
 
   opt.on('-h','--help','Display this help') do
     puts optparse
@@ -53,7 +55,6 @@ rescue Exception => e
   exit 1
 end
 
-$log = VCloud::Logger.new(options[:logfile])
 $esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
 
 def each_datastore(fm,ds,options)
@@ -111,8 +112,6 @@ begin
     conf.elements.each('//dslist/esx') do |h|
       each_esx(h.text,ds,options)
     end
-
-
   else
     vc = VSphere::VCenter.new
     vc.connect(*options[:vsp])
@@ -135,4 +134,14 @@ rescue Exception => e
   $log.error("vsp-datastore failed: #{e}")
   $log.error(e.backtrace)
   exit 1
+ensure
+  if($log.errors>0 && $log.temp)
+    # following local variables can be accessable from inside
+    # mailer conf templates via binding
+    vcdhost = options[:vcd][0]
+    now = Time.now
+    $mail.send({'Log' => File.read($log.temp.path)},
+               binding)
+  end
+  $log.close
 end
