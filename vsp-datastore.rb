@@ -57,6 +57,7 @@ rescue Exception => e
 end
 
 $esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
+$ERROR = {}
 
 def each_datastore(fm,ds,options)
   dspath = "[#{ds.name}] VCDKIT_TMPDIR"
@@ -97,6 +98,8 @@ def each_esx(hostname,datastores,options)
       datastores.each do |dsname|
         ds = dc.find_datastore(dsname)
         if(ds.nil?)
+          $ERROR[:host] = hostname
+          $ERROR[:datastore] = dsname
           raise "Datastore '#{dsname}' cannot be found"
         else
           each_datastore(fm,ds,options)
@@ -141,6 +144,8 @@ ensure
     # mailer conf templates via binding
     vcdhost = options[:vcd][0]
     now = Time.now
+    error_host = $ERROR[:host] || ''
+    error_datastore = $ERROR[:datastore] || ''
     $mail.send({'Log' => File.read($log.temp.path)},
                binding)
   end
