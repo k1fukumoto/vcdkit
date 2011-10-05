@@ -3,7 +3,7 @@
 \newcommand{\thetitle}{vCloud Datacenter Toolkit - Users Guide}
 \newcommand{\theauthor}{Kaoru Fukumoto}
 \newcommand{\email}{kfukumot@vmware.com}
-\newcommand{\version}{1.5.1}
+\newcommand{\version}{1.5.2}
 \newcommand{\customer}{SoftBank Telecom}
 \newcommand{\COMMON}{../common}
 
@@ -11,6 +11,7 @@
 \input{\COMMON/style}
 \usepackage{booktabs}
 \usepackage{hyperref}
+\usepackage{fancyvrb}
 
 \begin{document}
 \CoverPage
@@ -36,6 +37,9 @@ vsp-datastore.rb: ¥Ç¡¼¥¿¥¹¥È¥¢´Æ»ë¥¹¥¯¥ê¥×¥È¤ÎÄÉ²Ã\\
 
 2011/09/20 & 1.5.1 & Ê¡ËÜ¡¡·° & 
 vcd-ex.rb: º®Æþ¤·¤¿Ê¸»ú²½¤±¤ò½¤Àµ¡£\\
+
+2011/10/5 & 1.5.2 & Ê¡ËÜ¡¡·° & 
+vcd-dump.rb, vcd-trend.rb¤ª¤è¤Óvsp-datastore.rb¤ËÄÉ²Ã¤µ¤ì¤¿¥á¡¼¥ëÅ¾Á÷µ¡Ç½¤ÎÀâÌÀÄÉµ­\\
 
 \hline
 \end{tabular}
@@ -113,6 +117,47 @@ $ chmod go-r $VCDKIT/.vcd # password for vCenter
 \end{verbatim}
 }
 
+\item ¥á¡¼¥ëÅ¾Á÷¥Ñ¥é¥á¡¼¥¿¤ÎÀßÄê¡£\\
+¥¨¥é¡¼È¯À¸»þ¤Î¥í¥°¤â¤·¤¯¤Ï½ÐÎÏ¥ì¥Ý¡¼¥È¤ò¥á¡¼¥ë¤ÇÅ¾Á÷¤¹¤ëµ¡Ç½¤ò»ý¤Ä¥¹¥¯¥ê¥×¥È¤¬¤¢¤ê¤Þ¤¹¡£
+¥á¡¼¥ëÅ¾Á÷¤Î³Æ¼ï¥Ñ¥é¥á¡¼¥¿¤Ï¥¹¥¯¥ê¥×¥È¼Â¹Ô»þ¤ËÀßÄê¥Õ¥¡¥¤¥ëÌ¾¤ò{\tt -m MAILCONF}¥ª¥×¥·¥ç¥ó¤ÇÅÏ¤¹·Á¤Ç»ØÄê¤·¤Þ¤¹¡£
+°Ê²¼¤Ëvcd-trend.rb¼Â¹Ô»þ¤ËÍÑ¤¤¤ëÀßÄê¥Õ¥¡¥¤¥ë¤ÎÎã¤ò¼¨¤·¤Þ¤¹¡£
+
+{\footnotesize
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<mailerconf>
+  <to>SBTMRD-pm-vpf@tm.softbank.co.jp</to>
+  <to>SBTMRD-eng-vpf@tm.softbank.co.jp</to>
+  <from>{%= hostname %}@dhs.jtidc.jp</from>
+  <subject>vCDC guest OS usage report
+   [{%= vcdhost %}] {%= first.year %}/{%= first.month %}
+    </subject>
+  <body>VCD: {%= vcdhost %}
+REPORT CREATED: {%= now %}</body>
+  <smtp>
+    <host>10.121.0.113</host>
+  </smtp>
+</mailerconf>
+\end{verbatim}
+}
+
+from, subject¤ª¤è¤Óbody¤Ë¤Ï¡Ê¥á¡¼¥ë¼Â¹Ô»þ¤ËÃÍ¤¬·è¤Þ¤ë¡ËÆ°Åª¤ÊÃÖ´¹¥Ñ¥é¥á¡¼¥¿¤ò»ØÄê¤¹¤ë»ö¤¬¤Ç¤­¤Þ¤¹¡£
+ÃÖ´¹¥Ñ¥é¥á¡¼¥¿¤Ï{\tt \{\%=}¤È{\tt \%\}}¤Ë¶´¤ß¹þ¤à·Á¤Ç»ÈÍÑ¤·¤Þ¤¹¡£Æ°Åª¥Ñ¥é¥á¡¼¥¿¤Î°ìÍ÷¤ò°Ê²¼¤Ë¼¨¤·¤Þ¤¹¡£
+\begin{table}[H]
+\begin{tabular}{llm{6.5cm}}
+\toprule
+\textbf{¥Ñ¥é¥á¡¼¥¿Ì¾}¡¡& \textbf{ÂÐ¾Ý¥¹¥¯¥ê¥×¥È} & \textbf{ÀâÌÀ} \\ 
+\midrule
+hostname & Á´¥¹¥¯¥ê¥×¥È & ¥¹¥¯¥ê¥×¥È¤ò¼Â¹Ô¤·¤¿¥Û¥¹¥È¤ÎÌ¾Á° \\
+vcdhost & Á´¥¹¥¯¥ê¥×¥È &  ¥¹¥¯¥ê¥×¥È¤Î¼Â¹ÔÂÐ¾Ý¤ÎvCloud Director¥Û¥¹¥È¤ÎÌ¾Á° \\
+now & Á´¥¹¥¯¥ê¥×¥È & ¥¹¥¯¥ê¥×¥È¼Â¹Ô»þ¹ï¡¡\\
+first & vcd-trend.rb & ¥ì¥Ý¡¼¥ÈºîÀ®¤Ë¤â¤Á¤¤¤¿¥Ç¡¼¥¿¤ÎÂÐ¾Ý´ü´Ö¤Î¤Ï¤¸¤á \\
+error\_host & vsp-datastore.rb & ¥¨¥é¡¼¤¬¸¡ÃÎ¤µ¤ì¤¿ESXi¥Û¥¹¥È¤ÎÌ¾Á° \\
+error\_datastore & vsp-datastore.rb & ¥¨¥é¡¼¤¬¸¡ÃÎ¤µ¤ì¤¿¥Ç¡¼¥¿¥¹¥È¥¢¤ÎÌ¾Á° \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \item cron¥¸¥ç¥Ö¤ÎÀßÄê¡£\\
 vAppÀßÄê¤Î¥ê¥¹¥È¥¢¤ò¹Ô¤¦¤¿¤á¤Ë¥Ð¥Ã¥¯¥¢¥Ã¥×¥¸¥ç¥Ö¤Î¥¹¥±¥¸¥å¡¼¥ë¤ÈÆ±´ü¤·¤Æ vcd-dump.rb¤ò¼Â¹Ô¤·¤Þ¤¹¡£
 \$VCDKIT/cron/crontab.conf ¤Ë¤ÏÉ¸½àÅª¤ÊËè»þ¥Ð¥Ã¥¯¥¢¥Ã¥×¤Î¥¹¥±¥¸¥å¡¼¥ëÎã¤¬µ­½Ò¤µ¤ì¤Æ¤¤¤Þ¤¹¡£
@@ -140,11 +185,14 @@ $ crontab -l
 vCloud Director¤ÈvCenter¤«¤é¥Ç¡¼¥¿¤ÎÃê½Ð¤ò¹Ô¤¤¤Þ¤¹¡£
 
 \subsubsection{»ÈÍÑÎã}
-\paragraph{¥Õ¥§¡¼¥º£²ËÜÈÖ´Ä¶­¤¹¤Ù¤Æ¤Î¥Ç¡¼¥¿¤ò¼«Æ°¥¿¥¤¥à¥¹¥¿¥ó¥×ÉÕ¤­¥Ç¥£¥ì¥¯¥È¥ê¤Ë¥À¥ó¥×¤¹¤ë}
+\paragraph{¥Õ¥§¡¼¥º£²ËÜÈÖ´Ä¶­¤¹¤Ù¤Æ¤Î¥Ç¡¼¥¿¤ò¼«Æ°¥¿¥¤¥à¥¹¥¿¥ó¥×ÉÕ¤­¥Ç¥£¥ì¥¯¥È¥ê¤Ë¥À¥ó¥×¤¹¤ë¡£
+¥¨¥é¡¼¤¬È¯À¸¤·¤¿¾ì¹ç¤Ë¤Ï¥í¥°¤ò¥á¡¼¥ëÅ¾Á÷¤¹¤ë¡£}
 
-\begin{verbatim}
-$ vcd-dump-rb -v1 -c1 -l $VCDKIT/logs/vcd-dump.log
-\end{verbatim}
+\begin{Verbatim}[frame=single] 
+$ vcd-dump-rb -v1 -c1 -l $VCDKIT/logs/vcd-dump.log \
+  -t -m $VCDKIT/conf/mail/vcd-dump.xml 
+\end{Verbatim}
+
 
 \begin{itemize}
 \item {\tt -v1, -c1} ¥ª¥×¥·¥ç¥ó¤Ï vCloud Director, vCenter ¶¦¤Ë¥Õ¥§¡¼¥º£²ËÜÈÖ´Ä¶­¤Î
@@ -161,7 +209,11 @@ $ vcd-dump-rb \
 \item ÀÜÂ³¤ËÍÑ¤¤¤ë¥Ñ¥¹¥ï¡¼¥É¤Ï¥³¥Þ¥ó¥É°ú¿ô¤Ç¤Ï»ØÄê¤·¤Þ¤»¤ó¡£¥Ñ¥¹¥ï¡¼¥É¤ÎÀßÄê¡¿ÊÝÂ¸ÊýË¡¤Ë¤Ä¤¤¤Æ¤Ï\ref{sec:install}¤ò»²¾È²¼¤µ¤¤¡£
 \item ¥À¥ó¥×¥Ç¡¼¥¿¤Ï¥Ç¥Õ¥©¥ë¥È¤Ç \$VCDKIT/data/vcd-report/TIMESTAMP °Ê²¼¤ËÊÝÂ¸¤µ¤ì¤Þ¤¹¡£
 \item TIMESTAMP Ì¾¤ÎÀ¸À®¤Ë¤Ï¥³¥Þ¥ó¥É¼Â¹Ô³«»Ï»þ¤Î»þ´Ö¤¬ÍøÍÑ¤µ¤ì¤Þ¤¹¡£¡ÊÎã¡§2011-07-20\_12-00-00¡Ë
-\item {\tt -l} ¥ª¥×¥·¥ç¥ó¤Ï¥í¥°½ÐÎÏÀè¥Õ¥¡¥¤¥ë¤ò»ØÄê¤·¤Þ¤¹¡£Ìµ»ØÄê¤Î¾ì¹ç¤ÏÉ¸½à½ÐÎÏ¤Ë½ÐÎÏ¤µ¤ì¤Þ¤¹¡£
+\item {\tt -l} ¥ª¥×¥·¥ç¥ó¤Ï¥í¥°½ÐÎÏÀè¥Õ¥¡¥¤¥ë¤ò»ØÄê¤·¤Þ¤¹¡£´ûÂ¸¥Õ¥¡¥¤¥ë¤ò»ØÄê¤·¤¿¾ì¹ç¤Ë¤ÏÄÉµ­¤µ¤ì¤Þ¤¹¡£
+\item {\tt -t} ¥ª¥×¥·¥ç¥ó¤Ï¥í¥°¤ò¥Æ¥ó¥Ý¥é¥ê¥Õ¥¡¥¤¥ë¤Ë½ÐÎÏ¤·¤Þ¤¹¡£¥Æ¥ó¥Ý¥é¥ê¥Õ¥¡¥¤¥ë¤Ï¥á¡¼¥ëÅ¾Á÷µ¡Ç½¤ËÍÑ¤¤¤é¤ì¤Þ¤¹¡£
+¡¡¥Æ¥ó¥Ý¥é¥ê¥í¥°¥Õ¥¡¥¤¥ë¤Ï¥¹¥¯¥ê¥×¥È¼Â¹Ô¸å¡Ê¥á¡¼¥ëÅ¾Á÷¸å¡Ë¤Ëºï½ü¤µ¤ì¤Þ¤¹¡£
+\item {\tt -m} ¥ª¥×¥·¥ç¥ó¤Ï¥á¡¼¥ëÅ¾Á÷¥Ñ¥é¥á¡¼¥¿¤¬µ­½Ò¤µ¤ì¤¿¹½À®¥Õ¥¡¥¤¥ëÌ¾¤ò»ØÄê¤·¤Þ¤¹¡£¥á¡¼¥ë¹½À®¥Õ¥¡¥¤¥ë¤Î¾ÜºÙ¤Ë¤Ä¤¤¤Æ¤Ï
+  \ref{sec:install}¤ò»²¾È²¼¤µ¤¤¡£
 \end{itemize}
 
 
@@ -220,8 +272,10 @@ Usage: vcd-dump.rb [options]
     -A, --all                        Dump all data
     -a, --vapp ORG,VDC,VAPP          Dump specified vApp data
     -o, --org ORG                    Dump specified organization data
-    -t, --tree TREENAME              Dump tree directory name
+        --tree TREENAME              Dump tree directory name
     -l, --logfile LOGFILEPATH        Log file name
+    -t, --tempfile                   Output log to temporary file
+    -m, --mailconf CONFFILE          Mailer configuration file name
     -h, --help                       Display this help
 \end{verbatim}
 }
@@ -235,9 +289,9 @@ vcd-dump.rb ¤ÇÃê½Ð¤·¤¿ XML¥Ç¡¼¥¿¤ò¤â¤È¤Ë³Æ¼ï¥ì¥Ý¡¼¥ÈºîÀ®¤·¤Þ¤¹¡£
 \subsubsection{»ÈÍÑÎã}
 \paragraph{¥ì¥Ý¡¼¥ÈÌ¤ºîÀ®¤Î¤¹¤Ù¤Æ¤Î¥À¥ó¥×¥Ç¡¼¥¿¤«¤é¥ì¥Ý¡¼¥È¤òºîÀ®¤¹¤ë}
 
-\begin{verbatim}
+\begin{Verbatim}[frame=single]
 $ vcd-report.rb
-\end{verbatim}
+\end{Verbatim}
 
 \begin{itemize}
 \item \$VCDKIT/data/vcd-dump°Ê²¼¤Î¤¹¤Ù¤Æ¤Î¥Ç¥£¥ì¥¯¥È¥ê¤ò¸¡º÷¤·¡ÊTIMESTAMP¤òÊÝ»ý¤·¤¿·Á¤Ç¡Ë
@@ -309,9 +363,11 @@ Usage: vcd-report.rb [cmd-options]
     -T ORG,VDC,VAPPTEMPLATE          Create report for vApp Template
         --vapptemplate
     -A, --all                        Create report for entire dump tree
-    -t, --tree TREENAME              Directory name to identify dump tree
+        --tree TREENAME              Directory name to identify dump tree
     -f, --force                      Force to recreate reports to exisiting tree
+    -s, --skip                       Skip processing vSphere data
     -l, --logfile LOGFILEPATH        Log file name
+    -t, --tempfile                   Output log to temporary file
     -h, --help                       Display this help
 \end{verbatim}
 }
@@ -392,12 +448,13 @@ $ vcd-restore.rb -h
 Usage: vcd-restore.rb [cmd-options]
     -v, --vcd HOST,ORG,USER          vCD login parameters
     -i, --input DIR                  Root directory of the vCD dump data
-    -t, --tree TREENAME              Directory name to identify dump tree
+        --tree TREENAME              Directory name to identify dump tree
     -o, --output DIR                 Specify directory for reports
     -a, --vapp ORG,VDC,VAPP          Restore source vApp
+    -s, --skip                       Skip interactive questions
     -l, --logfile LOGFILEPATH        Log file name
+    -t, --tempfile                   Output log to temporary file
     -h, --help                       Display this help
-
 \end{verbatim}
 }
 
@@ -410,9 +467,10 @@ vcd-report.rb ¤ÇºîÀ®¤·¤¿¥ì¥Ý¡¼¥È¥Ç¡¼¥¿¤ò¤â¤È¤Ë¥È¥ì¥ó¥ÉÊ¬ÀÏ¤ò¹Ô¤¦¤¿¤á¤Î³Æ¼ï¥ì¥Ý¡¼
 \subsubsection{»ÈÍÑÎã}
 \paragraph{´ûÂ¸¤Î¥ì¥Ý¡¼¥È¥Ç¡¼¥¿¤«¤éWindows¥²¥¹¥ÈOS¤Î»ÈÍÑ¾õ¶·¥ê¥¹¥È¤òºîÀ®¤¹¤ë}
 
-\begin{verbatim}
-$ vcd-trend.rb
-\end{verbatim}
+\begin{Verbatim}[frame=single]
+$ vcd-trend.rb -v1 -l$VCDKIT/logs/vcd-trend.log \
+  -m $VCDKIT/conf/mail/vcd-trend.xml
+\end{Verbatim}
 
 \begin{itemize}
 \item \$VCDKIT/data/vcd-report°Ê²¼¤Î¤¹¤Ù¤Æ¤Î¥Ç¥£¥ì¥¯¥È¥ê¤ò¸¡º÷¤·¡¢Á°·îÊ¬¤Î¥È¥ì¥ó¥É¥ì¥Ý¡¼¥È¤òºîÀ®¤·¤Þ¤¹¡£
@@ -422,7 +480,8 @@ $ vcd-trend.rb
 2011Ç¯9·î21Æü¤Ë¥¹¥¯¥ê¥×¥È¤ò¼Â¹Ô¤·¤¿¾ì¹ç¡¢Á°·îÊ¬¤Ç¤¢¤ë2011Ç¯8·î1Æü¤«¤é2011Ç¯8·î31Æü¤Î¥Ç¡¼¥¿¤òÂÐ¾Ý¤È¤·¤¿¥È¥ì¥ó¥É¥ì¥Ý¡¼¥È¤ò
 \$VCDKIT/data/vcd-trend/2011-08-01\_00-00-00\_\_2011-08-31\_23-00-00ÇÛ²¼¤ËºîÀ®¤·¤Þ¤¹¡£
 \end{quote}
-
+\item {\tt -v1}¥ª¥×¥·¥ç¥ó¤Ï¥Ç¡¼¥¿¤ò¼èÆÀ¤·¤¿vCloud Director¤ò»ØÄê¤·¤Þ¤¹¡£¥ì¥Ý¡¼¥ÈÀ¸À®½èÍý¤Ë¤Ï»ÈÍÑ¤µ¤ì¤Þ¤»¤ó¤¬
+¡¡¥á¡¼¥ëÀ¸À®¤ÎºÝ¤Ë»ÈÍÑ¤Ç¤­¤ë{\tt vcdhost}¥Ñ¥é¥á¡¼¥¿¤ÎÃÍ¤Ë»ÈÍÑ¤µ¤ì¤Þ¤¹¡£
 \end{itemize}
 
 \subsubsection{ºîÀ®¤µ¤ì¤ë¥ì¥Ý¡¼¥È¤Î¼ïÎà}
@@ -505,9 +564,9 @@ vCenter¤ÎÀÜÂ³¾ðÊó¤ò»ØÄê¤·¤¿¾ì¹ç¤Ë¤Ï¡¢¤½¤ÎvCenterÇÛ²¼¤Î¤¹¤Ù¤Æ¤ÎESX¥Û¥¹¥È¡¢¤ª¤è¤Ó³
 \subsubsection{»ÈÍÑÎã}
 \paragraph{vCenter¤ò»ØÄê¤·¤Æ¹½À®¥Õ¥¡¥¤¥ë¤Î¥Æ¥ó¥×¥ì¡¼¥È¤ò½ÐÎÏ¤¹¤ë}
 
-\begin{verbatim}
+\begin{Verbatim}[frame=single]
 $ vsp-datastore.rb -c1
-\end{verbatim}
+\end{Verbatim}
 
 \begin{itemize}
 \item {\tt -c1} ¥ª¥×¥·¥ç¥ó¤ÏÀÜÂ³Àè¤ÎvCenter¤È¤·¤Æ¥Õ¥§¡¼¥º£²ËÜÈÖ´Ä¶­¤ÎvCenter¥µ¡¼¥Ð¤ò»ØÄê¤·¤Þ¤¹¡£
@@ -518,13 +577,19 @@ $ vsp-datastore.rb -c1
 
 \paragraph{¹½À®¥Õ¥¡¥¤¥ë¤ò»ØÄê¤·¤Æ¥Ç¡¼¥¿¥¹¥È¥¢¤Ø¤Î¥¢¥¯¥»¥¹¥Æ¥¹¥È¤ò¹Ô¤¦}
 
-\begin{verbatim}
-$ vsp-datastore.rb -C $CONFFILE -D -l $VCDKIT/logs/vsp-datastore.log
-\end{verbatim}
+\begin{Verbatim}[frame=single]
+$ vsp-datastore.rb -C $CONFFILE -D \
+  -l $VCDKIT/logs/vsp-datastore.log \
+  -t -m $VCDKIT/conf/mail/vsp-datastore.xml
+\end{Verbatim}
 
 \begin{itemize}
 \item {\tt -D} ¥ª¥×¥·¥ç¥ó¤Ï³Æ¥Ç¡¼¥¿¥¹¥È¥¢¤ËÂÐ¤·¤Æ¥Æ¥ó¥Ý¥é¥ê¥Ç¥£¥ì¥¯¥È¥ê¤ÎºîÀ®¤Èºï½ü¤ò¼Â»Ü¤¹¤ë»ö¤ò»ØÄê¤·¤Þ¤¹¡£
-\item ¥Ç¡¼¥¿¥¹¥È¥¢Áàºî¤Î¼Â¹Ô·ë²Ì¤Ï»ØÄê¤·¤¿¥í¥°¥Õ¥¡¥¤¥ë¤Ëµ­Ï¿¤µ¤ì¤Þ¤¹¡£¼ºÇÔÁàºî¤Ï¥¨¥é¡¼¥í¥°¤È¤·¤Æµ­Ï¿¤µ¤ì¤Þ¤¹¡£
+\item ¥Ç¡¼¥¿¥¹¥È¥¢Áàºî¤Î¼Â¹Ô·ë²Ì¤Ï»ØÄê¤·¤¿¥í¥°¥Õ¥¡¥¤¥ë¤Ëµ­Ï¿¤µ¤ì¤Þ¤¹¡£¥¨¥é¡¼¤¬È¯À¸¤·¤¿¾ì¹ç¥í¥°¤¬¥á¡¼¥ëÅ¾Á÷¤µ¤ì¤Þ¤¹¡£
+\item {\tt -t} ¥ª¥×¥·¥ç¥ó¤Ï¥í¥°¤ò¥Æ¥ó¥Ý¥é¥ê¥Õ¥¡¥¤¥ë¤Ë½ÐÎÏ¤·¤Þ¤¹¡£¥Æ¥ó¥Ý¥é¥ê¥Õ¥¡¥¤¥ë¤Ï¥á¡¼¥ëÅ¾Á÷µ¡Ç½¤ËÍÑ¤¤¤é¤ì¤Þ¤¹¡£
+¡¡¥Æ¥ó¥Ý¥é¥ê¥í¥°¥Õ¥¡¥¤¥ë¤Ï¥¹¥¯¥ê¥×¥È¼Â¹Ô¸å¡Ê¥á¡¼¥ëÅ¾Á÷¸å¡Ë¤Ëºï½ü¤µ¤ì¤Þ¤¹¡£
+\item {\tt -m} ¥ª¥×¥·¥ç¥ó¤Ï¥á¡¼¥ëÅ¾Á÷¥Ñ¥é¥á¡¼¥¿¤¬µ­½Ò¤µ¤ì¤¿¹½À®¥Õ¥¡¥¤¥ëÌ¾¤ò»ØÄê¤·¤Þ¤¹¡£¥á¡¼¥ë¹½À®¥Õ¥¡¥¤¥ë¤Î¾ÜºÙ¤Ë¤Ä¤¤¤Æ¤Ï
+  \ref{sec:install}¤ò»²¾È²¼¤µ¤¤¡£
 \end{itemize}
 
 \section{´ÉÍý}
