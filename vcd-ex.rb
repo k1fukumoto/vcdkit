@@ -27,6 +27,14 @@ optparse = OptionParser.new do |opt|
 
   vcdopts(options,opt)
 
+  opt.on('-T','--thumbnail','Get the thumbnails from target VMs') do
+    options[:thumbnail] = true
+  end
+
+  opt.on('-P','--powerops','Perform power operation on target vApps') do
+    options[:powerops] = true
+  end
+
   VCloud::Logger.parseopts(opt)
   VCloud::Mailer.parseopts(opt)
 
@@ -83,33 +91,37 @@ begin
   vcd.connect(*options[:vcd])
   org = vcd.org(VCDEX_ORG)
 
-  # Get thumbnails from all ESX hosts
-  VCDEX_JOBS[options[:vcd]].each do |t|
-    vapp = org.vdc(t.vdc).vapp(t.vapp)
+  if(options[:thumbnail])
+    # Get thumbnails from all ESX hosts
+    VCDEX_JOBS[options[:vcd]].each do |t|
+      vapp = org.vdc(t.vdc).vapp(t.vapp)
 
-    if(vapp.status == "Powered Off")
-      vcd.wait(vapp.powerOn)
-    end
+      if(vapp.status == "Powered Off")
+        vcd.wait(vapp.powerOn)
+      end
 
-    vapp.each_vm do |vm|
-      open("#{VCDEX_DIR}/#{vm.name}.png",'w') do |f|
-        f.write vm.thumbnail
+      vapp.each_vm do |vm|
+        open("#{VCDEX_DIR}/#{vm.name}.png",'w') do |f|
+          f.write vm.thumbnail
+        end
       end
     end
   end
+  
+  if(options[:powerops])
+    # Recycle power of one of vApp
+    t = VCDEX_JOBS[options[:vcd]][0]
+    vdc = org.vdc(t.vdc)
 
-  # Recycle power of one of vApp
-  t = VCDEX_JOBS[options[:vcd]][0]
-  vdc = org.vdc(t.vdc)
+    vapp = vdc.vapp(t.vapp)
+    vcd.wait(vapp.powerOff)
 
-  vapp = vdc.vapp(t.vapp)
-  vcd.wait(vapp.powerOff)
+    vapp = vdc.vapp(t.vapp)
+    vcd.wait(vapp.undeploy)
 
-  vapp = vdc.vapp(t.vapp)
-  vcd.wait(vapp.undeploy)
-
-  vapp = vdc.vapp(t.vapp)
-  vcd.wait(vapp.powerOn)
+    vapp = vdc.vapp(t.vapp)
+    vcd.wait(vapp.powerOn)
+  end
 
 rescue Exception => e
   $log.error("vcd-ex failed: #{e}")
