@@ -23,7 +23,7 @@ options={
 }
 
 cb1 = ['10.128.0.66','vcdadmin']
-cb2 = []
+cb2 = ['10.128.1.66','vcdadmin']
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcb-report.rb [options]"
@@ -39,7 +39,7 @@ optparse = OptionParser.new do |opt|
     end
   end
 
-  opt.on('-n','--name','Export report by name') do |o|
+  opt.on('-n','--name REPORT_NAME_PATTERN','Export report by name') do |o|
     options[:name] = o
   end
 
@@ -66,12 +66,12 @@ end
 #
 # MAIN
 #
-$log = VCloud::Logger.new(options[:logfile])
+$log = VCloud::Logger.new
 
 begin
   vcb = Chargeback::VCB.new
   vcb.connect(*options[:cb])
-  vcb.searchReport('TESTJAPANESE').each do |id|
+  vcb.searchReport(options[:name]).each do |id|
     vcb.exportReport(id)
   end
 
