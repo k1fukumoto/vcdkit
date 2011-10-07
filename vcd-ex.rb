@@ -125,5 +125,4 @@ ensure
     $mail.send({'Log' => File.read($log.temp.path)},
                binding)
   end
-  $log.close
 end

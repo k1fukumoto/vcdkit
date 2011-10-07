@@ -29,7 +29,7 @@ module VCloud
         # keep last 10 generations, cap size at 20MB
       end
       opt.on('-t','--tempfile','Output log to temporary file') do |o|
-        $log.add_logger(Tempfile.new(self.class.name))
+        $log.add_logger(Tempfile.new(self.name))
       end
 
     end
@@ -64,12 +64,12 @@ module VCloud
       @loggers.each {|l| l.warn(msg)}
     end
 
-    def close
-      if(@temp)
-        self.info("Deleting temporary log file: #{@temp.path}")
-        @temp.close
-        @temp.unlink
+    def compressed_temp
+      @ctemp = Tempfile.new(self.class.name)
+      Zlib::GzipWriter.open(@ctemp.path) do |gz|
+        gz.write @temp.read 
       end
+      @ctemp.path
     end
   end
 
@@ -89,6 +89,9 @@ module VCloud
     end
 
     def send(attachments,bind)
+      if(@conf.nil?) 
+        raise "Mailer configuration is not specified"
+      end
       e = @conf.elements['/mailerconf'].elements
 
       smtp_opts = {
@@ -103,7 +106,7 @@ module VCloud
       smtp_opts.update(:port => port.text) if port
       smtp_opts.update(:user_name => user.text) if user
       smtp_opts.update(:password => pass.text) if pass
-      smtp_opts.update(:password => auth.text) if auth
+      smtp_opts.update(:authentication => auth.text) if auth
 
       Pony.mail(:to => e.collect('./to') {|to| to.text}.join(','),
                 :from => Mailer.build(e['./from'].text,bind),
