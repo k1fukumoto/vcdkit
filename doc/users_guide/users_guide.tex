@@ -3,7 +3,7 @@
 \newcommand{\thetitle}{vCloud Datacenter Toolkit - Users Guide}
 \newcommand{\theauthor}{Kaoru Fukumoto}
 \newcommand{\email}{kfukumot@vmware.com}
-\newcommand{\version}{1.5.2}
+\newcommand{\version}{1.5.3}
 \newcommand{\customer}{SoftBank Telecom}
 \newcommand{\COMMON}{../common}
 
@@ -40,6 +40,9 @@ vcd-ex.rb: 混入した文字化けを修正。\\
 
 2011/10/5 & 1.5.2 & 福本　薫 & 
 vcd-dump.rb, vcd-trend.rbおよびvsp-datastore.rbに追加されたメール転送機能の説明追記\\
+
+2011/10/11 & 1.5.3 & 福本　薫 & 
+ログは圧縮してから転送。vCD監視用にvcd-ex.rbを拡張\\
 
 \hline
 \end{tabular}
@@ -119,6 +122,7 @@ $ chmod go-r $VCDKIT/.vcd # password for vCenter
 
 \item メール転送パラメータの設定。\\
 エラー発生時のログもしくは出力レポートをメールで転送する機能を持つスクリプトがあります。
+ログはgzip形式に圧縮された後に転送されます。
 メール転送の各種パラメータはスクリプト実行時に設定ファイル名を{\tt -m MAILCONF}オプションで渡す形で指定します。
 以下にvcd-trend.rb実行時に用いる設定ファイルの例を示します。
 
@@ -501,15 +505,42 @@ GuestSummary.xml & 各ORG毎/各ゲストOSタイプ(サーバ系Windows、非サーバ系Windows、
 % vcd-ex.rb
 %
 \subsection{vcd-ex.rb}
-vCloud Director Cell と vCenter 間、および vCloud Director Cellと ESXホスト間のセッションを維持するために以下の操作を行います。
-
+指定されたvCloud Directorに対して以下の操作を行います。どの操作を行うかはコマンドオプションで指定する事ができます。
 \begin{itemize}
-\item vAppのリスタート
-\item 仮想マシンサムネールの取得
+\item vCloud DirectorへのログインしOrganizationリストを取得（常に実行）
+\item vAppのリスタート（{\tt -P}オプション）
+\item 仮想マシンサムネールの取得（{\tt -T オプション}）
 \end{itemize}
 
-このコマンドはファイアウォールによるアイドルコネクションタイムアウトによる接続障害を回避する目的で
-使用されます。ファイアウォールのタイムアウト間隔より十分短い間隔で実行する必要があります。
+このコマンドはvCloud Director CellとvCenter間、もしくはvCloud Director CellとESXホスト間
+に設置されたファイアウォールによるアイドルコネクションタイムアウトによる接続障害を回避する目的で
+使用する事ができます。その場合、ファイアウォールのタイムアウト間隔より十分短い間隔でコマンドを
+実行する必要があります。
+
+\subsubsection{使用例}
+\paragraph{vCloud Director の監視}
+
+\begin{Verbatim}[frame=single]
+$ vcd-report.rb -v1 -l$VCDKIT/logs/vcd-ex.log \
+  -t -m $VCDKIT/conf/mail/vcd-ex.xml
+\end{Verbatim}
+
+\begin{itemize}
+\item フェーズ２本番環境のvCloud Directorに対してログイン操作を行います。
+\item エラーが発生した場合には、{\tt -m}オプションで指定したメール構成ファイルの情報に基づきエラーログを転送します。
+\end{itemize}
+
+\paragraph{ファイアウォールのアイドルコネクションタイムアウトによる接続障害の回避}
+
+\begin{Verbatim}[frame=single]
+$ vcd-report.rb -v1 -T -P -l$VCDKIT/logs/vcd-ex.log
+\end{Verbatim}
+
+\begin{itemize}
+\item {\tt -T}オプションを指定し、サムネイル取得操作を実行します。
+\item {\tt -P}オプションを指定し、vAppの再起動操作を実行します。
+\end{itemize}
+
 
 \subsubsection{操作対象となるvApp}
 
