@@ -66,17 +66,17 @@ end
 VCDEX_DIR   = './data/vcd-ex'
 VCDEX_ORG   = 'Admin'
 VCDEX_JOBS  = {
-  $VCD[0] => [
+  $VCD[0][0] => [
            Target.new('Basic Backup - Admin','VCDEX-BB01'),
            Target.new('Committed Backup - Admin','VCDEX-CB01'),
            Target.new('Basic - Admin','VCDEX-B01'),
            Target.new('Committed - Admin','VCDEX-C01'),
           ],
-  $VCD[1] => [
+  $VCD[1][0] => [
            Target.new('Basic Backup - Admin','VCDEX-BB01'),
            Target.new('Committed Backup - Admin','VCDEX-CB01'),
           ],
-  $VCD[2] => [
+  $VCD[2][0] => [
            Target.new('Admin','VCDMON-01'),
           ],
 }
@@ -93,7 +93,7 @@ begin
 
   if(options[:thumbnail])
     # Get thumbnails from all ESX hosts
-    VCDEX_JOBS[options[:vcd]].each do |t|
+    VCDEX_JOBS[options[:vcd][0]].each do |t|
       vapp = org.vdc(t.vdc).vapp(t.vapp)
 
       if(vapp.status == "Powered Off")
@@ -110,7 +110,7 @@ begin
   
   if(options[:powerops])
     # Recycle power of one of vApp
-    t = VCDEX_JOBS[options[:vcd]][0]
+    t = VCDEX_JOBS[options[:vcd][0]][0]
     vdc = org.vdc(t.vdc)
 
     vapp = vdc.vapp(t.vapp)
@@ -137,4 +137,5 @@ ensure
     $mail.send({'vcd-ex.log' => File.read($log.temp.path)},
                binding)
   end
+  exit ($log.errors + $log.warns)
 end
