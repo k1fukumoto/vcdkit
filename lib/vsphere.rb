@@ -118,8 +118,16 @@ module VSphere
 
     def load(dir)
       @dir = dir
-      @doc = REXML::Document.
-        new(File.new("#{dir}/#{self.class.name.sub(/VSphere::/,'')}.xml"))
+
+      @index_vm = {}
+      @index_media = {}
+
+      path = "#{dir}/#{self.class.name.sub(/VSphere::/,'')}.xml"
+      unless (File.exists?(path))
+        return self
+      end
+
+      @doc = REXML::Document.new(File.new(path))
 
       @index_vm = @doc.elements.inject("//HostSystem/VirtualMachine",{}) {|h,e|
         vm = Vm.new
@@ -136,6 +144,7 @@ module VSphere
         h.update($1 => m)
         h
       }
+      self
     end
 
     def save(dir)
