@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testconf>
+  <cmdopt name="log">-l/tmp/test.log</cmdopt>
+  <cmdopt name="vcd">-vtvcd.vcdc.whitecloud.jp,System,vcdadminl</cmdopt>
+  <cmdopt name="vc"></cmdopt>
+  <cmdopt name="exops">-T -P</cmdopt>
+  <cmdopt name="org">-aAdmin</cmdopt>
+  <cmdopt name="vapp">-aAdmin,'Committed Backup - Admin',RESTORETEST01</cmdopt>
+  <cmdopt name="tree">--tree TESTALL</cmdopt>
+</testconf>
+
