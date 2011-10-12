@@ -19,7 +19,7 @@ require 'pony'
 
 module VCloud
   class Logger
-    attr_reader :temp,:errors
+    attr_reader :temp,:errors,:warns
 
     def Logger.parseopts(opt)
       opt.on('-l','--logfile LOGFILEPATH','Log file name') do |path|
@@ -36,7 +36,7 @@ module VCloud
 
     def initialize
       @loggers = []
-      @errors = 0
+      @warns = @errors = 0
       self.add_logger(::Logger.new(STDOUT))
     end
 
@@ -61,6 +61,7 @@ module VCloud
       @loggers.each {|l| l.error(msg)}
     end
     def warn(msg)
+      @warns += 1
       @loggers.each {|l| l.warn(msg)}
     end
 
@@ -90,7 +91,8 @@ module VCloud
 
     def send(attachments,bind)
       if(@conf.nil?) 
-        raise "Mailer configuration is not specified"
+        $log.info("Mailer configuration is not specified. Skip sending email")
+        return
       end
       e = @conf.elements['/mailerconf'].elements
 
