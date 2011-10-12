@@ -167,4 +167,6 @@ rescue NoChangesException => e
 rescue Exception => e
   $log.error("vcd-restore failed: #{e}")
   $log.error(e.backtrace)
+ensure
+  exit($log.errors + $log.warns)
 end

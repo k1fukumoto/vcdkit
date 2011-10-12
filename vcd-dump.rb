@@ -100,4 +100,5 @@ ensure
     $mail.send({'vcd-dump.log.gz' => File.read($log.compressed_temp)},
                binding)
   end
+  exit($log.errors + $log.warns)
 end
