@@ -22,6 +22,7 @@ options = {
   :input => "#{$VCDKIT}/data/vcd-report",
   :output => "#{$VCDKIT}/data/vcd-trend",
   :target => :all,
+  :offset => 1,
 }
 
 $log = VCloud::Logger.new
@@ -37,6 +38,10 @@ optparse = OptionParser.new do |opt|
   end
   opt.on('-o','--output DIR','Specify directory for trend data') do |o|
     options[:output] = o
+  end
+
+  opt.on('','--offset OFFSET','Offset of starting month(default=1)') do |o|
+    options[:offset] = o
   end
 
   VCloud::Logger.parseopts(opt)
@@ -59,7 +64,7 @@ rescue Exception => e
 end
 
 # Determine target report data range
-pm = (Date.parse(Time.now.to_s) << 1) # previous month
+pm = (Date.parse(Time.now.to_s) << options[:offset].to_i) # previous month
 first = Date.civil(pm.year,pm.month,1) 
 last = Date.civil(pm.year,pm.month,-1)
 
@@ -147,4 +152,4 @@ $mail.send({"GuestList.xml" =>
              File.read("#{outdir}/GuestSummary.xml")
            },binding)
 
-
+exit($log.errors + $log.warns)
