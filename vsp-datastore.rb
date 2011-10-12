@@ -60,7 +60,7 @@ $esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
 $ERROR = {}
 
 def each_datastore(fm,ds,options)
-  dspath = "[#{ds.name}] VCDKIT_TMPDIR"
+  dspath = "[#{ds.name}] __VCDKIT_TMPDIR__"
   if(options[:conf])
     $log.info("Test datastore access: Datastore '#{ds.name}'")
   else
