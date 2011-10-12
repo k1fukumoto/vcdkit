@@ -456,7 +456,11 @@ EOS
 
     def org(name)
       org = Org.new(name)
-      org.connect(self,@doc.elements["#{ORGPATH}[@name='#{name}']"])
+      if(@auth_token)
+        org.connect(self,@doc.elements["#{ORGPATH}[@name='#{name}']"])
+      else
+        org.load(@dir)
+      end
     end
 
     def each_org
