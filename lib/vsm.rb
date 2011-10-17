@@ -12,20 +12,22 @@
 # QUALITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. 
 #
 #######################################################################################
-require 'logger'
-require 'vclouddata.rb'
-require 'securepass.rb'
-require 'service.rb'
-require 'vcloud.rb'
-require 'vapp.rb'
-require 'vsphere.rb'
-require 'vcb.rb'
-require 'vsm.rb'
+require 'rubygems'
+require 'rest_client'
+require 'rexml/document'
+require 'erb'
+require 'pp'
 
-$VCDKIT=ENV['VCDKIT']
-if $VCDKIT.nil?
-  puts "Please set VCDKIT environment variable to installataion directory." 
-  exit 1
+module VShieldManager
+
+  class VSM < XMLElement
+    def connect(host,user)
+      @apiurl = "https://#{host}/api/2.0/global/heartbeat"
+      resp = RestClient::Resource.new("#{@apiurl}",
+                                      :user => "admin",
+                                      :password => 'default').post(nil)
+pp resp
+      self
+    end
+  end
 end
-Dir.chdir($VCDKIT)
-
