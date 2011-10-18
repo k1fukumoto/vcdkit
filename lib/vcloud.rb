@@ -116,10 +116,10 @@ module VCloud
                     {:content_type => CloneVAppParams::TYPE})
     end
 
-    def deployVApp(ci,name,ntwk,desc='')
+    def deployVApp(src,name,desc='')
       Task.new.post(@vcd,
                     self.alt.elements["//Link[@type='#{InstantiateVAppTemplateParams::TYPE}' and @rel='add']"],
-                    InstantiateVAppTemplateParams.new(ci,name,ntwk,desc).xml,
+                    InstantiateVAppTemplateParams.new(self,src,name,desc).xml,
                     {:content_type => InstantiateVAppTemplateParams::TYPE})
     end
 

@@ -13,45 +13,88 @@
 # QUALITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. 
 #
 #######################################################################################
+$: << File.dirname(__FILE__) + "/lib"
 require 'optparse'
 require 'vcdkit'
-require 'pp'
 
-#
-# Process command args
-#
 options = {
-  :input => "./data/vcd-dump",
+  # XXX: put default options
 }
 
+$log = VCloud::Logger.new
+
 optparse = OptionParser.new do |opt|
-  opt.banner = "Usage: vcd-vapp.rb CMD [cmd-options]"
+  opt.banner = "Usage: vcd-vapp.rb [cmd-options]"
   
   vcdopts(options,opt)
 
-  opt.on('-a','--vapp ORG,VDC,VAPP',Array,'Restore source vApp') do |o|
-    options[:target] = o
+  opt.on('-A','--add','Add new vApp') do |o|
+    options[:op] = :add
+  end
+  opt.on('-D','--delete','Delete vApp') do |o|
+    options[:op] = :del
   end
 
+  opt.on('','--vapptemplate ORG,VDC,VAPP',Array,'Specify target vAppTemplate') do |o|
+    options[:vat] = o
+  end
+  opt.on('','--vdc ORG,VDC',Array,'Specify target vdc') do |o|
+    options[:vdc] = o
+  end
+  opt.on('-n','--vappname NAME','Specify vapp basename') do |o|
+    options[:name] = o
+  end
+
+  VCloud::Logger.parseopts(opt)
+
   opt.on('-h','--help','Display this help') do
-    puts opt
+    puts optparse
     exit
   end
 end
 
 begin
   optparse.parse!
-  raise OptionParser::MissingArgument.new("--input") if options[:input].nil?
+rescue SystemExit => e
+  exit(e.status)
 rescue Exception => e
   puts e
   puts optparse
   exit 1
 end
 
-$log = VCloud::Logger.new(options[:logfile])
+begin
+  vcd = VCloud::VCD.new()
+  vcd.connect(*options[:vcd])
 
-vcd = VCloud::VCD.new()
-vcd.connect(*options[:vcd])
-ot = options[:target]
-vcd.org(ot[0]).vdc(ot[1]).vapp(ot[2]).delete
+  case options[:op]
+  when :add
+    t = options[:vat]
+    vdc = vcd.org(t[0]).vdc(t[1])
+    vat = vdc.vapptemplate(t[2])
+    vappname = Time.now.strftime("#{options[:name]}-%Y/%m/%d-%H:%M:%S")
+    vcd.wait(vdc.deployVApp(vat,vappname))
+  when :del
+    t = options[:vdc]
+    vdc = vcd.org(t[0]).vdc(t[1])
+    vdc.each_vapp do |vapp|
+      name = vapp.name
+      if name =~ /#{options[:name]}-[\d\/]+-[\d:]+/
+        $log.info("Start deleting vapp: '#{name}'")
+        vcd.wait(vapp.powerOff)
+        vcd.wait(vapp.undeploy)
+        vdc.vapp(name).delete
+      end
+    end
+  end
+
+rescue Exception => e
+  $log.error("vcd-vapp failed: #{e}")
+  $log.error(e.backtrace)
+ensure
+  if($log.errors>0 && $log.temp)
+    # XXX: Add error notifications
+  end
+end
+exit($log.errors + $log.warns)
 

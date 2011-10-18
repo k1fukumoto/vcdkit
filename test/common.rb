@@ -13,10 +13,11 @@ CONF = REXML::Document.new(File.new("#{VCDKIT}/conf/test.xml"))
 class Target
   attr_reader :name,:command,:done
   attr_accessor :repeat
+  @@id = 0
 
   def initialize(name,params={})
     @name = name
-    @done = "#{name}.done"
+    @done = "#{name}#{@@id}.done"
     @repeat = params[:repeat] || 1
     opts = (params[:opts] || []).collect {|o| 
       if (o.class == Symbol)
@@ -30,6 +31,7 @@ class Target
       end
     }
     @command = "#{VCDKIT}/#{name}.rb #{opts.join(' ')}"
+    @@id += 1
   end
 
   def setup

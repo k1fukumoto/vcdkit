@@ -461,27 +461,28 @@ EOS
     XML =<<EOS
 <?xml version="1.0" encoding="UTF-8"?>
 <InstantiateVAppTemplateParams 
-  name="<%= dest %>" 
-  xmlns="http://www.vmware.com/vcloud/v1"
+  name="<%= name %>" 
+  deploy="true"
+  powerOn="true"
+  xmlns="<%= vdc.xmlns %>"
   xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"> 
   <Description><%= desc %></Description> 
-
-  <InstantiationParams>
-    <NetworkConfigSection> 
-      <ovf:Info/>
-      <NetworkConfig networkName="<%= ntwk.name %>">
-        <Configuration>
-          <ParentNetwork href="<%= ntwk.href %>"/>
-          <FenceMode>bridged</FenceMode>
-        </Configuration>
-      </NetworkConfig>
-    </NetworkConfigSection>
-  </InstantiationParams>
-
-  <Source href="<%= src.entity_href %>"/>
+  <Source href="<%= src.href %>"/>
 </InstantiateVAppTemplateParams>
 EOS
-    def initialize(src,dest,ntwk,desc)
+  # <InstantiationParams>
+  #   <NetworkConfigSection> 
+  #     <ovf:Info/>
+  #     <NetworkConfig networkName="<%= ntwk.name %>">
+  #       <Configuration>
+  #         <ParentNetwork href="<%= ntwk.href %>"/>
+  #         <FenceMode>bridged</FenceMode>
+  #       </Configuration>
+  #     </NetworkConfig>
+  #   </NetworkConfigSection>
+  # </InstantiationParams>
+
+    def initialize(vdc,src,name,desc)
       @xml = ERB.new(XML).result(binding)
     end
   end
