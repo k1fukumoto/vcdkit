@@ -209,6 +209,14 @@ module VCloud
 
   class OrgNetwork < XMLElement
     TYPE='application/vnd.vmware.vcloud.network+xml'
+
+    def initialize(org,name)
+      @org = org; @name = name
+    end
+
+    def path
+      "#{@org.path}/ORGNET/#{@name}"
+    end
   end
 
   class Org < XMLElement
@@ -295,9 +303,23 @@ module VCloud
       
     end
 
+    NETWORKPATH ='//Networks/Network'
+
     def network(name)
       ntwk = OrgNetwork.new
-      ntwk.connect(@vcd,@doc.elements["//Networks/Network[@name='#{name}']"])
+      ntwk.connect(@vcd,@doc.elements["#{NETWORKPATH}[@name='#{name}']"])
+    end
+
+    def each_network
+      @doc.elements.each(NETWORKPATH) { |n| 
+        ntwk = OrgNetwork.new(self,n.attributes['name'].to_s)
+        if(@vcd)
+          ntwk.connect(@vcd,n)
+        elsif(@dir)
+          ntwk.load(@dir)
+        end
+        yield ntwk
+      }
     end
 
     CATPATH = '//Catalogs/CatalogReference'
@@ -325,6 +347,7 @@ module VCloud
       self.each_vdc {|vdc| vdc.save(dir)}
       self.each_catalog {|cat| cat.save(dir)}
       self.each_user {|user| user.save(dir)}
+      self.each_network {|n| n.save(dir)}
     end
 
     def saveparam(dir)
@@ -548,7 +571,7 @@ $VCD = [
         ['vcd.vcdc.whitecloud.jp','System','vcloud-sc'],
         ['tvcd.vcdc.whitecloud.jp','System','vcloud-sc'],
         ['vcd.vhost.ultina.jp','System','vcdadminl'],
-        ['10.149.64.29','System','vcdadmin'],
+        ['10.149.64.21','System','admin'],
         ]
 
 $VSP = [
