@@ -4,7 +4,7 @@ require 'rake/clean'
 VCDKIT=ENV['VCDKIT']
 LOG="#{VCDKIT}/logs/test.log"
 
-CLEAN.include("#{VCDKIT}/data/*",LOG,'**/*.done')
+CLEAN.include(LOG,'**/*.done')
 # Verbose shell command execution
 verbose(true)
 

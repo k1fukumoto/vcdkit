@@ -22,6 +22,7 @@ options = {
 }
 
 $log = VCloud::Logger.new
+$mail = VCloud::Mailer.new
 
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcd-vapp.rb [cmd-options]"
@@ -46,6 +47,7 @@ optparse = OptionParser.new do |opt|
   end
 
   VCloud::Logger.parseopts(opt)
+  VCloud::Mailer.parseopts(opt)
 
   opt.on('-h','--help','Display this help') do
     puts optparse
@@ -93,7 +95,11 @@ rescue Exception => e
   $log.error(e.backtrace)
 ensure
   if($log.errors>0 && $log.temp)
-    # XXX: Add error notifications
+    vcdhost = options[:vcd][0]
+    hostname = `hostname`.chomp
+    now = Time.now
+    $mail.send({'vcd-vapp.log.gz' => File.read($log.compressed_temp)},
+               binding)
   end
 end
 exit($log.errors + $log.warns)
