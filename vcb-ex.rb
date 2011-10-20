@@ -56,12 +56,21 @@ FROM cb_server_property
 WHERE server_property_name like '<%= key %>'
 EOS
 
+  now = Time.now
+
   ['vmijob.lastProcessTime',
    'cbEventListRawView.lastProcessTime',
    'vcLastProcessTime-%'].each do |key|
     sql = ERB.new(DCTS).result(binding)
-    vcbdb.exec(sql) do |r|
-      r[0]
+    vcbdb.conn.exec(sql) do |r|
+      ts = Time.at(Integer(r[0])/1000)
+      diff = now - ts
+      t = ts.strftime('%Y/%m/%d %H:%M:%S')
+      if(diff > 5400)
+        $log.error("#{t}: #{diff.to_i}: #{key}")
+      else
+        $log.info("#{t}: #{diff.to_i}: #{key}")
+      end
     end
   end
 

@@ -16,6 +16,7 @@ require 'rubygems'
 require 'rest_client'
 require 'rexml/document'
 require 'erb'
+require 'oci8'
 require 'pp'
 
 module Chargeback
@@ -89,13 +90,11 @@ EOS
   end
 
   class VCBDB
+    attr_reader :conn   
     def connect(host,dbname)
       pass = VCloud::SecurePass.new().decrypt(File.new('.vcbdb','r').read)
-      @db = OCI8.new('vcb',pass,"//#{host}/#{dbname}")
+      @conn = OCI8.new('vcb',pass,"//#{host}/#{dbname}")
       self
-    end
-    def exec(sql)
-      @db.exec(sql)
     end
   end
 
