@@ -50,6 +50,14 @@ begin
   vcbdb = Chargeback::VCBDB.new
   vcbdb.connect(*options[:vcbdb])
 
+  sql =<<EOS
+SELECT property_name,server_property_value
+FROM cb_server_property
+WHERE server_property_name = <%'vmijob.lastProcessTime',
+                               'cbEventListRawView.lastProcessTime',
+e server_property_name like 'vcLastProcessTime-%';
+
+
 rescue Exception => e
   $log.error("vcb-ex failed: #{e}")
   $log.error(e.backtrace)
