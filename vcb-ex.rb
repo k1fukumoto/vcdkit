@@ -50,12 +50,20 @@ begin
   vcbdb = Chargeback::VCBDB.new
   vcbdb.connect(*options[:vcbdb])
 
-  sql =<<EOS
-SELECT property_name,server_property_value
+  DCTS =<<EOS
+SELECT server_property_value
 FROM cb_server_property
-WHERE server_property_name = <%'vmijob.lastProcessTime',
-                               'cbEventListRawView.lastProcessTime',
-e server_property_name like 'vcLastProcessTime-%';
+WHERE server_property_name like '<%= key %>'
+EOS
+
+  ['vmijob.lastProcessTime',
+   'cbEventListRawView.lastProcessTime',
+   'vcLastProcessTime-%'].each do |key|
+    sql = ERB.new(DCTS).result(binding)
+    vcbdb.exec(sql) do |r|
+      r[0]
+    end
+  end
 
 
 rescue Exception => e

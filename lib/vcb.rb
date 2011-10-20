@@ -92,8 +92,10 @@ EOS
     def connect(host,dbname)
       pass = VCloud::SecurePass.new().decrypt(File.new('.vcbdb','r').read)
       @db = OCI8.new('vcb',pass,"//#{host}/#{dbname}")
-      @db.execute('SELECT COUNT(*) FROM CB_FIXED_COST') {|r| puts r}
       self
+    end
+    def exec(sql)
+      @db.exec(sql)
     end
   end
 
