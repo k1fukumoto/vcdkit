@@ -88,8 +88,16 @@ EOS
     end
   end
 
-  class VCB < XMLElement
+  class VCBDB
+    def connect(host,dbname)
+      pass = VCloud::SecurePass.new().decrypt(File.new('.vcbdb','r').read)
+      @db = OCI8.new('vcb',pass,"//#{host}/#{dbname}")
+      @db.execute('SELECT COUNT(*) FROM CB_FIXED_COST') {|r| puts r}
+      self
+    end
+  end
 
+  class VCB < XMLElement
     def connect(host,user)
       pass = VCloud::SecurePass.new().decrypt(File.new('.vcb','r').read)
       @url = "https://#{host}/vCenter-CB/api"

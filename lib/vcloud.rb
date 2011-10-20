@@ -581,6 +581,11 @@ $VSP = [
         ['172.16.180.30','vcdadmin'],
         ]
 
+$VCBDB = [
+          ['10.128.0.69','vclouddb'],
+          ['10.128.1.69','vclouddb'],
+         ]
+
 def vcdopts(options,opt) 
   opt.on('-v','--vcd HOST,ORG,USER',Array,'vCD login parameters') do |o|
     if(o[0].size == 1)
@@ -597,6 +602,16 @@ def vcopts(options,opt)
       options[:vsp] = $VSP[o[0].to_i - 1]
     else
       options[:vsp] = o
+    end
+  end
+end
+
+def vcbdbopts(options,opt)
+  opt.on('','--chargeback_db HOST,USER',Array,'vCenter Chargeback database login parameters') do |o|
+    if(o[0].size == 1)
+      options[:vcbdb] = $VCBDB[o[0].to_i - 1]
+    else
+      options[:vcbdb] = o
     end
   end
 end
