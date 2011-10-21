@@ -16,6 +16,7 @@
 $: << File.dirname(__FILE__) + "/lib"
 require 'optparse'
 require 'vcdkit'
+require 'vcb'
 
 options={}
 
