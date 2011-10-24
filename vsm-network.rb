@@ -49,7 +49,7 @@ end
 
 begin
   vsm = VShieldManager::VSM.new
-  vsm.connect('')
+  vsm.connect('IP','default')
 
 rescue Exception => e
   $log.error("vsm-network failed: #{e}")
