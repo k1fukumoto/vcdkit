@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mailerconf>
+  <to>k1fukumoto@gmail.com</to>
+  <from>{%= hostname %}@dhs.jtidc.jp</from>
+  <subject>vCDC vcd-dump error report [{%= vcdhost %}] {%= now.year %}/{%= now.month %} </subject>
+  <body>VCD: {%= vcdhost %}
+SCRIPT RUN AT: {%= now %}</body>
+  <smtp>
+    <host>10.121.0.113</host>
+  </smtp>
+</mailerconf>
+
