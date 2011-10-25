@@ -84,7 +84,7 @@ ensure
   if($log.errors>0 && $log.temp)
     # following local variables can be accessable from inside
     # mailer conf templates via binding
-    vcdhost = options[:vcd][0]
+    vcbdb = options[:vcbdb][0]
     hostname = `hostname`.chomp
     now = Time.now
     $mail.send({'vcb-ex.log' => File.read($log.temp.path)},
