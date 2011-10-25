@@ -22,12 +22,30 @@ module VShieldManager
 
   class VSM < XMLElement
     def connect(host,user)
-      @apiurl = "https://#{host}/api/2.0/global/heartbeat"
-      resp = RestClient::Resource.new("#{@apiurl}",
-                                      :user => "admin",
-                                      :password => 'default').post(nil)
-pp resp
-      self
+      @apiurl = "https://#{host}/api/2.0"
+      @auth_token = {:Authorization => 'Basic YWRtaW46ZGVmYXVsdA=='}
+      xml = self.get("#{@apiurl}/networks/edge/capability")
+      doc = REXML::Document.new(xml)
+      netid = doc.root.elements['//networkId'].text
+      
+      doc = REXML::Document.new(self.get("#{@apiurl}/networks/#{netid}/edge/dhcp/service"))
+      REXML::Formatters::Pretty.new.write(doc.root,STDOUT)
+
     end
+
+    def get(url)
+      $log.info("HTTP GET: #{url.sub(/#{@apiurl}/,'')}")
+      RestClient.get(url,@auth_token) { |response, request, result, &block|
+        case response.code
+        when 200..299
+          response
+        else
+          $log.error("#{response.code}>> #{response}")
+          response.return!(request,result,&block)
+        end
+      }
+    end
+
+
   end
 end
