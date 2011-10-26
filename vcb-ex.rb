@@ -55,7 +55,11 @@ end
 
 begin
   vcbdb = Chargeback::VCBDB.new
-  vcbdb.connect(*options[:vcbdb])
+  conn = vcbdb.connect(*options[:vcbdb])
+  if conn.nil?
+    $log.info("Failed to connect database. Skip the rest of tests.")
+    exit(0)
+  end
 
   now = Time.now
 
@@ -66,9 +70,9 @@ begin
     diff = now - ts
     tstr = ts.strftime('%Y-%m-%d %H:%M:%S')
     if(diff > options[:threshold])
-      $log.error("Last Process Time #{tstr}(#{diff.to_i} secs old): #{key}")
+      $log.error("Last Process Time #{tstr}(#{diff.to_i} secs old): #{th.name}")
     else
-      $log.info("Last Process Time #{tstr}(#{diff.to_i} secs old): #{key}")
+      $log.info("Last Process Time #{tstr}(#{diff.to_i} secs old): #{th.name}")
     end
     ts_vmijob = ts if key == 'vmijob.lastProcessTime'
   end

@@ -141,8 +141,18 @@ EOS
 
     def connect(host,dbname)
       pass = VCloud::SecurePass.new().decrypt(File.new('.vcbdb','r').read)
-      @conn = OCI8.new('vcb',pass,"//#{host}/#{dbname}")
-      self
+      c = 0
+      while @conn.nil? && c<5
+        begin 
+          $log.info("Connecting VCB database #{host}/#{dbname}")
+          @conn = OCI8.new('vcb',pass,"//#{host}/#{dbname}")
+        rescue Exception => e
+          $log.info("#{e}")
+          sleep(3)
+          c += 1
+        end
+      end
+      @conn
     end
 
     def dcThreads
