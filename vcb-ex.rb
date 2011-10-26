@@ -18,7 +18,9 @@ require 'optparse'
 require 'vcdkit'
 require 'vcb'
 
-options={}
+options={
+  :threshold => 5400,
+}
 
 $log = VCloud::Logger.new
 $mail = VCloud::Mailer.new
@@ -30,6 +32,10 @@ optparse = OptionParser.new do |opt|
 
   VCloud::Logger.parseopts(opt)
   VCloud::Mailer.parseopts(opt)
+
+  opt.on('','--threshold SECS','Threshold for dc thread timestamp') do |n|
+    options[:threshold] = n
+  end
 
   opt.on('-h','--help','Display this help') do
     puts opt
@@ -51,30 +57,18 @@ begin
   vcbdb = Chargeback::VCBDB.new
   vcbdb.connect(*options[:vcbdb])
 
-  DCTS =<<EOS
-SELECT server_property_value
-FROM cb_server_property
-WHERE server_property_name like '<%= key %>'
-EOS
-
   now = Time.now
 
-  ['vmijob.lastProcessTime',
-   'cbEventListRawView.lastProcessTime',
-   'vcLastProcessTime-%'].each do |key|
-    sql = ERB.new(DCTS).result(binding)
-    vcbdb.conn.exec(sql) do |r|
-      ts = Time.at(Integer(r[0])/1000)
-      diff = now - ts
-      t = ts.strftime('%Y/%m/%d %H:%M:%S')
-      if(diff > 5400)
-        $log.error("#{t}: #{diff.to_i}: #{key}")
-      else
-        $log.info("#{t}: #{diff.to_i}: #{key}")
-      end
+  vcbdb.dcThreads.each do |th|
+    ts = th.lastProcessTime
+    diff = now - ts
+    tstr = ts.strftime('%Y-%m-%d %H:%M:%S')
+    if(diff > options[:threshold])
+      $log.error("Last Process Time #{tstr}(#{diff.to_i} secs old): #{key}")
+    else
+      $log.info("Last Process Time #{tstr}(#{diff.to_i} secs old): #{key}")
     end
   end
-
 
 rescue Exception => e
   $log.error("vcb-ex failed: #{e}")

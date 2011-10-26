@@ -91,10 +91,34 @@ EOS
 
   class VCBDB
     attr_reader :conn   
+
+    class DCThread
+      attr_reader :name,:lastProcessTime
+      INIT =<<EOS
+SELECT server_property_value
+FROM cb_server_property
+WHERE server_property_name like '<%= name %>'
+EOS
+      def initialize(conn,name)
+        sql = ERB.new(INIT).result(binding)
+        conn.exec(sql) do |r|
+          @lastProcessTime = Time.at(Integer(r[0])/1000)
+        end
+      end
+    end
+
     def connect(host,dbname)
       pass = VCloud::SecurePass.new().decrypt(File.new('.vcbdb','r').read)
       @conn = OCI8.new('vcb',pass,"//#{host}/#{dbname}")
       self
+    end
+
+    def dcThreads
+      ['vmijob.lastProcessTime',
+       'cbEventListRawView.lastProcessTime',
+       'vcLastProcessTime-%'].collect do |name|
+        DCThread.new(@conn,name)
+      end
     end
   end
 
