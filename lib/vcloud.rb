@@ -582,8 +582,8 @@ $VSP = [
         ]
 
 $VCBDB = [
-          ['10.128.0.69','vclouddb'],
-          ['10.128.1.69','vclouddb'],
+          ['10.128.0.71','vclouddb'],
+          ['10.128.1.71','vclouddb'],
          ]
 
 def vcdopts(options,opt) 
