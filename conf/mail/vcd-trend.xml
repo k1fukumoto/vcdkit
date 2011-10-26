@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mailerconf>
-  <to>k1fukumoto@gmail.com</to>
+  <to>alert-vcloud@dhs.jtidc.jp</to>
+  <to>ml_kanshi@dhs.jtidc.jp</to>
   <from>{%= hostname %}@dhs.jtidc.jp</from>
   <subject>vCDC guest OS usage report: [{%= vcdhost %}] {%= first.year %}/{%= first.month %} </subject>
   <body>VCD: {%= vcdhost %}

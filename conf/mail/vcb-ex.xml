@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mailerconf>
   <to>k1fukumoto@gmail.com</to>
+  <to>atsuhiro.machida@tm.softbank.co.jp</to>
+  <to>masaki.gonda@g.softbank.co.jp</to>
+  <to>masanori.wada@g.softbank.co.jp</to>
   <from>{%= hostname %}@dhs.jtidc.jp</from>
   <subject>vCDC vcb-ex error report [{%= vcbdb %}] {%= now %} </subject>
   <body>VCBDB: {%= vcbdb %}

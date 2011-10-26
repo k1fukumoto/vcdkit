@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mailerconf>
-  <to>k1fukumoto@gmail.com</to>
+  <to>alert-vcloud@dhs.jtidc.jp</to>
+  <to>ml_kanshi@dhs.jtidc.jp</to>
   <from>{%= hostname %}@dhs.jtidc.jp</from>
   <subject>vCDC vcd-ex error report [{%= vcdhost %}] {%= now %} </subject>
   <body>VCD: {%= vcdhost %}
