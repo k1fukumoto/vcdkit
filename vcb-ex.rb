@@ -59,6 +59,8 @@ begin
 
   now = Time.now
 
+  ts_vmijob = nil
+
   vcbdb.dcThreads.each do |th|
     ts = th.lastProcessTime
     diff = now - ts
@@ -68,7 +70,10 @@ begin
     else
       $log.info("Last Process Time #{tstr}(#{diff.to_i} secs old): #{key}")
     end
+    ts_vmijob = ts if key == 'vmijob.lastProcessTime'
   end
+
+  Chargeback::VCBDB::VM.searchByStartTime(:since => ts_vmijob)
 
 rescue Exception => e
   $log.error("vcb-ex failed: #{e}")

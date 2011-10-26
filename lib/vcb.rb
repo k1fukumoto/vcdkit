@@ -107,6 +107,38 @@ EOS
       end
     end
 
+    class VM
+      SEARCH_BY_STARTTIME <<EOS
+SELECT che.cb_hierarchical_entity_id heid,
+       ch.hierarchy_name org, 
+       ce2.entity_name vapp,
+       che.entity_display_name vm, 
+       chr.start_time created, 
+       chr.end_time deleted
+FROM cb_hierarchy_relation chr 
+  INNER JOIN cb_hierarchical_entity che 
+    ON chr.entity_id = che.cb_hierarchical_entity_id
+  INNER JOIN cb_entity ce 
+    ON che.entity_id = ce.entity_id
+  INNER JOIN cb_hierarchy ch
+    ON che.hierarchy_id = ch.hierarchy_id
+  INNER JOIN cb_hierarchical_entity che2
+    ON chr.parent_entity_id = che2.cb_hierarchical_entity_id
+  INNER JOIN cb_entity ce2
+    ON che2.entity_id = ce2.entity_id
+WHERE chr.start_time > to_date('20111018', 'yyyymmdd') 
+  AND end_time is not null
+  AND ce.entity_type_id = 0
+ORDER BY ch.hierarchy_name, chr.start_time
+EOS
+      def VM.searchByStartTime(opts)
+        sql = ERB.new(SEARCH_BY_STARTTIME).result(binding)
+        conn.exec(sql) do |r|
+          pp r
+        end
+      end
+    end
+
     def connect(host,dbname)
       pass = VCloud::SecurePass.new().decrypt(File.new('.vcbdb','r').read)
       @conn = OCI8.new('vcb',pass,"//#{host}/#{dbname}")
