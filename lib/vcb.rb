@@ -120,7 +120,7 @@ EOS
           c += 1
         end
       end
-      self
+      @conn
     end
 
     def dcThreads
