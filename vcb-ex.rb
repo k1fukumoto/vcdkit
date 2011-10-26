@@ -78,8 +78,8 @@ begin
   end
 
   Chargeback::VCBDB::VM.searchByStartTime(conn,:since => ts_vmijob) do |vm|
-    c = vm.created.strformat('%Y-%m-%d %H:%M:%S')
-    d = vm.deleted.strformat('%Y-%m-%d %H:%M:%S')
+    c = vm.created.strftime('%Y-%m-%d %H:%M:%S')
+    d = vm.deleted.strftime('%Y-%m-%d %H:%M:%S')
     $log.info("Unprocessed VM found: #{vm.org}/#{vm.vapp}/#{vm.name}(#{vm.heid}) #{vm.c} ~ #{vm.d}")
   end
 
