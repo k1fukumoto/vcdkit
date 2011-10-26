@@ -132,6 +132,7 @@ WHERE chr.start_time > to_date('<%= since %>', 'YYYY-MM-DD HH24:MI:SS')
   AND ce.entity_type_id = 0
 ORDER BY ch.hierarchy_name, chr.start_time
 EOS
+
       attr_reader :heid,:org,:vapp,:name,:created,:deleted
 
       def initialize(heid,org,vapp,name,created,deleted)
@@ -175,6 +176,12 @@ EOS
        'vcLastProcessTime-%'].collect do |name|
         DCThread.new(@conn,name)
       end
+    end
+
+    def lastFixedCost
+      t = nil
+      conn.exec('SELECT MAX(start_time) FROM cb_fixed_cost') {|r| t = r[0]}
+      t
     end
   end
 

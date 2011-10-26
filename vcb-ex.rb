@@ -53,6 +53,8 @@ rescue Exception => e
   exit 1
 end
 
+TIMEFORMAT = '%Y-%m-%d %H:%M:%S'
+
 begin
   vcbdb = Chargeback::VCBDB.new
   conn = vcbdb.connect(*options[:vcbdb])
@@ -62,13 +64,20 @@ begin
   end
 
   now = Time.now
+  ts = conn.lastFixedCost
+  diff = now - ts
+  tstr = ts.strftime(TIMEFORMAT)
+  if(diff > options[:threshold])
+    $log.error("Last Fixed Cost #{tstr}(#{diff.to_i} secs old)")
+  else
+    $log.info("Last Fixed Cost #{tstr}(#{diff.to_i} secs old)")
+  end
 
   ts_vmijob = nil
-
   vcbdb.dcThreads.each do |th|
     ts = th.lastProcessTime
     diff = now - ts
-    tstr = ts.strftime('%Y-%m-%d %H:%M:%S')
+    tstr = ts.strftime(TIMEFORMAT)
     if(diff > options[:threshold])
       $log.error("Last Process Time #{tstr}(#{diff.to_i} secs old): #{th.name}")
     else
