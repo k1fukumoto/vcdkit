@@ -12,7 +12,13 @@ CNTR = {
   
 }
 
-ARGV.collect {|f| File.new(f)}.sort {|a,b| a.mtime <=> b.mtime}.each do |file|
+ARGV.collect do |f| 
+  File.new(f)
+end.sort do |a,b| 
+  a.path =~ /\.(\d*)$/; at = $1 || 0
+  b.path =~ /\.(\d*)$/; bt = $1 || 0
+  bt.to_i <=> at.to_i
+end.each do |file|
   t0 = t1 = nil
   in_ae = false
   n = 1
@@ -35,7 +41,6 @@ ARGV.collect {|f| File.new(f)}.sort {|a,b| a.mtime <=> b.mtime}.each do |file|
         in_ae = true
       else
         CNTR[:stacktrace_other] += 1
-#        puts "#{n}:" + line
       end
     else
       in_ae = false
@@ -43,12 +48,13 @@ ARGV.collect {|f| File.new(f)}.sort {|a,b| a.mtime <=> b.mtime}.each do |file|
     n += 1
     prev_line = line
   end
-  dt = DateTime.parse(t1) - DateTime.parse(t0)
-  hrs = (dt - dt.floor) * 24
+  days = DateTime.parse(t1) - DateTime.parse(t0)
+  hrs = (days - days.floor) * 24
   mins = (hrs - hrs.floor) * 60
-  puts sprintf("%-18s: %02d days %02d hrs(%s ~ %s)",file.path,dt, (dt - dt.floor) * 24,t0,t1)
+  puts sprintf("%-16s(%-2dMB):%2d day %02d:%02d (%s ~ %s)",
+               file.path,File.size(file)/1024/1024,days.floor,hrs.floor,mins.floor,t0,t1)
 end
 
 [:debug,:info,:warn,:error,:stacktrace_apiexception,:stacktrace_other,:total].each do |type|
-  puts sprintf("%-12s %8d (%d%%)\n",type,CNTR[type],CNTR[type]*100/CNTR[:total])
+  puts sprintf("%-24s %8d (%3d%%)\n",type,CNTR[type],CNTR[type]*100/CNTR[:total])
 end
