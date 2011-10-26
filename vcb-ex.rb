@@ -74,11 +74,17 @@ begin
     else
       $log.info("Last Process Time #{tstr}(#{diff.to_i} secs old): #{th.name}")
     end
-    ts_vmijob = ts if key == 'vmijob.lastProcessTime'
+    ts_vmijob = ts if th.name == 'vmijob.lastProcessTime'
   end
 
-  Chargeback::VCBDB::VM.searchByStartTime(:since => ts_vmijob)
+  Chargeback::VCBDB::VM.searchByStartTime(conn,:since => ts_vmijob) do |vm|
+    c = vm.created.strformat('%Y-%m-%d %H:%M:%S')
+    d = vm.deleted.strformat('%Y-%m-%d %H:%M:%S')
+    $log.info("Unprocessed VM found: #{vm.org}/#{vm.vapp}/#{vm.name}(#{vm.heid}) #{vm.c} ~ #{vm.d}")
+  end
 
+rescue SystemExit => e
+  exit(e.status)
 rescue Exception => e
   $log.error("vcb-ex failed: #{e}")
   $log.error(e.backtrace)

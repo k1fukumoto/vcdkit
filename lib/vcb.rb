@@ -101,6 +101,7 @@ WHERE server_property_name like '<%= name %>'
 EOS
       def initialize(conn,name)
         sql = ERB.new(INIT).result(binding)
+        @name = name
         conn.exec(sql) do |r|
           @lastProcessTime = Time.at(Integer(r[0])/1000)
         end
@@ -108,7 +109,7 @@ EOS
     end
 
     class VM
-      SEARCH_BY_STARTTIME <<EOS
+      SEARCH_BY_STARTTIME = <<EOS
 SELECT che.cb_hierarchical_entity_id heid,
        ch.hierarchy_name org, 
        ce2.entity_name vapp,
@@ -126,15 +127,28 @@ FROM cb_hierarchy_relation chr
     ON chr.parent_entity_id = che2.cb_hierarchical_entity_id
   INNER JOIN cb_entity ce2
     ON che2.entity_id = ce2.entity_id
-WHERE chr.start_time > to_date('20111018', 'yyyymmdd') 
+WHERE chr.start_time > to_date('<%= since %>', 'YYYY-MM-DD HH24:MI:SS') 
   AND end_time is not null
   AND ce.entity_type_id = 0
 ORDER BY ch.hierarchy_name, chr.start_time
 EOS
-      def VM.searchByStartTime(opts)
+      attr_reader :heid,:org,:vapp,:name,:created,:deleted
+
+      def initialize(heid,org,vapp,name,created,deleted)
+        @heid = heid
+        @org = org
+        @vapp = vapp
+        @name = name
+        @created = created
+        @deleted = deleted
+      end
+
+      def VM.searchByStartTime(conn,opts)
+        since = opts[:since].strftime('%Y-%m-%d %H:%M:%S')
         sql = ERB.new(SEARCH_BY_STARTTIME).result(binding)
         conn.exec(sql) do |r|
-          pp r
+          next if r[1] =~ /^DELETED/
+          yield VM.new(*r)
         end
       end
     end
