@@ -127,7 +127,8 @@ FROM cb_hierarchy_relation chr
     ON chr.parent_entity_id = che2.cb_hierarchical_entity_id
   INNER JOIN cb_entity ce2
     ON che2.entity_id = ce2.entity_id
-WHERE chr.start_time > to_date('<%= since %>', 'YYYY-MM-DD HH24:MI:SS') 
+WHERE chr.start_time > to_date('<%= t0 %>', 'YYYY-MM-DD HH24:MI:SS') 
+  AND chr.start_time < to_date('<%= t1 %>', 'YYYY-MM-DD HH24:MI:SS') 
   AND end_time is not null
   AND ce.entity_type_id = 0
 ORDER BY ch.hierarchy_name, chr.start_time
@@ -145,7 +146,8 @@ EOS
       end
 
       def VM.searchByStartTime(conn,opts)
-        since = opts[:since].strftime('%Y-%m-%d %H:%M:%S')
+        t0 = opts[:t0].strftime('%Y-%m-%d %H:%M:%S')
+        t1 = opts[:t1].strftime('%Y-%m-%d %H:%M:%S')
         sql = ERB.new(SEARCH_BY_STARTTIME).result(binding)
         conn.exec(sql) do |r|
           next if r[1] =~ /^DELETED/
