@@ -134,6 +134,17 @@ WHERE chr.start_time > to_date('<%= t0 %>', 'YYYY-MM-DD HH24:MI:SS')
 ORDER BY ch.hierarchy_name, chr.start_time
 EOS
 
+      SEARCH_PARENT = <<EOS
+SELECT che2.cb_hierarchical_entity_id,
+       che2.entity_display_name
+FROM cb_hierarchy_relation chr
+  INNER JOIN cb_hierarchical_entity che
+    ON chr.entity_id = che.cb_hierarchical_entity_id
+  INNER JOIN cb_hierarchical_entity che2
+    ON chr.parent_entity_id = che2.cb_hierarchical_entity_id
+WHERE che.cb_hierarchical_entity_id = <% heid %>
+EOS
+
       attr_reader :heid,:org,:vapp,:name,:created,:deleted
 
       def initialize(heid,org,vapp,name,created,deleted)
@@ -153,6 +164,16 @@ EOS
           next if r[1] =~ /^DELETED/
           yield VM.new(*r)
         end
+      end
+
+      def vdc
+        heid = @heid
+        sql = ERB.new(SEARCH_PARENT).result(binding)
+        conn.exec(sql) {|r| puts r; heid = r[0]}
+        sql = ERB.new(SEARCH_PARENT).result(binding)
+        conn.exec(sql) {|r| puts r; heid = r[0]}
+        sql = ERB.new(SEARCH_PARENT).result(binding)
+        conn.exec(sql) {|r| puts r; heid = r[0]}
       end
     end
 

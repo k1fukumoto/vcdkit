@@ -31,7 +31,7 @@ optparse = OptionParser.new do |opt|
 
   VCloud::Logger.parseopts(opt)
 
-  opt.on('-s','--starttime T0,T1','Start time range') do |r|
+  opt.on('-s','--starttime T0,T1',Array,'Start time range') do |r|
     options[:starttime] = r
   end
 
@@ -68,6 +68,7 @@ begin
   Chargeback::VCBDB::VM.searchByStartTime(conn,opts) do |vm|
     c = vm.created.strftime(TIMEFORMAT)
     d = vm.deleted.strftime(TIMEFORMAT)
+    puts vm.vdc
     puts "#{vm.org}/#{vm.vapp}/#{vm.name}(#{vm.heid}) #{c} ~ #{d}"
   end
 
