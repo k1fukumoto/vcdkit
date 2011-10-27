@@ -136,18 +136,21 @@ EOS
 
       SEARCH_PARENT = <<EOS
 SELECT che2.cb_hierarchical_entity_id,
-       che2.entity_display_name
+       ce2.entity_name
 FROM cb_hierarchy_relation chr
   INNER JOIN cb_hierarchical_entity che
     ON chr.entity_id = che.cb_hierarchical_entity_id
   INNER JOIN cb_hierarchical_entity che2
     ON chr.parent_entity_id = che2.cb_hierarchical_entity_id
-WHERE che.cb_hierarchical_entity_id = <% heid %>
+  INNER JOIN cb_entity ce2 
+    ON che2.entity_id = ce2.entity_id
+WHERE che.cb_hierarchical_entity_id = <%= heid %>
 EOS
 
       attr_reader :heid,:org,:vapp,:name,:created,:deleted
 
-      def initialize(heid,org,vapp,name,created,deleted)
+      def initialize(conn,heid,org,vapp,name,created,deleted)
+        @conn = conn
         @heid = heid
         @org = org
         @vapp = vapp
@@ -162,18 +165,20 @@ EOS
         sql = ERB.new(SEARCH_BY_STARTTIME).result(binding)
         conn.exec(sql) do |r|
           next if r[1] =~ /^DELETED/
-          yield VM.new(*r)
+          yield VM.new(conn,*r)
         end
       end
 
       def vdc
         heid = @heid
+        vdc = nil
         sql = ERB.new(SEARCH_PARENT).result(binding)
-        conn.exec(sql) {|r| puts r; heid = r[0]}
+        @conn.exec(sql) {|r| heid = r[0]}
         sql = ERB.new(SEARCH_PARENT).result(binding)
-        conn.exec(sql) {|r| puts r; heid = r[0]}
+        @conn.exec(sql) {|r| heid = r[0]}
         sql = ERB.new(SEARCH_PARENT).result(binding)
-        conn.exec(sql) {|r| puts r; heid = r[0]}
+        @conn.exec(sql) {|r| vdc = r[1].chomp}
+        vdc
       end
     end
 
