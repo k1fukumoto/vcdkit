@@ -175,6 +175,12 @@ EOS
         sql = ERB.new(SEARCH_PARENT).result(binding)
         conn.exec(sql) {|r| puts r; heid = r[0]}
       end
+
+      def printVmiCost
+        heid = @heid
+        sql = ERB.new(File.new("suppor/vcb/vmicost.sql").read).result(binding)
+        
+      end
     end
 
     def connect(host,dbname)
