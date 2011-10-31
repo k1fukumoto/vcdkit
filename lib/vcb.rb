@@ -182,9 +182,15 @@ EOS
       end
 
       def printVmiCost
-        heid = @heid
-        sql = ERB.new(File.new("suppor/vcb/vmicost.sql").read).result(binding)
-        
+        cost_model_ids = []
+        @conn.exec('SELECT cost_model_id FROM cb_vmi_cm_matrix_map') do |r|
+          cost_model_ids.push(r[0])
+        end
+        cost_model_ids.each do |cmid|
+          heid = @heid
+          sql = ERB.new(File.new("suppor/vcb/list_vmi_cost.sql").read).result(binding)
+          @conn.exec(sql) {|r|}
+        end
       end
     end
 

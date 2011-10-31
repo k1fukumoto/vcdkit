@@ -16,25 +16,26 @@ v_cost_matrix_id integer;
 v_fc_id integer;
 
 CURSOR allocation_cursor IS
-       (SELECT allocation_value, start_time, end_time 
-        FROM cb_entity_resource_allocation 
-        WHERE computing_resource_id = v_vcpu_res_id 
-          AND entity_id = v_entity_id 
-        ORDER BY start_time);
+       SELECT allocation_value, start_time, end_time 
+       FROM cb_entity_resource_allocation 
+       WHERE computing_resource_id = v_vcpu_res_id 
+       AND entity_id = v_entity_id 
+       ORDER BY start_time;
 CURSOR mem_allocation_cursor IS
-       (SELECT allocation_value, start_time, end_time 
-        FROM cb_entity_resource_allocation 
-        WHERE computing_resource_id = v_mem_res_id 
-          AND entity_id = v_entity_id 
-        ORDER BY start_time);
+       SELECT allocation_value, start_time, end_time 
+       FROM cb_entity_resource_allocation 
+       WHERE computing_resource_id = v_mem_res_id 
+       AND entity_id = v_entity_id 
+       ORDER BY start_time;
+
 BEGIN
-    -- VM Instance fixed cost is configured only for two cost models (select * from cb_vmi_cm_matrix_map) i.e 1433 and 2237, run this procedure for each cost model
-    v_cost_model_id := 698;
+    v_cost_model_id := <%= cmid %>;
+    v_entity_id := <%= heid %>;
+
     select cost_matrix_id into v_cost_matrix_id from cb_vmi_cm_matrix_map where cost_model_id = v_cost_model_id;
     dbms_output.enable(1000000);
     v_mem_res_id := 5;
     v_vcpu_res_id := 10;
-    v_entity_id := <%= heid %>
 
     OPEN allocation_cursor;
     FETCH allocation_cursor INTO v_vcpu_allocation, v_vcpu_start_time, v_vcpu_end_time;
