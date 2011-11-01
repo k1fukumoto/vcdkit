@@ -38,7 +38,7 @@ optparse = OptionParser.new do |opt|
     options[:apps] << {:name => 'vCenter Chargeback', :file =>'.vcb'}
   end
   opt.on('','--chargeback_db','Change login password for vCenter Chargeback DB') do |o|
-    options[:apps] << {:name => 'vCenter Chargeback', :file =>'.vcbdb'}
+    options[:apps] << {:name => 'vCenter Chargeback DB', :file =>'.vcbdb'}
   end
 
   VCloud::Logger.parseopts(opt)
