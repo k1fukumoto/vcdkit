@@ -38,6 +38,10 @@ optparse = OptionParser.new do |opt|
     options[:threshold] = n
   end
 
+  opt.on('','--restart_vcddc','Enforce to restart vCD data-collector service') do |n|
+    options[:cmd] = :restart_vcddc
+  end
+
   opt.on('-h','--help','Display this help') do
     puts opt
     exit
@@ -135,6 +139,12 @@ begin
     c = vm.created.strftime('%Y-%m-%d %H:%M:%S')
     d = vm.deleted.strftime('%Y-%m-%d %H:%M:%S')
     $log.info("Unprocessed VM found: #{vm.org}/#{vm.vapp}/#{vm.name}(#{vm.heid}) #{c} ~ #{d}")
+  end
+
+  case options[:cmd]
+  when :restart_vcddc
+    restart_vcddc(options)
+  else
   end
 
 rescue SystemExit => e
