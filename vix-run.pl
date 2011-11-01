@@ -2,19 +2,20 @@
 
 use lib qw{ blib/lib blib/auto blib/arch blib/arch/auto/VMware blib/arch/auto };
 
-use strict;
 use Getopt::Std;
 
 use VMware::Vix::Simple;
 use VMware::Vix::API::Constants;
 
-my %args;
-getopts("hpv",\%args);
+getopt("hpv");
 
-my $hostname = %args{h}
+my $hostname = $opt_h;
+my $vmname = $opt_v;
 my $hostport = 0;
 my $username = 'root';
-my $password = %args{p}
+my $password = $opt_p;
+
+my $script = "C:\\PROGRA~2\\VMware\\VMWARE~1\\VMWARE~1\\restart-vcddc.bat";
 
 my $err;
 my $esx;
@@ -31,20 +32,22 @@ my %procinfo;
 			   0, VIX_INVALID_HANDLE);
 die "Connect failed, $err ", GetErrorText($err), "\n" if $err != VIX_OK;
 
+
 @vms = FindRunningVMs($esx, 100);
 $err = shift @vms;
 die "Error $err finding running VMs ", GetErrorText($err),"\n" if $err != VIX_OK;
 
 foreach (@vms) {
+  next unless $_ =~ /$vmname/;
+
   print "Running VM: $_\n";
   ($err,$vm) = HostOpenVM($esx,$_,VIX_VMOPEN_NORMAL,VIX_INVALID_HANDLE);
   die $err, GetErrorText($err),"\n" if $err != VIX_OK;
 
-  $err = VMLoginInGuest($vm,"Administrator","vmware1!",0);
+  $err = VMLoginInGuest($vm,"vcdadmin",$password,0);
   die $err, GetErrorText($err),"\n" if $err != VIX_OK;
 
-  ($err,%procinfo) = VMRunProgramInGuestEx
-    ($vm,"c:\\restart_service.bat",'',0,VIX_INVALID_HANDLE);
+  ($err,%procinfo) = VMRunProgramInGuestEx($vm,$script,'',0,VIX_INVALID_HANDLE);
   die $err, GetErrorText($err),"\n" if $err != VIX_OK;
   print "$procinfo{'EXIT_CODE'}\n";
 

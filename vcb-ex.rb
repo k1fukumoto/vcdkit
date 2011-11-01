@@ -54,11 +54,11 @@ rescue Exception => e
   exit 1
 end
 
-def find_vms(vm_names)
+def find_vms(opts, vmnames)
   ret = []
 
   vc = VSphere::VCenter.new
-  vc.connect(*options[:vsp])
+  vc.connect(*opts[:vsp])
 
   vc.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
     dc.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).each do |c|
@@ -66,13 +66,15 @@ def find_vms(vm_names)
         h.vm.each do |vm|
           vmnames.each do |vmname|
             next unless vm.name == vmname
-            pus "FOUND! #{vmname} on #{h}"
+            puts "FOUND! #{vmname} on #{h.name}"
           end
         end
       end
     end
   end
 end
+
+# find_vms(options,['CGSdhv-868','CGSdhv-869'])
 
 TIMEFORMAT = '%Y-%m-%d %H:%M:%S'
 
