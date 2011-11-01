@@ -1,4 +1,3 @@
-SET SERVEROUTPUT ON
 DECLARE
 v_mem_res_id integer;
 v_vcpu_res_id integer;
@@ -31,6 +30,7 @@ CURSOR mem_allocation_cursor IS
 BEGIN
     v_cost_model_id := <%= cmid %>;
     v_entity_id := <%= heid %>;
+    :testbind := '';
 
     select cost_matrix_id into v_cost_matrix_id from cb_vmi_cm_matrix_map where cost_model_id = v_cost_model_id;
     dbms_output.enable(1000000);
@@ -52,7 +52,7 @@ BEGIN
         -- If there is a overlap, valid interval process it
         IF v_fc_start_time < v_fc_end_time THEN
 	--    select CB_FIND_MATCHING_FIXED_COST(v_vcpu_allocation, v_mem_allocation, v_cost_matrix_id) into v_fc_id from dual;
-          dbms_output.put_line('costModelId=' || v_cost_model_id || ', id=' || v_entity_id || ', vcpu=' || v_vcpu_allocation || ', mem=' || v_mem_allocation || ', st=' || v_fc_start_time || ', et=' || v_fc_end_time);
+          :testbind := :testbind || chr(10) || 'costModelId=' || v_cost_model_id || chr(10) || ', id=' || v_entity_id || ', vcpu=' || v_vcpu_allocation || ', mem=' || v_mem_allocation || ', st=' || v_fc_start_time || ', et=' || v_fc_end_time;
         END IF;
         
         IF v_vcpu_end_time < v_mem_end_time THEN 

@@ -188,8 +188,11 @@ EOS
         end
         cost_model_ids.each do |cmid|
           heid = @heid
-          sql = ERB.new(File.new("suppor/vcb/list_vmi_cost.sql").read).result(binding)
-          @conn.exec(sql) {|r|}
+          sql = ERB.new(File.new("support/vcb/list_vmi_cost.sql").read).result(binding)
+          curs = @conn.parse(sql)
+          curs.bind_param(':testbind','INIT')
+          curs.exec()
+          puts curs[':testbind']
         end
       end
     end
