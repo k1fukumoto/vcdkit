@@ -3,13 +3,18 @@
 use lib qw{ blib/lib blib/auto blib/arch blib/arch/auto/VMware blib/arch/auto };
 
 use strict;
+use Getopt::Std;
+
 use VMware::Vix::Simple;
 use VMware::Vix::API::Constants;
 
-my $hostname = '192.168.2.21';
+my %args;
+getopts("hpv",\%args);
+
+my $hostname = %args{h}
 my $hostport = 0;
 my $username = 'root';
-my $password = 'vmware1!';
+my $password = %args{p}
 
 my $err;
 my $esx;
