@@ -62,7 +62,8 @@ def find_vms(opts, vmnames)
   ret = {}
 
   vc = VSphere::VCenter.new
-  vc.connect(*opts[:vsp])
+  esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
+  vc.connect(opts[:vsp][0],opts[:vsp][1],esxpass)
 
   vc.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
     dc.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).each do |c|
