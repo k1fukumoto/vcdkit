@@ -55,7 +55,7 @@ rescue Exception => e
 end
 
 def find_vms(opts, vmnames)
-  ret = []
+  ret = {}
 
   vc = VSphere::VCenter.new
   vc.connect(*opts[:vsp])
@@ -66,7 +66,7 @@ def find_vms(opts, vmnames)
         h.vm.each do |vm|
           vmnames.each do |vmname|
             next unless vm.name == vmname
-            puts "FOUND! #{vmname} on #{h.name}"
+            ret[vmname] = h.name
           end
         end
       end
@@ -74,7 +74,22 @@ def find_vms(opts, vmnames)
   end
 end
 
-# find_vms(options,['CGSdhv-868','CGSdhv-869'])
+def restart_vcddc(opts)
+  cbvms = case opts[:vsp][0] 
+          when $VSP[0][0]
+            []
+          when $VSP[4][0]
+            ['CGSdhv-868','CGSdhv-869']
+          else
+            []
+          end
+  script = "C:\\PROGRA~2\\VMware\\VMWARE~1\\VMWARE~1\\restart-vcddc.bat"
+  esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
+
+  find_vms(opts,cbvms).each_pair do |vm,esx|
+    puts "./vix-run.pl -h #{esx} -v #{vm} -p #{esxpass} -s #{script} -l #{$log.path}"
+  end
+end
 
 TIMEFORMAT = '%Y-%m-%d %H:%M:%S'
 

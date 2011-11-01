@@ -19,10 +19,11 @@ require 'pony'
 
 module VCloud
   class Logger
-    attr_reader :temp,:errors,:warns
+    attr_reader :temp,:errors,:warns,:path
 
     def Logger.parseopts(opt)
       opt.on('-l','--logfile LOGFILEPATH','Log file name') do |path|
+        @path = path
         dir = File.dirname(path)
         FileUtils.mkdir_p(dir) unless File.exists? dir
         $log.add_logger(::Logger.new(path,10,20480000))
