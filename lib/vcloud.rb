@@ -571,7 +571,7 @@ $VCD = [
         ['vcd.vcdc.whitecloud.jp','System','vcloud-sc'],
         ['tvcd.vcdc.whitecloud.jp','System','vcloud-sc'],
         ['vcd.vhost.ultina.jp','System','vcdadminl'],
-        ['10.149.64.21','System','admin'],
+        ['192.168.2.101','System','admin'],
         ]
 
 $VSP = [
@@ -584,6 +584,7 @@ $VSP = [
 $VCBDB = [
           ['10.128.0.71','vclouddb'],
           ['10.128.1.71','vclouddb'],
+          ['192.168.2.101','orclXDB'],
          ]
 
 def vcdopts(options,opt) 
