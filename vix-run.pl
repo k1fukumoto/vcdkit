@@ -34,9 +34,9 @@ sub info {
   __log 'INFO',shift;
 }
 sub error {
-  msg = shift;
-  __log('ERROR',msg);
-  die msg;
+  $msg = shift;
+  __log('ERROR',$msg);
+  die $msg;
 }
 
 ($err, $esx) = HostConnect(VIX_API_VERSION, 
@@ -60,10 +60,10 @@ foreach (@vms) {
   error("Failed to open VM $_: $err: ", GetErrorText($err)) if $err != VIX_OK;
 
   $err = VMLoginInGuest($vm,"vcdadmin",$password,0);
-  error("Failed to login guest: $err: ", GetErrorText($err)) if $err != VIX_OK;
+  error("Failed to login guest: $err: ". GetErrorText($err)) if $err != VIX_OK;
 
   ($err,%procinfo) = VMRunProgramInGuestEx($vm,$script,'',0,VIX_INVALID_HANDLE);
-  error("Failed to run script: $err: ", GetErrorText($err)) if $err != VIX_OK;
+  error("Failed to run script $script: $err: ". GetErrorText($err)) if $err != VIX_OK;
 
   $exit_code = $procinfo{'EXIT_CODE'};
 

@@ -72,6 +72,7 @@ def find_vms(opts, vmnames)
       end
     end
   end
+  ret
 end
 
 def restart_vcddc(opts)
@@ -79,15 +80,21 @@ def restart_vcddc(opts)
           when $VSP[0][0]
             []
           when $VSP[4][0]
-            ['CGSdhv-868','CGSdhv-869']
+            ['CGSdhv-869']
           else
             []
           end
-  script = "C:\\PROGRA~2\\VMware\\VMWARE~1\\VMWARE~1\\restart-vcddc.bat"
+  script = 'C:/PROGRA~2/VMware/VMWARE~1/VMWARE~1/restart-vcddc.bat'
   esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
 
   find_vms(opts,cbvms).each_pair do |vm,esx|
-    puts "./vix-run.pl -h #{esx} -v #{vm} -p #{esxpass} -s #{script} -l #{$log.path}"
+    cmd = "./vix-run.pl -h #{esx} -v #{vm} -p #{esxpass} -s #{script} -l logs/vix-run.log"
+    $log.info("Executing command #{cmd}")
+    if system(cmd)
+      $log.info("Service restarted successfully")
+    else
+      $log.error("Failed to restart service: #{$?}")
+    end
   end
 end
 
