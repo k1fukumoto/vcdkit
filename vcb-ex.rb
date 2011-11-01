@@ -88,12 +88,12 @@ def restart_vcddc(opts)
           else
             []
           end
-  script = 'C:/PROGRA~2/VMware/VMWARE~1/VMWARE~1/restart-vcddc.bat'
+  script = 'C:\\\\PROGRA~2\\\\VMware\\\\VMWARE~1\\\\VMWARE~1\\\\restart-vcddc.bat'
   esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
 
   find_vms(opts,cbvms).each_pair do |vm,esx|
     cmd = "./vix-run.pl -h #{esx} -v #{vm} -p #{esxpass} -s #{script} -l logs/vix-run.log"
-    $log.info("Executing command #{cmd}")
+    $log.info("Executing command #{cmd.sub(esxpass,'****')}")
     if system(cmd)
       $log.info("Service restarted successfully")
     else
