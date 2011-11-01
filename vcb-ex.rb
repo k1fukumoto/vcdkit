@@ -28,6 +28,7 @@ $mail = VCloud::Mailer.new
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vcb-ex.rb [options]"
 
+  vcopts(options,opt)
   vcbdbopts(options,opt)
 
   VCloud::Logger.parseopts(opt)
@@ -51,6 +52,26 @@ rescue Exception => e
   puts e
   puts optparse
   exit 1
+end
+
+def find_vms(vm_names)
+  ret = []
+
+  vc = VSphere::VCenter.new
+  vc.connect(*options[:vsp])
+
+  vc.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
+    dc.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).each do |c|
+      c.host.each do |h|
+        h.vm.each do |vm|
+          vmnames.each do |vmname|
+            next unless vm.name == vmname
+            pus "FOUND! #{vmname} on #{h}"
+          end
+        end
+      end
+    end
+  end
 end
 
 TIMEFORMAT = '%Y-%m-%d %H:%M:%S'
