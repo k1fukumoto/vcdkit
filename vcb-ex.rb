@@ -61,7 +61,7 @@ rescue Exception => e
   exit 1
 end
 
-def find_esx(opts, vm)
+def find_esx(opts, vmname)
   vc = VSphere::VCenter.new
   vc.connect(opts[:vsp][0],opts[:vsp][1],File.new('.esx','r'))
 
@@ -69,10 +69,8 @@ def find_esx(opts, vm)
     dc.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).each do |c|
       c.host.each do |h|
         h.vm.each do |vm|
-          vmnames.each do |vmname|
-            if vm.name == vmname
-              return h.name
-            end
+          if vm.name == vmname
+            return h.name
           end
         end
       end
