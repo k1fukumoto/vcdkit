@@ -68,8 +68,10 @@ begin
   Chargeback::VCBDB::VM.searchByStartTime(conn,opts) do |vm|
     c = vm.created.strftime(TIMEFORMAT)
     d = vm.deleted.strftime(TIMEFORMAT)
-    puts "#{vm.vdc}/#{vm.vapp}/#{vm.name}(#{vm.heid}) #{c}~#{d}"
+    puts "#{vm.org}/#{vm.vdc}/#{vm.vapp}/#{vm.name}(#{vm.heid}) #{c}~#{d}"
+    vm.printVmiCost
   end
+  
 
 rescue SystemExit => e
   exit(e.status)
