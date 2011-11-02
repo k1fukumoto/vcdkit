@@ -51,8 +51,8 @@ BEGIN
         IF v_vcpu_end_time > v_mem_end_time THEN v_fc_end_time:=v_mem_end_time; ELSE v_fc_end_time:=v_vcpu_end_time; END IF;
         -- If there is a overlap, valid interval process it
         IF v_fc_start_time < v_fc_end_time THEN
-	--    select CB_FIND_MATCHING_FIXED_COST(v_vcpu_allocation, v_mem_allocation, v_cost_matrix_id) into v_fc_id from dual;
-          :fixed_costs := :fixed_costs || '- :cost_model_id: ' || v_cost_model_id || chr(10) || '  :heid: ' || v_entity_id || chr(10) || '  :vcpu: ' || v_vcpu_allocation || chr(10) || '  :mem: ' || v_mem_allocation || chr(10) || ' :start: ' || v_fc_start_time || char(10) || '  :end: ' || v_fc_end_time || chr(10);
+	    select CB_FIND_MATCHING_FIXED_COST(v_vcpu_allocation, v_mem_allocation, v_cost_matrix_id) into v_fc_id from dual;
+          :fixed_costs := :fixed_costs || '- :cost_model_id: ' || v_cost_model_id || chr(10) || '  :fcid: ' || v_fc_id || chr(10) || '  :heid: ' || v_entity_id || chr(10) || '  :vcpu: ' || v_vcpu_allocation || chr(10) || '  :mem: ' || v_mem_allocation || chr(10) || '  :start: ' || v_fc_start_time || chr(10) || '  :end: ' || v_fc_end_time || chr(10);
         END IF;
         
         IF v_vcpu_end_time < v_mem_end_time THEN 
