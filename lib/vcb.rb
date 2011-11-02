@@ -108,6 +108,34 @@ EOS
         end
       end
     end
+    
+    class FixedCost
+      INSERT = <<EOS
+INSERT INTO cb_fixed_cost
+(cost_model_id, start_time, end_time, entity_id, global_fc_line_item_id,propagate)
+VALUES
+(<%= @cmid %>,<%= @start %>,<%= @end %>,<%= @heid %>,<%= @fcid %>,0)
+EOS
+      attr_reader :cmid,:heid,:fcid,:start,:end
+
+      def initialize(cmid,heid,fcid,start,e)
+        @cmid = cmid
+        @heid = heid
+        @fcid = fcid
+        @start = start
+        @end = e
+      end
+
+      def insert
+        ERB.new(INSERT).result(binding)
+      end
+
+      def FixedCost.search(conn,heid)
+        conn.exec('SELECT * FROM cb_fixed_cost WHERE entity_id=#{heid}') do |r|
+          yield FixedCost.new(*r)
+        end
+      end
+    end
 
     class VM
       SEARCH_BY_STARTTIME = <<EOS
@@ -184,7 +212,11 @@ EOS
         @vdc
       end
 
-      def printVmiCost
+      def each_fixedcost
+        FixedCost::search(@conn,@heid)
+      end
+
+      def each_vmicost
         cost_model_ids = []
         @conn.exec('SELECT cost_model_id FROM cb_vmi_cm_matrix_map') do |r|
           cost_model_ids.push(r[0])
@@ -196,7 +228,7 @@ EOS
           curs.bind_param(':fixed_costs','INIT')
           curs.exec()
           fc = YAML.load(curs[':fixed_costs'])
-          pp fc
+          yield FixedCost.new(fc[:cmid],fc[:heid],fc[:fcid],fc[:start],fc[:end])
         end
       end
     end
