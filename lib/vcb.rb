@@ -17,6 +17,7 @@ require 'rest_client'
 require 'rexml/document'
 require 'erb'
 require 'oci8'
+require 'yaml'
 require 'pp'
 
 module Chargeback
@@ -194,7 +195,8 @@ EOS
           curs = @conn.parse(sql)
           curs.bind_param(':fixed_costs','INIT')
           curs.exec()
-          puts curs[':fixed_costs']
+          fc = YAML.load(curs[':fixed_costs'])
+          pp fc
         end
       end
     end
