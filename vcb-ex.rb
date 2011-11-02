@@ -1,4 +1,5 @@
 #!/usr/bin/ruby
+# -*- coding: undecided -*-
 #######################################################################################
 #
 # Copyright 2011 Kaoru Fukumoto All Rights Reserved
@@ -106,6 +107,7 @@ def verbose_sleep(s)
     print "#{s}" if (s % 10 == 0)
     STDOUT.flush
   end
+  print "¥n"
 end
 
 TIMEFORMAT = '%Y-%m-%d %H:%M:%S'
