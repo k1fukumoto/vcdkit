@@ -192,9 +192,9 @@ EOS
           heid = @heid
           sql = ERB.new(File.new("support/vcb/list_vmi_cost.sql").read).result(binding)
           curs = @conn.parse(sql)
-          curs.bind_param(':testbind','INIT')
+          curs.bind_param(':fixed_costs','INIT')
           curs.exec()
-          puts curs[':testbind']
+          puts curs[':fixed_costs']
         end
       end
     end
