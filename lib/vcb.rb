@@ -170,15 +170,17 @@ EOS
       end
 
       def vdc
-        heid = @heid
-        vdc = nil
-        sql = ERB.new(SEARCH_PARENT).result(binding)
-        @conn.exec(sql) {|r| heid = r[0]}
-        sql = ERB.new(SEARCH_PARENT).result(binding)
-        @conn.exec(sql) {|r| heid = r[0]}
-        sql = ERB.new(SEARCH_PARENT).result(binding)
-        @conn.exec(sql) {|r| vdc = r[1].chomp}
-        vdc
+        if @vdc.nil?
+          heid = @heid
+
+          sql = ERB.new(SEARCH_PARENT).result(binding)
+          @conn.exec(sql) {|r| heid = r[0]}
+          sql = ERB.new(SEARCH_PARENT).result(binding)
+          @conn.exec(sql) {|r| heid = r[0]}
+          sql = ERB.new(SEARCH_PARENT).result(binding)
+          @conn.exec(sql) {|r| @vdc = r[1].chomp}
+        end
+        @vdc
       end
 
       def printVmiCost
