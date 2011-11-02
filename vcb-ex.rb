@@ -38,8 +38,11 @@ optparse = OptionParser.new do |opt|
     options[:threshold] = n
   end
 
-  opt.on('','--restart_vcddc','Enforce to restart vCD data-collector service') do |n|
-    options[:cmd] = :restart_vcddc
+  opt.on('','--vcddc DCVMS',Array,'Specify vCD data-collector VMs') do |o|
+    options[:vcddc] = o
+  end
+  opt.on('','--restart_vcddc','Enforce to restart vCD data-collector service') do |o|
+    options[:restart_vcddc] = true
   end
 
   opt.on('-h','--help','Display this help') do
@@ -58,20 +61,18 @@ rescue Exception => e
   exit 1
 end
 
-def find_vms(opts, vmnames)
-  ret = {}
-
+def find_esx(opts, vm)
   vc = VSphere::VCenter.new
-  esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
-  vc.connect(opts[:vsp][0],opts[:vsp][1],esxpass)
+  vc.connect(opts[:vsp][0],opts[:vsp][1],File.new('.esx','r'))
 
   vc.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
     dc.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).each do |c|
       c.host.each do |h|
         h.vm.each do |vm|
           vmnames.each do |vmname|
-            next unless vm.name == vmname
-            ret[vmname] = h.name
+            if vm.name == vmname
+              return h.name
+            end
           end
         end
       end
@@ -81,19 +82,12 @@ def find_vms(opts, vmnames)
 end
 
 def restart_vcddc(opts)
-  cbvms = case opts[:vsp][0] 
-          when $VSP[0][0]
-            []
-          when $VSP[4][0]
-            ['CGSdhv-869']
-          else
-            []
-          end
   script = 'C:\\\\PROGRA~2\\\\VMware\\\\VMWARE~1\\\\VMWARE~1\\\\restart-vcddc.bat'
   esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
 
-  find_vms(opts,cbvms).each_pair do |vm,esx|
-    cmd = "./vix-run.pl -h #{esx} -v #{vm} -p #{esxpass} -s #{script} -l logs/vix-run.log"
+  opts[:vcddc].each do |cbvm|
+    esx = find_esx(opts,cbvm)
+    cmd = "./vix-run.pl -h #{esx} -v #{cbvm} -p #{esxpass} -s #{script} -l logs/vix-run.log"
     $log.info("Executing command #{cmd.sub(esxpass,'****')}")
     if system(cmd)
       $log.info("Service restarted successfully")
@@ -142,10 +136,13 @@ begin
     $log.info("Unprocessed VM found: #{vm.org}/#{vm.vapp}/#{vm.name}(#{vm.heid}) #{c} ~ #{d}")
   end
 
-  case options[:cmd]
-  when :restart_vcddc
+  if($log.errors > 0)
+    # On error, restart vCD data collector
+    options[:restart_vcddc] = true
+  end
+
+  if options[:restart_vcddc]
     restart_vcddc(options)
-  else
   end
 
 rescue SystemExit => e
