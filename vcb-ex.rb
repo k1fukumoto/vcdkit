@@ -83,7 +83,7 @@ def restart_vcddc(opts)
   script = 'C:\\\\PROGRA~2\\\\VMware\\\\VMWARE~1\\\\VMWARE~1\\\\restart-vcddc.bat'
   esxpass = VCloud::SecurePass.new().decrypt(File.new('.esx','r').read)
 
-  opts[:vcddc].each do |cbvm|
+  (opts[:vcddc] || []).each do |cbvm|
     esx = find_esx(opts,cbvm)
     cmd = "./vix-run.pl -h #{esx} -v #{cbvm} -p #{esxpass} -s #{script} -l logs/vix-run.log"
     $log.info("Executing command #{cmd.sub(esxpass,'****')}")
