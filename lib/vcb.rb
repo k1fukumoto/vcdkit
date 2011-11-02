@@ -110,11 +110,11 @@ EOS
     end
     
     class FixedCost
+      COLS = 'cost_model_id, entity_id, global_fc_line_item_id, start_time, end_time, propagate'
       INSERT = <<EOS
-INSERT INTO cb_fixed_cost
-(cost_model_id, start_time, end_time, entity_id, global_fc_line_item_id,propagate)
+INSERT INTO cb_fixed_cost (#{COLS})
 VALUES
-(<%= @cmid %>,<%= @start %>,<%= @end %>,<%= @heid %>,<%= @fcid %>,0)
+(<%= @cmid %>,<%= @heid %>,<%= @fcid %>,<%= @start %>,<%= @end %>,0)
 EOS
       attr_reader :cmid,:heid,:fcid,:start,:end
 
@@ -131,7 +131,7 @@ EOS
       end
 
       def FixedCost.search(conn,heid)
-        conn.exec("SELECT * FROM cb_fixed_cost WHERE entity_id=#{heid}") do |r|
+        conn.exec("SELECT #{COLS} FROM cb_fixed_cost WHERE entity_id=#{heid}") do |r|
           yield FixedCost.new(*r)
         end
       end
