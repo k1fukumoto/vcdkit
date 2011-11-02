@@ -127,6 +127,14 @@ EOS
         @end = e
       end
 
+      def ==(other)
+        self.heid == other.heid &&
+          self.cmid == other.cmid &&
+          self.fcid == other.fcid &&
+          self.start == other.start &&
+          self.end == other.end
+      end
+
       def insert
         ERB.new(INSERT).result(binding)
       end
