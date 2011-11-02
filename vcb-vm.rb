@@ -73,7 +73,7 @@ begin
       puts vmic.to_s
       vm.each_fixedcost do |fc|
         puts fc.to_s
-        puts (fc.cmid == vmic.cmid && fc.fcid == vmic.fcid)
+        puts (fc == vmic)
       end
     end
   end
