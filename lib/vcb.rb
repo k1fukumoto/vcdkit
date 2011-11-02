@@ -124,7 +124,9 @@ EOS
         @cmid = cmid
         @fcid = fcid
         @start = start
-        @end = e
+        @start = DateTime.parse(@start) if @start.class == String
+        @end = e || "9999-11-30 23:59:59" 
+        @end = DateTime.parse(@end) if @end.class == String
       end
 
       def insert
