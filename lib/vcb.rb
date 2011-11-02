@@ -92,6 +92,7 @@ EOS
 
   class VCBDB
     attr_reader :conn   
+    TIMEFORMAT = '%Y-%m-%d %H:%M:%S'
 
     class DCThread
       attr_reader :name,:lastProcessTime
@@ -110,17 +111,17 @@ EOS
     end
     
     class FixedCost
-      COLS = 'cost_model_id, entity_id, global_fc_line_item_id, start_time, end_time, propagate'
+      COLS = 'entity_id, cost_model_id, global_fc_line_item_id, start_time, end_time, propagate'
       INSERT = <<EOS
 INSERT INTO cb_fixed_cost (#{COLS})
 VALUES
-(<%= @cmid %>,<%= @heid %>,<%= @fcid %>,<%= @start %>,<%= @end %>,0)
+(<%= @heid %>,<%= @cmid %>,<%= @fcid %>,<%= @start %>,<%= @end %>,0)
 EOS
-      attr_reader :cmid,:heid,:fcid,:start,:end
+      attr_reader :heid,:cmid,:fcid,:start,:end
 
-      def initialize(cmid,heid,fcid,start,e,*ignore)
-        @cmid = cmid
+      def initialize(heid,cmid,fcid,start,e,*ignore)
         @heid = heid
+        @cmid = cmid
         @fcid = fcid
         @start = start
         @end = e
@@ -128,6 +129,10 @@ EOS
 
       def insert
         ERB.new(INSERT).result(binding)
+      end
+
+      def to_s
+        "#{@heid},#{@cmid},#{@fcid},#{@start.strftime(TIMEFORMAT)},#{@end.strftime(TIMEFORMAT)}"
       end
 
       def FixedCost.search(conn,heid)
@@ -230,7 +235,7 @@ EOS
           curs.bind_param(':fixed_costs','INIT')
           curs.exec()
           YAML.load(curs[':fixed_costs']).each do |fc|
-            yield FixedCost.new(fc[:cmid],fc[:heid],fc[:fcid],fc[:start],fc[:end])
+            yield FixedCost.new(fc[:heid],fc[:cmid],fc[:fcid],fc[:start],fc[:end])
           end
         end
       end

@@ -69,11 +69,12 @@ begin
     c = vm.created.strftime(TIMEFORMAT)
     d = vm.deleted.strftime(TIMEFORMAT)
     puts "#{vm.org}/#{vm.vdc}/#{vm.vapp}/#{vm.name}(#{vm.heid}) #{c}~#{d}"
-    vm.each_fixedcost do |fc|
-      puts fc.insert
-    end
-    vm.each_vmicost do |vmc|
-      puts vmc.insert
+    vm.each_vmicost do |vmic|
+      puts vmic.to_s
+      vm.each_fixedcost do |fc|
+        puts fc.to_s
+        puts (fc.cmid == vmic.cmid && fc.fcid == vmic.fcid)
+      end
     end
   end
   
