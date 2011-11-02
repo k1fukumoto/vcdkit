@@ -130,11 +130,11 @@ EOS
       end
 
       def ==(other)
-        self.heid == other.heid &&
-          self.cmid == other.cmid &&
-          self.fcid == other.fcid &&
-          self.start == other.start &&
-          self.end == other.end
+        (self.heid == other.heid &&
+         self.cmid == other.cmid &&
+         self.fcid == other.fcid &&
+         self.start.strftime(TIMEFORMAT) == other.start.strftime(TIMEFORMAT) &&
+         self.end.strftime(TIMEFORMAT) == other.end.strftime(TIMEFORMAT))
       end
 
       def insert
