@@ -69,6 +69,9 @@ begin
     c = vm.created.strftime(TIMEFORMAT)
     d = vm.deleted.strftime(TIMEFORMAT)
     puts "#{vm.org}/#{vm.vdc}/#{vm.vapp}/#{vm.name}(#{vm.heid}) #{c}~#{d}"
+    vm.each_fixedcost do |fc|
+      puts fc.insert
+    end
     vm.each_vmicost do |vmc|
       puts vmc.insert
     end

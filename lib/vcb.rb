@@ -118,7 +118,7 @@ VALUES
 EOS
       attr_reader :cmid,:heid,:fcid,:start,:end
 
-      def initialize(cmid,heid,fcid,start,e)
+      def initialize(cmid,heid,fcid,start,e,*ignore)
         @cmid = cmid
         @heid = heid
         @fcid = fcid
@@ -131,7 +131,7 @@ EOS
       end
 
       def FixedCost.search(conn,heid)
-        conn.exec('SELECT * FROM cb_fixed_cost WHERE entity_id=#{heid}') do |r|
+        conn.exec("SELECT * FROM cb_fixed_cost WHERE entity_id=#{heid}") do |r|
           yield FixedCost.new(*r)
         end
       end
@@ -213,7 +213,9 @@ EOS
       end
 
       def each_fixedcost
-        FixedCost::search(@conn,@heid)
+        FixedCost::search(@conn,@heid) do |fc|
+          yield fc
+        end
       end
 
       def each_vmicost
@@ -227,8 +229,9 @@ EOS
           curs = @conn.parse(sql)
           curs.bind_param(':fixed_costs','INIT')
           curs.exec()
-          fc = YAML.load(curs[':fixed_costs'])
-          yield FixedCost.new(fc[:cmid],fc[:heid],fc[:fcid],fc[:start],fc[:end])
+          YAML.load(curs[':fixed_costs']).each do |fc|
+            yield FixedCost.new(fc[:cmid],fc[:heid],fc[:fcid],fc[:start],fc[:end])
+          end
         end
       end
     end
