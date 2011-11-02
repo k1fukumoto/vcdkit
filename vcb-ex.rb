@@ -94,6 +94,19 @@ def restart_vcddc(opts)
     else
       $log.error("Failed to restart service: #{$?}")
     end
+    unless cbvm == opts[:vcddc].last
+      $log.info("Wait 3 mins before restarting another data-collector")
+      verbose_sleep(180)
+    end
+  end
+end
+
+def verbose_sleep(s)
+  while s > 0
+    sleep 2; s -= 2
+    print '.'
+    print "#{s}" if (s % 10 == 0)
+    STDOUT.flush
   end
 end
 
