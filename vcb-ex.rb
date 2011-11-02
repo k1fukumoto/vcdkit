@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-# -*- coding: undecided -*-
+# -*- coding: utf-8 -*-
 #######################################################################################
 #
 # Copyright 2011 Kaoru Fukumoto All Rights Reserved
@@ -146,7 +146,7 @@ begin
   Chargeback::VCBDB::VM.searchByStartTime(conn,{:t0 => ts_fc,:t1 => Time.now}) do |vm|
     c = vm.created.strftime('%Y-%m-%d %H:%M:%S')
     d = vm.deleted.strftime('%Y-%m-%d %H:%M:%S')
-    $log.info("Unprocessed VM found: #{vm.org}/#{vm.vapp}/#{vm.name}(#{vm.heid}) #{c} ~ #{d}")
+    $log.info("Unprocessed VM: #{vm.org}/#{vm.vdc}/#{vm.vapp}/#{vm.name}(#{vm.heid}) #{c}~#{d}")
   end
 
   if($log.errors > 0)
