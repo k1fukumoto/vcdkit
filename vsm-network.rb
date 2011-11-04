@@ -27,9 +27,7 @@ $log = VCloud::Logger.new
 optparse = OptionParser.new do |opt|
   opt.banner = "Usage: vsm-network.rb [options]"
 
-  opt.on('-n','--name REPORT_NAME_PATTERN','Export report by name') do |o|
-    options[:name] = o
-  end
+  vsmopts(options,opt)
 
   opt.on('-h','--help','Display this help') do
     puts optparse
@@ -49,7 +47,15 @@ end
 
 begin
   vsm = VShieldManager::VSM.new
-  vsm.connect('IP','default')
+  vsm.connect(*options[:vsm])
+  vsm.each_vse do |vse|
+    begin
+      vse.serviceStats
+      $log.info("Confirmed vShield Edge '#{vse.name}' is running")
+    rescue Exception => e      
+      $log.error("Failed to retrieve service status from vShield Edge '#{vse.name}': #{e}")
+    end
+  end
 
 rescue Exception => e
   $log.error("vsm-network failed: #{e}")

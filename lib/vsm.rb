@@ -20,22 +20,49 @@ require 'pp'
 
 module VShieldManager
 
+  class VShieldEdge 
+    attr_reader :name,:id
+
+    def initialize(vsm,id)
+      @vsm = vsm
+      @id = id
+
+      @doc = REXML::Document.new(@vsm.get("networks/#{@id}/edge"))
+      @name = @doc.elements['//hostName'].text
+    end
+
+    def dhcpService
+      doc = REXML::Document.new(@vsm.get("networks/#{@id}/edge/dhcp/service"))
+      doc.elements['//dhcpService'].text
+    end
+
+    def serviceStats
+      doc = REXML::Document.new(@vsm.get("networks/#{@id}/edge/serviceStats"))
+      doc.elements['//serviceStatsLocation'].text
+    end
+  end
+
   class VSM < XMLElement
     def connect(host,user)
-      @apiurl = "https://#{host}/api/2.0"
-      @auth_token = {:Authorization => 'Basic YWRtaW46ZGVmYXVsdA=='}
-      xml = self.get("#{@apiurl}/networks/edge/capability")
-      doc = REXML::Document.new(xml)
-      netid = doc.root.elements['//networkId'].text
-      
-      doc = REXML::Document.new(self.get("#{@apiurl}/networks/#{netid}/edge/dhcp/service"))
-      REXML::Formatters::Pretty.new.write(doc.root,STDOUT)
+      @url_base = "https://#{host}/api/2.0"
 
+      pass = VCloud::SecurePass.new().decrypt(File.new('.vsm','r').read)
+      auth = Base64.encode64("#{user}:#{pass}")
+      @auth_token = {:Authorization => "Basic #{auth}"}
+
+      @xml = self.get("networks/edge/capability")
+      @doc = REXML::Document.new(xml)
+    end
+
+    def each_vse
+      @doc.root.elements.each('//networkId') do |n|
+        yield VShieldEdge.new(self,n.text)
+      end
     end
 
     def get(url)
-      $log.info("HTTP GET: #{url.sub(/#{@apiurl}/,'')}")
-      RestClient.get(url,@auth_token) { |response, request, result, &block|
+      $log.info("HTTP GET: #{url}")
+      RestClient.get("#{@url_base}/#{url}",@auth_token) { |response, request, result, &block|
         case response.code
         when 200..299
           response
