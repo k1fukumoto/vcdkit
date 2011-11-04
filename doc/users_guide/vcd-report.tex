@@ -1,0 +1,87 @@
+\subsection{vcd-report.rb} 
+vcd-dump.rb で抽出した XMLデータをもとに各種レポート作成します。
+
+\subsubsection{使用例}
+\paragraph{レポート未作成のすべてのダンプデータからレポートを作成する}
+
+\begin{Verbatim}[frame=single]
+$ vcd-report.rb
+\end{Verbatim}
+
+\begin{itemize}
+\item \$VCDKIT/data/vcd-dump以下のすべてのディレクトリを検索し（TIMESTAMPを保持した形で）
+同じディレクトリ構成で \$VCDKIT/data/vcd-report 以下にレポートを作成します。
+（例：\$VCDKIT/data/vcd-dump/2011-07-01\_00-00-00
+のレポートを \$VCDKIT/data/vcd-report/2011-07-01\_00-00-00に作成）
+\item デフォルトでは 既にレポート作成が行われているダンプデータはスキップされます。強制的に
+レポートの再作成を行う場合には{\tt -f (--force)}オプションを指定します。
+\item コマンドオプションの詳細については\ref{sec:vcd-report-opts}を参照下さい。
+\end{itemize}
+
+\subsubsection{データファイルの構造}
+vcd-report.rb は \$VCDKIT/data/vcd-report 配下に以下の形で各種レポートファイルを作成します。
+
+{\footnotesize
+\begin{verbatim}
+$VCDKIT/data/vcd-report/TIMESTAMP
+`-- ORG
+   |-- VMList.xml
+   |-- MediaList.xml
+   `-- [Org Name]
+     `-- VDC
+       `-- [vDC Name]
+         |-- VAPP
+         | `-- [vApp Name]
+         |   |-- VAppParams.xml
+         |   `-- VM
+         |     `-- [VM Name]
+         |       `-- VmParams.xml     
+         `-- VAPPTEMPLATE
+           `-- [vApp Template Name]
+             |-- VAppTemplateParams.xml
+             `-- VMTEMPLATE
+               `-- [VM Template Name]
+                  `-- VmTemplateParams.xml     
+
+\end{verbatim}
+}
+
+\subsubsection{作成されるレポートの種類}
+
+\begin{table}[H]
+\begin{tabular}{lm{6.5cm}}
+\toprule
+\textbf{ファイル名}　& \textbf{説明} \\ 
+\midrule
+VMList.xml & 仮想マシンのインベントリ一覧 \\
+MediaList.xml & メディアのインベントリ一覧 \\
+vAppParams.xml & vAppのパラメータ一覧 \\
+VmParams.xml  & vApp内仮想マシンのパラメータ一覧 \\
+vAppTemplateParams.xml & vApp Templateのパラメータ一覧 \\
+VmTemplateParams.xml & vApp Template内仮想マシンのパラメータ一覧 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{コマンドオプション一覧}
+\label{sec:vcd-report-opts}
+利用できるコマンドオプションの一覧は引数に{\tt -h}を指定すると表示されます。
+
+{\footnotesize
+\begin{verbatim}
+$ vcd-report.rb -h
+Usage: vcd-report.rb [cmd-options]
+    -v, --vcd HOST,ORG,USER          vCD login parameters
+    -i, --input DIR                  Specify root directory of the vCD dump data
+    -o, --output DIR                 Specify directory for reports
+    -a, --vapp ORG,VDC,VAPP          Create report for vApp
+    -T ORG,VDC,VAPPTEMPLATE          Create report for vApp Template
+        --vapptemplate
+    -A, --all                        Create report for entire dump tree
+        --tree TREENAME              Directory name to identify dump tree
+    -f, --force                      Force to recreate reports to exisiting tree
+    -l, --logfile LOGFILEPATH        Log file name
+    -t, --tempfile                   Output log to temporary file
+    -h, --help                       Display this help
+\end{verbatim}
+}

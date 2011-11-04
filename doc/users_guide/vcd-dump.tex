@@ -1,0 +1,95 @@
+\subsection{vcd-dump.rb} 
+vCloud DirectorとvCenterからデータの抽出を行います。
+
+\subsubsection{使用例}
+\paragraph{本番環境すべてのデータを自動タイムスタンプ付きディレクトリにダンプする。
+エラーが発生した場合にはログをメール転送する。}
+
+\begin{Verbatim}[frame=single] 
+$ vcd-dump-rb -v1 -c1 -l $VCDKIT/logs/vcd-dump.log \
+  -t -m $VCDKIT/conf/mail/vcd-dump.xml 
+\end{Verbatim}
+
+
+\begin{itemize}
+\item {\tt -v1, -c1} オプションは vCloud Director, vCenter 共に本番環境の
+サーバおよび接続アカウントを利用する事を指定します。以下の{\tt -v, -c}オプションを指定する事と同等です。
+
+\begin{verbatim}
+   -v vcd.vcdc.whitecloud.jp,System,vcloud-sc
+   -c 10.128.0.57,vcloud-vcd
+\end{verbatim}
+
+\item 利用できるコマンドオプションの詳細については\ref{sec:vcd-dump-opts}を参照下さい。
+\item 接続に用いるパスワードはコマンド引数では指定しません。パスワードの設定／保存方法については\ref{sec:password}を参照下さい。
+\item ダンプデータはデフォルトで \$VCDKIT/data/vcd-report/TIMESTAMP 以下に保存されます。TIMESTAMP 名の生成にはコマンド実行開始時の時間が利用されます。（例：2011-07-20\_12-00-00）
+\item {\tt -l} オプションはログ出力先ファイルを指定します。既存ファイルを指定した場合には追記されます。
+\item {\tt -t} オプションはログをテンポラリファイルに出力します。テンポラリファイルはメール転送機能に用いられます。
+　テンポラリログファイルはスクリプト実行後（メール転送後）に削除されます。
+\item {\tt -m} オプションはメール転送パラメータが記述された構成ファイル名を指定します。メール構成ファイルの詳細については
+  \ref{sec:mail}を参照下さい。
+\end{itemize}
+
+
+\subsubsection{データファイルの構造}
+vcd-dump.rb は \$VCDKIT/data/vcd-dump/TIMESTAMP 配下に以下の形で抽出データをダンプします。
+データファイルはすべて vCloud API を用いて取得されるオブジェクト毎の XML形式です。
+\footnote{XMLデータの詳細についてはvCloud APIの仕様を参照ください。
+\url{http://communities.vmware.com/community/vmtn/developer/forums/vcloudapi}}
+
+{\footnotesize
+\begin{verbatim}
+$VCDKIT/data/vcd-dump/TIMESTAMP
+`-- ORG
+  |-- VCD.xml
+  |-- VCenter.xml
+  `-- [Org Name]
+     |-- Org.xml
+     |-- VDC
+     | `-- [vDC Name]
+     |   |-- Vdc.xml
+     |   |-- VAPP
+     |   | `-- [vApp Name]
+     |   |   |-- VApp.xml
+     |   |   |-- ControlAccessParams.xml
+     |   |   `-- VM
+     |   |     `-- [VM Name]
+     |   |       `-- Vm.xml     
+     |   `-- VAPPTEMPLATE
+     |     `-- [vApp Template Name]
+     |       |-- VAppTemplate.xml
+     |       `-- VMTEMPLATE
+     |         `-- [VM Template Name]
+     |            `-- VmTempalte.xml     
+     |-- CATALOG
+     | `-- Public
+     |    |-- Catalog.xml
+     |    `-- CATALOGITEM
+     |      `-- [Catalog Item Name]
+     |        `-- CatalogItem.xml
+     `-- USER
+       `-- [User Name]
+         `-- User.xml
+\end{verbatim}
+}
+
+\subsubsection{コマンドオプション一覧}
+\label{sec:vcd-dump-opts}
+利用できるコマンドオプションの一覧は引数に{\tt -h}を指定すると表示されます。
+
+{\footnotesize
+\begin{verbatim}
+$ vcd-dump.rb -h
+Usage: vcd-dump.rb [options]
+    -v, --vcd HOST,ORG,USER          vCD login parameters
+    -c, --vcenter HOST,USER          vCenter login parameters
+    -A, --all                        Dump all data
+    -a, --vapp ORG,VDC,VAPP          Dump specified vApp data
+    -o, --org ORG                    Dump specified organization data
+        --tree TREENAME              Dump tree directory name
+    -l, --logfile LOGFILEPATH        Log file name
+    -t, --tempfile                   Output log to temporary file
+    -m, --mailconf CONFFILE          Mailer configuration file name
+    -h, --help                       Display this help
+\end{verbatim}
+}

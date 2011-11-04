@@ -1,0 +1,54 @@
+\subsection{vsp-datastore.rb}
+ESXホストとNFSデータストア間の正常接続を監視するために、NFSデータストアに対してディレクトリ作成／削除の操作を行います。
+
+\subsubsection{操作対象となるESXホストおよびデータストア}
+監視対象となるvCenterの接続情報もしくはホストとデータストアのリストを定義した構成ファイルを指定します。
+
+vCenterの接続情報を指定した場合には、そのvCenter配下のすべてのESXホスト、および各ESXホストに
+マウントされているすべてのデータストアが操作対象となります。
+
+ホストとデータストアの構成ファイルは以下のフォーマットのXMLで定義します。
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<dslist>
+  <esx>host-1</esx>
+  <esx>host-2</esx>
+          ...
+  <esx>host-N</esx>
+  <datastore>datastore-1</datastore>
+  <datastore>datastore-2</datastore>
+          ...
+  <datastore>datastore-N</datastore>
+</dslist>
+\end{verbatim}
+
+\subsubsection{使用例}
+\paragraph{vCenterを指定して構成ファイルのテンプレートを出力する}
+
+\begin{Verbatim}[frame=single]
+$ vsp-datastore.rb -c1
+\end{Verbatim}
+
+\begin{itemize}
+\item {\tt -c1} オプションは接続先のvCenterとして本番環境のvCenterサーバを指定します。
+\item 標準出力にホストとデータストアのリストが構成ファイルのフォーマットで出力されます。
+\item データストアに対してディレクトリ作成などの変更操作は行いません。
+\item 出力された構成ファイルをコマンド引数として用いるためには、ローカルのデータストアの削除などの編集を適時行う必要があります。
+\end{itemize}
+
+\paragraph{構成ファイルを指定してデータストアへのアクセステストを行う}
+
+\begin{Verbatim}[frame=single]
+$ vsp-datastore.rb -C $CONFFILE -D \
+  -l $VCDKIT/logs/vsp-datastore.log \
+  -t -m $VCDKIT/conf/mail/vsp-datastore.xml
+\end{Verbatim}
+
+\begin{itemize}
+\item {\tt -D} オプションは各データストアに対してテンポラリディレクトリの作成と削除を実施する事を指定します。
+\item データストア操作の実行結果は指定したログファイルに記録されます。エラーが発生した場合ログがメール転送されます。
+\item {\tt -t} オプションはログをテンポラリファイルに出力します。テンポラリファイルはメール転送機能に用いられます。
+　テンポラリログファイルはスクリプト実行後（メール転送後）に削除されます。
+\item {\tt -m} オプションはメール転送パラメータが記述された構成ファイル名を指定します。メール構成ファイルの詳細については
+  \ref{sec:mail}を参照下さい。
+\end{itemize}

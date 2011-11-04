@@ -1,0 +1,35 @@
+\subsection{vcd-trend.rb} 
+vcd-report.rb で作成したレポートデータをもとにトレンド分析を行うための各種レポートを作成しメールで送信します。
+
+\subsubsection{使用例}
+\paragraph{既存のレポートデータからWindowsゲストOSの使用状況リストを作成する}
+
+\begin{Verbatim}[frame=single]
+$ vcd-trend.rb -v1 -l$VCDKIT/logs/vcd-trend.log \
+  -m $VCDKIT/conf/mail/vcd-trend.xml
+\end{Verbatim}
+
+\begin{itemize}
+\item \$VCDKIT/data/vcd-report以下のすべてのディレクトリを検索し、前月分のトレンドレポートを作成します。
+\begin{quote}
+例：\\
+\$VCDKIT/data/vcd-report 配下に 2011-07-15\_00-00-00 から 2011-09-20\_00-00-00までのレポートディレクトリがある時に
+2011年9月21日にスクリプトを実行した場合、前月分である2011年8月1日から2011年8月31日のデータを対象としたトレンドレポートを
+\$VCDKIT/data/vcd-trend/2011-08-01\_00-00-00\_\_2011-08-31\_23-00-00配下に作成します。
+\end{quote}
+\item {\tt -v1}オプションはデータを取得したvCloud Directorを指定します。レポート生成処理には使用されませんが
+　メール生成の際に使用できる{\tt vcdhost}パラメータの値に使用されます。
+\end{itemize}
+
+\subsubsection{作成されるレポートの種類}
+
+\begin{table}[H]
+\begin{tabular}{lm{7.5cm}}
+\toprule
+\textbf{ファイル名}　& \textbf{説明} \\ 
+\midrule
+GuestList.xml & 各VDC毎/各ゲストOS毎のVM数の内訳（最少数、最大数、最大数をとった時の最古の時刻、平均値）\\
+GuestSummary.xml & 各ORG毎/各ゲストOSタイプ(サーバ系Windows、非サーバ系Windows、非Windowsの３種類)毎のVM数の内訳（最少数、最大数、最大数をとった時の最古の時刻、平均値）\\
+\bottomrule
+\end{tabular}
+\end{table}

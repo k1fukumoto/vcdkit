@@ -1,0 +1,34 @@
+\section{管理}
+\subsection{データアーカイビング}
+vcdkitインストール時に、以下のスクリプト(\$VCDKIT/cron/archive.sh)が毎時30分に実行するように設定されます。
+{\footnotesize 
+\begin{verbatim}
+     1	#!/bin/sh
+     2	
+     3	export VCDDATA=/opt/vmware/vcdkit/data
+     4	
+     5	archive() {
+     6	    tooldir=$1
+     7	    days=$2
+     8	
+     9	    for t in `find $VCDDATA/$tooldir -maxdepth 1 -mindepth 1 -mtime +$days -type d`
+    10	    do
+    11          file=`basename $t`
+    12	         dir=`dirname $t`
+    13	         echo "Creating tar archive: $t"
+    14	         tar zcf $dir/$file.tgz -C $dir $file && \
+    15	            rm -fr $t && \
+    16	            mv $dir/$file.tgz $VCDDATA/$tooldir/archive
+    17	    done
+    18	}
+    19	
+    20	# Archive vcd-dump data which is older than 7 days
+    21	archive vcd-dump 7
+    22	# Archive vcd-report data which is older than 31 days
+    23	archive vcd-report 31
+\end{verbatim}
+}
+\$VCDDATA/vcd-dump配下のデータについては７日前、\$VCDDATA/vcd-report配下のデータについては
+３１日前より古いデータが、圧縮されたtarアーカイブに変換され、archiveディレクトリに移動します。
+（21行目と23行目）何らかの理由でアーカイブ作成に失敗した場合には元のディレクトリはそのまま残ります
+（14行目から16行目までの\&\&で連結されたコマンド）。

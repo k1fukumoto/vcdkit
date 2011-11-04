@@ -1,0 +1,64 @@
+\subsection{vcb-ex.rb}
+指定されたvCloud Chargeback データベースに対して以下の検査を行います。
+検査に用いられる閾値はオプションで指定することができます。（デフォルトで９０分）
+エラー検知時には指定されたChargeback VM内のvCD データコレクタサービスの再起動を行います。
+
+\begin{itemize}
+\item CB\_FIXED\_COST テーブルの最新のレコードのタイムスタンプが閾値より新しいこと。
+\item CB\_SERVER\_PROPERTYテーブル内の以下のタイムスタンプが閾値より新しいこと。
+\begin{itemize}
+\item vmijob.lastProcessTime
+\item cbEventListRawView.lastProcessTime
+\item vcLastProcessTime
+\end{itemize}
+\end{itemize}
+
+\subsubsection{使用例}
+\paragraph{vCenter Chargeback の監視}
+
+\begin{Verbatim}[frame=single]
+$ vcb-ex.rb --chargeback_db 1 \
+  -c5 --vcddc CGSdhv-868,CGSdhv-869 \
+  -l$VCDKIT/logs/vcb-ex.log -t \
+  -m $VCDKIT/conf/mail/vcd-ex.xml
+\end{Verbatim}
+
+\begin{itemize}
+\item 本番環境のChargeback データベース（{\tt --chargeback\_db 1}）に対して検査を行います。
+\item エラーが発生した場合には、{\tt --vcddc}オプションで指定した仮想マシン内のvCD Data Collectorサービスの再起動を行います。仮想マシンの検索は本番環境管理クラスタVC （{\tt -c5}）に対して行います。
+\end{itemize}
+
+\paragraph{vCD Data Collector サービスの再起動}
+
+\begin{Verbatim}[frame=single]
+$ vcb-ex.rb --chargeback_db 1 \
+  --restart_vcddc -c5 --vcddc CGSdhv-868,CGSdhv-869 \
+  -l$VCDKIT/logs/vcb-ex.log -t \
+  -m $VCDKIT/conf/mail/vcd-ex.xml
+\end{Verbatim}
+
+\begin{itemize}
+\item {\tt --restart\_vcddc}オプションを指定し、検査を行った後、検査結果に関わらずvCD Data Collectorサービスの再起動を行います。
+\end{itemize}
+
+\subsubsection{コマンドオプション一覧}
+利用できるコマンドオプションの一覧は引数に{\tt -h}を指定すると表示されます。
+
+{\footnotesize
+\begin{verbatim}
+Usage: vcb-ex.rb [options]
+    -c, --vcenter HOST,USER          vCenter login parameters
+        --chargeback_db HOST,USER
+                                     vCenter Chargeback database login parameters
+    -l, --logfile LOGFILEPATH        Log file name
+    -t, --tempfile                   Output log to temporary file
+    -m, --mailconf CONFFILE          Mailer configuration file name
+        --threshold SECS
+                                     Threshold for dc thread timestamp
+        --vcddc DCVMS
+                                     Specify vCD data-collector VMs
+        --restart_vcddc
+                                     Enforce to restart vCD data-collector service
+    -h, --help                       Display this help
+\end{verbatim}
+}

@@ -1,0 +1,197 @@
+\section{インストール}
+
+\subsection{システム要件}
+vcdkitをインストールするためには各種Liunx系OSもしくはMac OSXと以下のruby実行環境が必要です。
+\begin{itemize}
+\item ruby (version 1.8.7 以降)
+\item ruby gem (version 1.3.5 以降)
+\item ruby gem パッケージ
+  \begin{itemize}
+  \item crypt 
+  \item highline
+  \item rbvmomi
+  \item rest-client
+  \item pony
+  \end{itemize}
+
+\item Ruby用 Oracle インターフェース OCI8 \footnote{インストール方法の詳細については
+\url{http://ruby-oci8.rubyforge.org/ja/index.html}を参照してください}
+\begin{itemize}
+\item Oracle Instant Client (Oracle Technology Networkからrpmパッケージをダウンロード）
+\item OCI8 gem パッケージ
+\end{itemize}
+
+\item VMware VIX API SDK 1.10.3 \footnote{インストール方法の詳細については
+\url{https://www.vmware.com/support/developer/vix-api/vix110_reference/}を参照してください}
+
+\end{itemize}
+
+本バージョンのvcdkitは以下のvCloudソフトウェアのバージョンをサポートします。
+\begin{itemize}
+\item vCloud Directory (version 1.0.1, 1.5)
+\item vShield Manager (version 5.0)
+\item vCenter Chargeback (version 1.6.2)
+\item vSphere (version 4.1)
+\end{itemize}
+
+\subsection{インストール手順}
+vcdkit のインストールは vcdkit を利用する一般ユーザアカウントで行います。root 権限は必要ありません。
+
+\subsubsection{配布パッケージのインストール}
+/tmp ディレクトリにコピーされた配布パッケージを/opt/vmware/vcdkitディレクトリにインストールする例を以下に示します。以下インストールディレクトリを\$VCDKITとして参照します。
+
+{\small \begin{verbatim}
+$ cd /opt/vmware/vcdkit
+$ unzip /tmp/vcdkit-$VERSION.zip
+\end{verbatim}}
+
+\subsubsection{環境変数の設定}
+vcdkitのコマンドを実行するためには環境変数 \$VCDKIT を設定する必要があります。また、すべてのコマンドは \$VCDKIT ディレクトリ直下にインストールされるので、PATH変数に \$ VCDKITを追加する事をお勧めします。.bashrcの編集例を以下に示します。
+
+ {\small \begin{verbatim}
+export VCDKIT=/opt/vmware/vcdkit	
+export PATH=$VCDKIT:$PATH
+\end{verbatim}}
+
+OCI8ライブラリとVIX APIライブラリのパスをLD\_LIBRARY\_PATHに追加します。
+設定例を以下に示します。
+
+ {\small
+ \begin{verbatim}
+LD_LIBRARY_PATH=/usr/lib/oracle/11.2/client64/lib:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/usr/lib/vmware-vix:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH
+\end{verbatim}
+}
+
+\label{sec:password}
+\subsubsection{パスワードの保存}
+vCloud Datacenterの各種システムへ接続する際に使用するパスワードを、暗号化した上でローカルディスクに保存します。
+保存されたパスワードファイルは vcdkit 利用アカウントと root アカウントのみが読み取り出来るように設定する事を推奨します。
+以下に設定例を示します。パスワードファイルはシステム毎に\$VCDKITディレクトリ直下に保存されます。
+
+{\footnotesize
+ \begin{verbatim}
+$ vcd-pass.rb -h
+ Usage: vcd-pass.rb [options]
+    -v, --vcd                        Change login password for vCloud Director
+    -c, --vcenter                    Change login password for vCenter
+    -e, --esx                        Change login password for ESX
+    -b, --chargeback                 Change login password for vCenter Chargeback
+        --chargeback_db
+                                     Change login password for vCenter Chargeback DB
+    -s, --vsm                        Change login password for vShield Manager
+    -l, --logfile LOGFILEPATH        Log file name
+    -t, --tempfile                   Output log to temporary file
+    -h, --help                       Display this help
+    
+$ ./vcd-pass.rb -vcebs --chargeback_db
+Enter vCloud Director password: ********
+2011-11-04 15:28:04 | WARN | Password for vCloud Director has been changed
+Enter vCenter password: ********
+2011-11-04 15:28:08 | WARN | Password for vCenter has been changed
+Enter ESX password: ********
+2011-11-04 15:28:13 | WARN | Password for ESX has been changed
+Enter vCenter Chargeback password: ********
+2011-11-04 15:28:21 | WARN | Password for vCenter Chargeback has been changed
+Enter vShield Manager password: ********
+2011-11-04 15:28:26 | WARN | Password for vShield Manager has been changed
+Enter vCenter Chargeback DB password: ********
+2011-11-04 15:28:31 | WARN | Password for vCenter Chargeback DB has been changed
+\end{verbatim}
+}
+
+\label{sec:mail}
+\subsubsection{メール転送パラメータの設定}
+以下のスクリプトにはエラーログもしくは出力レポートをメールで転送するオプションがあります。
+
+\begin{table}[H]
+\begin{tabular}{lll}
+\toprule
+\textbf{スクリプト名}　& \textbf{主な機能} & \textbf{転送ファイル} \\ 
+\midrule
+vcb-ex.rb & vCenter Chargeback 監視 & エラーログ \\
+vcd-ex.rb & vCloud Director 監視 & エラーログ \\
+vcd-dump.rb & vCD ダンプ & エラーログ(gzip形式) \\
+vcd-trend.rb & Windows仮想マシン集計 & 集計レポート \\
+vcd-vapp.rb & Chargeback監視用仮想マシン生成 & エラーログ(gzip形式) \\
+vsp-datastore.rb & データストア監視 & エラーログ(gzip形式) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+メール転送の各種パラメータはスクリプト実行時に設定ファイル名を{\tt -m MAILCONF}オプションで渡す形で指定します。
+以下にvcd-trend.rb実行時に用いる設定ファイルの例（\$VCDKIT/conf/mail/vcd-trend.xml）を示します。
+\footnote{\$VCDKIT/conf/mail配下に構成ファイルのサンプルが各スクリプト毎に用意されています。
+（例: vcd-ex.rb用にはvcd-ex.xml）}
+
+{\small
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?>
+<mailerconf>
+  <to>SBTMRD-pm-vpf@tm.softbank.co.jp</to>
+  <to>SBTMRD-eng-vpf@tm.softbank.co.jp</to>
+  <from>{%= hostname %}@dhs.jtidc.jp</from>
+  <subject>vCDC guest OS usage report
+   [{%= vcdhost %}] {%= first.year %}/{%= first.month %}
+    </subject>
+  <body>VCD: {%= vcdhost %}
+REPORT CREATED: {%= now %}</body>
+  <smtp>
+    <host>10.121.0.113</host>
+  </smtp>
+</mailerconf>
+\end{verbatim}
+}
+
+from, subjectおよびbodyには（メール実行時に値が決まる）動的な置換パラメータを指定する事ができます。
+置換パラメータは{\tt \{\%=}と{\tt \%\}}に挟み込む形で使用します。動的パラメータの一覧を以下に示します。
+\begin{table}[H]
+\begin{tabular}{llm{6.5cm}}
+\toprule
+\textbf{パラメータ名}　& \textbf{対象スクリプト} & \textbf{説明} \\ 
+\midrule
+hostname & 全スクリプト & スクリプトを実行したホストの名前 \\
+vcdhost & 全スクリプト &  スクリプトの実行対象のvCloud Directorホストの名前 \\
+now & 全スクリプト & スクリプト実行時刻　\\
+first & vcd-trend.rb & レポート作成にもちいたデータの対象期間のはじめ \\
+error\_host & vsp-datastore.rb & エラーが検知されたESXiホストの名前 \\
+error\_datastore & vsp-datastore.rb & エラーが検知されたデータストアの名前 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\subsubsection{cronジョブの設定}
+\$VCDKIT/cron/crontab.conf には標準的なスクリプト実行スケジュール例が記述されています。
+crontab.conf を適切に編集後、crontab コマンドで cron ジョブをスケジュールします。
+
+{\small
+ \begin{verbatim}
+# Dump vCD data at 0 min of every hour.
+# This schedule needs to be sychronized with VM backup schedule
+# when used for vApp restore purpose.
+0 * * * * /opt/vmware/vcdkit/cron/vcd-dump.sh
+
+# Extract parameters from dumped vCD data, 15 mins after the dump
+15 * * * * /opt/vmware/vcdkit/cron/vcd-report.sh
+
+# Archive old dump/report data, 15 mins after creating report
+30 * * * * /opt/vmware/vcdkit/cron/archive.sh
+
+# At 1:00AM of 1st day of every month, create VM count tracking report
+0 1 1 * * /opt/vmware/vcdkit/cron/vcd-trend.sh
+
+# Check datastore health every 15 mins
+*/15 * * * * /opt/vmware/vcdkit/cron/vsp-datastore.sh
+# Check vCloud Director health every 10 mins
+*/10 * * * * /opt/vmware/vcdkit/cron/vcd-ex.sh
+
+# Create & delete vApp every 60 mins.
+# Check VM instance cost time stamp every 10 mins, to confirm the health
+# of Chargeback vCD data-collector
+*/60 * * * * /opt/vmware/vcdkit/cron/vcd-vapp.sh
+*/10 * * * * /opt/vmware/vcdkit/cron/vcb-ex.sh
+\end{verbatim}
+}
+

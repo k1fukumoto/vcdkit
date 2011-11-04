@@ -1,0 +1,86 @@
+
+%
+% vcd-restore.rb
+%
+\subsection{vcd-restore.rb} 
+vcd-dump.rb で抽出した XMLデータをもとにvApp設定情報のリストアを行います。
+
+\subsubsection{使用例}
+\paragraph{リストア日時とvApp名を指定してvApp設定情報をリストアする（インタラクティブモード）}
+
+\subparagraph{ステップ1:  ターゲットの指定}
+
+{\footnotesize
+\begin{verbatim}
+$ vcd-report.rb
+Select restart target directory:
+1. 2011-07-26_20-04-10
+2. Specify date
+3. Change name pattern. Current pattern='*'
+?  1
+Enter vApp name pattern: RESTORE
+Select VAPP:
+1. CustomerDemo-02 | Basic Backup - Customer Demo-02 | RESTORE-000
+2. CustomerDemo-02 | Basic Backup - Customer Demo-02 | RESTORE-001
+3. Change name pattern. Current pattern='*RESTORE*'
+?  2
+\end{verbatim}
+}
+
+\subparagraph{ステップ2:  現時点での差分表示、およびリストア実行の確認}
+
+{\footnotesize
+\begin{verbatim}
+...
+（vApp情報取得動作のログ）
+...
+***************
+*** 4,10 ****
+        DB-02
+      </FullName>
+      <Description>
+!       Testing..
+      </Description>
+      <OperatingSystemType>
+         winNetEnterpriseGuest 
+--- 4,10 ----
+        DB-02
+      </FullName>
+      <Description>
+!       CHANGE DESCRIPTION
+      </Description>
+      <OperatingSystemType>
+         winNetEnterpriseGuest 
+<<
+Continue (yN)? y
+\end{verbatim}
+}
+
+\subparagraph{ステップ3: リストア実施、およびリストア完了後の差分表示}
+{\footnotesize
+\begin{verbatim}
+...
+（vAppリストア動作のログ）
+...
+2011-07-26 21:22:03 | INFO | [DIFF AFTER RESTORE]: >><<
+\end{verbatim}
+}
+
+\subsubsection{コマンドオプション一覧}
+利用できるコマンドオプションの一覧は引数に{\tt -h}を指定すると表示されます。
+
+{\footnotesize
+\begin{verbatim}
+$ vcd-restore.rb -h
+Usage: vcd-restore.rb [cmd-options]
+    -v, --vcd HOST,ORG,USER          vCD login parameters
+    -i, --input DIR                  Root directory of the vCD dump data
+        --tree TREENAME              Directory name to identify dump tree
+    -o, --output DIR                 Specify directory for reports
+    -a, --vapp ORG,VDC,VAPP          Restore source vApp
+    -s, --skip                       Skip interactive questions
+    -l, --logfile LOGFILEPATH        Log file name
+    -t, --tempfile                   Output log to temporary file
+    -h, --help                       Display this help
+\end{verbatim}
+}

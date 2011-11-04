@@ -1,0 +1,24 @@
+\subsection{vsm-network.rb}
+指定されたvShield Managerに管理されているvShield Edgeの検査を行います。
+\subsubsection{使用例}
+\paragraph{vShield Edgeの監視}
+
+\begin{Verbatim}[frame=single]
+$ vsm-network.rb --vsm 1
+\end{Verbatim}
+
+\begin{itemize}
+\item {\tt --vsm 1} オプションは接続先のvShield Managerとして本番環境のサーバを指定します。
+\end{itemize}
+
+\subsubsection{コマンドオプション一覧}
+利用できるコマンドオプションの一覧は引数に{\tt -h}を指定すると表示されます。
+
+{\footnotesize
+\begin{verbatim}
+Usage: vsm-network.rb [options]
+        --vsm HOST,USER
+                                     vShield Manager login parameters
+    -h, --help                       Display this help                                                         
+\end{verbatim}
+}
