@@ -45,7 +45,22 @@ module VShieldManager
         end
       }
     end
-
-
   end
 end
+
+$VSM = [
+        ['10.128.0.63','vcdadmin'],
+        ['10.128.1.63','vcdadmin'],
+        ['192.168.2.11','admin'],
+       ]
+
+def vsmopts(options,opt)
+  opt.on('','--vsm HOST,USER',Array,'vShield Manager login parameters') do |o|
+    if(o[0].size == 1)
+      options[:vsm] = $VSM[o[0].to_i - 1]
+    else
+      options[:vsm] = o
+    end
+  end
+end
+
