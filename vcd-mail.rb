@@ -53,6 +53,6 @@ vcdhost = ''
 hostname = `hostname`.chomp
 now = Time.now
 f = options[:attachment]
-$mail.send({f => File.read(a)},binding)
+$mail.send({f => File.read(f)},binding)
 
 exit($log.errors + $log.warns)
