@@ -115,7 +115,7 @@ EOS
       COLS = 'entity_id, cost_model_id, global_fc_line_item_id, start_time, end_time, propagate'
       INSERT = <<EOS
 INSERT INTO cb_fixed_cost (#{COLS})
-VALUES (<%= @heid %>,<%= @cmid %>,<%= @fcid %>,<%= start_sql %>,<%= end_sql %>,0);
+VALUES (<%= @heid %>,<%= @cmid %>,<%= @fcid %>,<%= start_sql %>,<%= end_sql %>,0)
 EOS
       attr_reader :heid,:cmid,:fcid,:start,:end
 

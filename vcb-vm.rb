@@ -69,6 +69,10 @@ begin
   Chargeback::VCBDB::VM.searchByStartTime(conn,opts) do |vm|
     c = vm.created.strftime(TIMEFORMAT)
     d = vm.deleted.strftime(TIMEFORMAT)
+
+#    next if vm.org =~ /Admin/
+#    next if vm.vdc =~ /Committed/
+
     puts "\n#{vm.heid}: #{vm.org} | #{vm.vdc} | #{vm.vapp} | #{vm.name}"
     puts "  Lifetime: #{c} ~ #{d}"
     vm.each_vmicost do |vmic|
@@ -89,13 +93,15 @@ begin
   end
 
   if (missed_vmic.size > 0)
-    sql = missed_vmic.collect{|v| v.insert}.join("") + "COMMIT;\n"
+    sql = missed_vmic.collect{|v| v.insert}.join('')
     puts "[ VMIC Inserts ]"
-    puts sql
+    puts "#{sql}"
     print "Execute SQL(yN)? "; a = gets
     if(a =~ /[yY]/)
-#      n = conn.exec(sql)
-      puts "#{n} VMICs inserted"
+      missed_vmic.each do |v|
+        n = conn.exec(v.insert)
+      end
+      conn.exec("COMMIT")
     end
   end
 
