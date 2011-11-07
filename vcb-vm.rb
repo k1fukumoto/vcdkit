@@ -89,12 +89,12 @@ begin
   end
 
   if (missed_vmic.size > 0)
-    sql = missed_vmic.collect{|v| v.insert}.join("\n") + "\nCOMMIT;\n"
+    sql = missed_vmic.collect{|v| v.insert}.join("") + "COMMIT;\n"
     puts "[ VMIC Inserts ]"
     puts sql
     print "Execute SQL(yN)? "; a = gets
     if(a =~ /[yY]/)
-      n = conn.exec(sql)
+#      n = conn.exec(sql)
       puts "#{n} VMICs inserted"
     end
   end
