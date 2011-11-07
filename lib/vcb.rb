@@ -134,7 +134,7 @@ EOS
       end
 
       def end_sql
-        if(@end == NULLTS?)
+        if(@end == DateTime.parse(NULLTS))
           'NULL'
         else
           "to_date('#{@end.strftime(TIMEFORMAT)}','YYYY-MM-DD HH24:MI:SS')"
