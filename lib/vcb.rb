@@ -111,11 +111,11 @@ EOS
     end
     
     class FixedCost
+      NULLTS = '9999-11-30 23:59:59'
       COLS = 'entity_id, cost_model_id, global_fc_line_item_id, start_time, end_time, propagate'
       INSERT = <<EOS
 INSERT INTO cb_fixed_cost (#{COLS})
-VALUES
-(<%= @heid %>,<%= @cmid %>,<%= @fcid %>,<%= @start %>,<%= @end %>,0)
+VALUES (<%= @heid %>,<%= @cmid %>,<%= @fcid %>,<%= start_sql %>,<%= end_sql %>,0);
 EOS
       attr_reader :heid,:cmid,:fcid,:start,:end
 
@@ -125,8 +125,20 @@ EOS
         @fcid = fcid
         @start = start
         @start = DateTime.parse(@start) if @start.class == String
-        @end = e || "9999-11-30 23:59:59" 
+        @end = e || NULLTS
         @end = DateTime.parse(@end) if @end.class == String
+      end
+
+      def start_sql
+        "to_date('#{@start.strftime(TIMEFORMAT)}','YYYY-MM-DD HH24:MI:SS')"
+      end
+
+      def end_sql
+        if(@end == NULLTS?)
+          'NULL'
+        else
+          "to_date('#{@end.strftime(TIMEFORMAT)}','YYYY-MM-DD HH24:MI:SS')"
+        end
       end
 
       def ==(other)

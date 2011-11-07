@@ -65,6 +65,7 @@ begin
     :t1 => DateTime.parse(options[:starttime][1]),
   }
 
+  missed_vmic = []
   Chargeback::VCBDB::VM.searchByStartTime(conn,opts) do |vm|
     c = vm.created.strftime(TIMEFORMAT)
     d = vm.deleted.strftime(TIMEFORMAT)
@@ -79,13 +80,24 @@ begin
         end
       end
       if match
-       puts "  Processed VMIC: #{vmic}" 
+        puts "  Processed VMIC: #{vmic}" 
       else
-       puts "* Missing VMIC:   #{vmic}" 
+        missed_vmic.push(vmic)
+        puts "* Missing VMIC:   #{vmic}" 
       end
     end
   end
-  
+
+  if (missed_vmic.size > 0)
+    sql = missed_vmic.collect{|v| v.insert}.join("\n") + "\nCOMMIT;\n"
+    puts "[ VMIC Inserts ]"
+    puts sql
+    print "Execute SQL(yN)? "; a = gets
+    if(a =~ /[yY]/)
+      n = conn.exec(sql)
+      puts "#{n} VMICs inserted"
+    end
+  end
 
 rescue SystemExit => e
   exit(e.status)
