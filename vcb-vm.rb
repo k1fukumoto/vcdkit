@@ -68,7 +68,8 @@ begin
   Chargeback::VCBDB::VM.searchByStartTime(conn,opts) do |vm|
     c = vm.created.strftime(TIMEFORMAT)
     d = vm.deleted.strftime(TIMEFORMAT)
-    puts "#{vm.org}/#{vm.vdc}/#{vm.vapp}/#{vm.name}(#{vm.heid}) #{c}~#{d}"
+    puts "\n#{vm.heid}: #{vm.org} | #{vm.vdc} | #{vm.vapp} | #{vm.name} #{c}~#{d}"
+    puts "  Lifetime: #{c} ~ #{d}"
     vm.each_vmicost do |vmic|
       match = false
       vm.each_fixedcost do |fc|
