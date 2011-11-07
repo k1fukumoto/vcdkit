@@ -1,0 +1,69 @@
+\subsection{vcb-vm.rb}
+vCloud Chargeback データベースに保持されている仮想マシン情報を検索し、
+VM Instanceコスト情報の不整合をレポートします。また欠損データを補間する
+SQL文を生成／実行する機能を提供します。
+
+\subsubsection{使用例}
+\paragraph{VM Instanceコスト不整合のレポート}
+
+\begin{Verbatim}[frame=single]
+$ vcb-vm.rb --chargeback_db 1 \
+  -s "2011/11/02 07:00:00","2011/11/02 10:00:00"
+\end{Verbatim}
+
+\begin{itemize}
+\item 本番環境のChargeback データベース（{\tt --chargeback\_db 1}）に対して検査を行います。
+\item {\tt 2011/11/02 07:00:00} から {\tt 2011/11/02 15:00:00}までの間に作成かつ削除された仮想マシンを検索します。
+\end{itemize}
+
+\paragraph{レポート出力例}
+{\footnotesize
+\begin{verbatim}
+20900: Admin | Basic - Admin | CBMON-2011/11/02-07:40:22 | CBMONVM01
+  Lifetime: 2011-11-02 07:44:38 ~ 2011-11-02 08:44:32
+  Processed VMIC: 20900,2237,2277,2011-11-02 07:40:33,9999-11-30 23:59:59
+  Processed VMIC: 20900,1433,1545,2011-11-02 07:40:33,9999-11-30 23:59:59
+
+20867: Admin | Basic - Admin | CBMON-2011/11/02-08:40:19 | CBMONVM01
+  Lifetime: 2011-11-02 08:44:37 ~ 2011-11-02 09:44:33
+* Missing VMIC:   20867,2237,2277,2011-11-02 08:40:28,9999-11-30 23:59:59
+* Missing VMIC:   20867,1433,1545,2011-11-02 08:40:28,9999-11-30 23:59:59
+
+[ VMIC Inserts ]
+INSERT INTO cb_fixed_cost (entity_id, cost_model_id, global_fc_line_item_id, 
+                                         start_time, end_time, propagate)
+VALUES (20867,2237,2277,to_date('2011-11-02 08:40:28','YYYY-MM-DD HH24:MI:SS'),NULL,0);
+INSERT INTO cb_fixed_cost (entity_id, cost_model_id, global_fc_line_item_id, 
+                                         start_time, end_time, propagate)
+VALUES (20867,1433,1545,to_date('2011-11-02 08:40:28','YYYY-MM-DD HH24:MI:SS'),NULL,0);
+COMMIT;
+
+Execute SQL(yN)?
+\end{verbatim}}
+
+\begin{itemize}
+\item {\tt -s}オプションで指定された時間内に生成／削除された各VMについて以下の情報が出力されます。
+\begin{verbatim}
+Entity ID: Organization名 | VDC名 | vApp名 | VM名
+  Lifetime: 作成時間~削除時間
+  Processed VMIC: 正しく処理されているVM Instanceコスト
+* Missing VMIC: 欠損しているVM Instance コスト
+\end{verbatim}
+\item VM情報の後に、すべての欠損データを補完するためのSQL文が出力されます。
+内容に不備がないか確認の上、実行する事ができます。
+\end{itemize}
+
+\subsubsection{コマンドオプション一覧}
+利用できるコマンドオプションの一覧は引数に{\tt -h}を指定すると表示されます。
+
+{\footnotesize
+\begin{verbatim}
+Usage: vcb-vm.rb [options]
+        --chargeback_db HOST,USER
+                                     vCenter Chargeback database login parameters
+    -l, --logfile LOGFILEPATH        Log file name
+    -t, --tempfile                   Output log to temporary file
+    -s, --starttime T0,T1            Start time range
+    -h, --help                       Display this help
+\end{verbatim}
+}
