@@ -29,11 +29,18 @@ optparse = OptionParser.new do |opt|
 
   vcbdbopts(options,opt)
 
-  VCloud::Logger.parseopts(opt)
-
   opt.on('-s','--starttime T0,T1',Array,'Start time range') do |r|
     options[:starttime] = r
   end
+
+  opt.on('','--skip_org ORG','Skip VMs in /ORG/ org') do |o|
+    options[:skip_org] = o
+  end
+  opt.on('','--skip_vdc VDC',"Skip VMs in /VDC/ vdc") do |o|
+    options[:skip_vdc] = o
+  end
+
+  VCloud::Logger.parseopts(opt)
 
   opt.on('-h','--help','Display this help') do
     puts opt
@@ -70,8 +77,8 @@ begin
     c = vm.created.strftime(TIMEFORMAT)
     d = vm.deleted.strftime(TIMEFORMAT)
 
-#    next if vm.org =~ /Admin/
-#    next if vm.vdc =~ /Committed/
+    next if (o = options[:skip_org] && vm.org =~ /#{o}/)
+    next if (v = options[:skip_vdc] && vm.vdc =~ /#{v}/)
 
     puts "\n#{vm.heid}: #{vm.org} | #{vm.vdc} | #{vm.vapp} | #{vm.name}"
     puts "  Lifetime: #{c} ~ #{d}"
