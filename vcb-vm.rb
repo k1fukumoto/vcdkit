@@ -77,8 +77,10 @@ begin
     c = vm.created.strftime(TIMEFORMAT)
     d = vm.deleted.strftime(TIMEFORMAT)
 
-    next if (o = options[:skip_org] && vm.org =~ /#{o}/)
-    next if (v = options[:skip_vdc] && vm.vdc =~ /#{v}/)
+    o = options[:skip_org]
+    v = options[:skip_vdc]
+    next if (o && vm.org =~ /#{o}/)
+    next if (v && vm.vdc =~ /#{v}/)
 
     puts "\n#{vm.heid}: #{vm.org} | #{vm.vdc} | #{vm.vapp} | #{vm.name}"
     puts "  Lifetime: #{c} ~ #{d}"
