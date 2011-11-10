@@ -8,11 +8,14 @@ SQL文を生成／実行する機能を提供します。
 
 \begin{Verbatim}[frame=single]
 $ vcb-vm.rb --chargeback_db 1 \
+  --skip_org Admin --skip_vdc Committed \
   -s "2011/11/02 07:00:00","2011/11/02 10:00:00"
 \end{Verbatim}
 
 \begin{itemize}
 \item 本番環境のChargeback データベース（{\tt --chargeback\_db 1}）に対して検査を行います。
+\item {\tt --skip\_org Admin} 名前に"Admin"という文字列を含むOrganization 内のVMをスキップします
+\item {\tt --skip\_vdc Committed} 名前に"Committed"を含むVDC 内のVMをスキップします
 \item {\tt 2011/11/02 07:00:00} から {\tt 2011/11/02 15:00:00}までの間に作成かつ削除された仮想マシンを検索します。
 \end{itemize}
 
@@ -61,9 +64,13 @@ Entity ID: Organization名 | VDC名 | vApp名 | VM名
 Usage: vcb-vm.rb [options]
         --chargeback_db HOST,USER
                                      vCenter Chargeback database login parameters
+    -s, --starttime T0,T1            Start time range
+        --skip_org ORG
+                                     Skip VMs in /ORG/ org
+        --skip_vdc VDC
+                                     Skip VMs in /VDC/ vdc
     -l, --logfile LOGFILEPATH        Log file name
     -t, --tempfile                   Output log to temporary file
-    -s, --starttime T0,T1            Start time range
     -h, --help                       Display this help
 \end{verbatim}
 }
