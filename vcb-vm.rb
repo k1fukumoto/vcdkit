@@ -96,12 +96,14 @@ begin
     sql = missed_vmic.collect{|v| v.insert}.join('')
     puts "[ VMIC Inserts ]"
     puts "#{sql}"
-    print "Execute SQL(yN)? "; a = gets
+    print "Execute above inserts(yN)? "; a = gets
     if(a =~ /[yY]/)
+      n = 0
       missed_vmic.each do |v|
-        n = conn.exec(v.insert)
+        n += conn.exec(v.insert)
       end
       conn.exec("COMMIT")
+      puts "#{n} VMICs are inserted"
     end
   end
 
