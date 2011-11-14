@@ -408,8 +408,10 @@ EOS
       ""
     end
 
-    def connect(host,org,user)
-      pass = VCloud::SecurePass.new().decrypt(File.new('.vcd','r').read)
+    def connect(host,org,user,pass=nil)
+      if pass.nil?
+        pass = VCloud::SecurePass.new().decrypt(File.new('.vcd','r').read)
+      end
 
       versions = REXML::Document.new(self.get("https://#{host}/api/versions")).
         elements.inject('/SupportedVersions/VersionInfo/Version',{}) {|h,vi| h.update(vi.text=>true); h}
