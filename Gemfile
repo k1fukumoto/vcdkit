@@ -1,0 +1,7 @@
+source 'http://rubygems.org'
+gem 'sinatra'
+gem 'rest-client'
+gem 'json'
+gem 'crypt'
+gem 'pony'
+gem 'rbvmomi'
