@@ -158,7 +158,6 @@ module VCloud
       elsif(href =~ /media\/([0-9a-f\-]+)$/)
         $1
       else
-        $log.error("Cannot find valid Media ID: #{href}")
         nil
       end
     end
@@ -404,12 +403,27 @@ EOS
   end
 
   class VCD < XMLElement
-    def path
-      ""
+    attr_reader :log
+
+    def initialize(logger)
+      @log = logger
+      @vcd = self
     end
 
-    def connect(host,org,user)
-      pass = VCloud::SecurePass.new().decrypt(File.new('.vcd','r').read)
+    def path
+      "/"
+    end
+
+    def VCD.connectParams
+      p = VCloudServers.first(:application => 'vCD')
+      [p.host,
+       p.account.split('/')[0],
+       p.account.split('/')[1],
+       p.password]
+    end
+
+    def connect(host,org,user,pass=nil)
+      pass ||= VCloud::SecurePass.new().decrypt(File.new('.vcd','r').read)
 
       versions = REXML::Document.new(self.get("https://#{host}/api/versions")).
         elements.inject('/SupportedVersions/VersionInfo/Version',{}) {|h,vi| h.update(vi.text=>true); h}
@@ -499,54 +513,54 @@ EOS
     end
 
     def get(url)
-      $log.info("HTTP GET: #{url.sub(/#{@apiurl}/,'')}")
+      log.info("HTTP GET: #{url.sub(/#{@apiurl}/,'')}")
       RestClient.get(url,@auth_token) { |response, request, result, &block|
         case response.code
         when 200..299
           response
         else
-          $log.error("#{response.code}>> #{response}")
+          log.error("#{response.code}>> #{response}")
           response.return!(request,result,&block)
         end
       }
     end
 
     def delete(url)
-      $log.info("HTTP DELETE: #{url.sub(/#{@apiurl}/,'')}")
+      log.info("HTTP DELETE: #{url.sub(/#{@apiurl}/,'')}")
       RestClient.delete(url,@auth_token) { |response, request, result, &block|
         case response.code
         when 200..299
           response
         else
-          $log.error("#{response.code}>> #{response}")
+          log.error("#{response.code}>> #{response}")
           response.return!(request,result,&block)
         end
       }
     end
 
     def post(url,payload=nil,hdrs={})
-      $log.info("HTTP POST: #{url.sub(/#{@apiurl}/,'')}")
+      log.info("HTTP POST: #{url.sub(/#{@apiurl}/,'')}")
       RestClient.post(url,payload,hdrs.update(@auth_token)) { |response, request, result, &block|
         case response.code
         when 200..299
           response
         else
-          $log.error("#{response.code}<< #{payload}")
-          $log.error("#{response.code}>> #{response}")
+          log.error("#{response.code}<< #{payload}")
+          log.error("#{response.code}>> #{response}")
           response.return!(request,result,&block)
         end
       }
     end
 
     def put(url,payload=nil,hdrs={})
-      $log.info("HTTP PUT: #{url.sub(/#{@apiurl}/,'')}")
+      log.info("HTTP PUT: #{url.sub(/#{@apiurl}/,'')}")
       RestClient.put(url,payload,hdrs.update(@auth_token)) { |response, request, result, &block|
         case response.code
         when 200..299
           response
         else
-          $log.error("#{response.code}<< #{payload}")
-          $log.error("#{response.code}>> #{response}")
+          log.error("#{response.code}<< #{payload}")
+          log.error("#{response.code}>> #{response}")
           response.return!(request,result,&block)
         end
       }
@@ -560,8 +574,8 @@ EOS
         task.connect(self,node)
       end
       if(task.status != 'success')
-        $log.warn("Task failed to complete:")
-        $log.warn(task.xml)
+        log.warn("Task failed to complete:")
+        log.warn(task.xml)
       end
     end  
   end
@@ -571,7 +585,7 @@ $VCD = [
         ['vcd.vcdc.whitecloud.jp','System','vcloud-sc'],
         ['tvcd.vcdc.whitecloud.jp','System','vcloud-sc'],
         ['vcd.vhost.ultina.jp','System','vcdadminl'],
-        ['192.168.2.101','System','admin'],
+        ['10.149.64.21','System','admin'],
         ]
 
 $VSP = [
