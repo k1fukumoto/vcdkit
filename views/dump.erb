@@ -1,0 +1,19 @@
+<% tree = DumpTree.get(params[:id]) %>
+<H2>VCD Dump @<%= tree.created_at %></H2>
+
+<ul>
+<% DumpData.all(:treeid => tree.id, :type => "VCloud::Org").each do |org| %>
+<li><%= org.name %>
+  <ul>
+  <% DumpData.all(:treeid => tree.id, :path.like => "#{org.path}%", :type => "VCloud::Vdc").each do |vdc| %>
+  <li><%= vdc.name %>
+    <ul>
+    <% DumpData.all(:treeid => tree.id, :path.like => "#{vdc.path}%", :type => "VCloud::VApp").each do |vapp| %>
+    <li><a href=<%= url("/vapp/#{vapp.id}")%>><%= vapp.name %></a>
+      (<%= DumpData.all(:treeid => tree.id, :path.like => "#{vapp.path}%", :type => "VCloud::Vm").collect {|vm| vm.name}.join(',') %>)
+    <% end %>
+    </ul>
+  <% end %>
+  </ul>
+<% end %>
+</ul>

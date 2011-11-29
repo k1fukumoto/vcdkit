@@ -1,0 +1,32 @@
+<H2>Job History - <%= params[:name] %> </H2>
+<table cellpadding=3>
+<tr>
+  <th>ID</th>
+  <th>Started</th><th></th>
+  <th>Finished</th>
+  <th>Duration</th>
+ <th>Log Breakdown</th>
+ <th></th>
+</tr>
+<% VCloudJob::JobData.all(:job => params[:name]).each do |jd| %>
+<tr>
+  <td><%= jd.id %></td>
+  <td><%= jd.started_at %></td><td>~</td>
+  <td><%= jd.finished_at %></td>
+  <td><%= jd.duration %></td>
+ <td>
+ INFO(<%= VCloud::Log.count(:jobid => jd.id, :priority =>'INFO') %>) ,
+ WARN(<%= VCloud::Log.count(:jobid => jd.id, :priority =>'WARN') %>) ,
+ ERROR(<%= VCloud::Log.count(:jobid => jd.id, :priority =>'ERROR') %>)  
+ </td>
+ <td>
+<% dt = DumpTree.first(:jobid => jd.id) %>
+<% unless dt.nil? %>
+ <a href=<%= url("/dump/#{dt.id}") %>>Dump</a>
+<% end %>
+ <a href=<%= url("/log/#{jd.id}") %>>Logs</a>
+ </td>
+</tr>
+<% end %>
+</table>
+

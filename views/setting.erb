@@ -1,0 +1,43 @@
+<H1>VCDKIT Dashboard</H1>
+
+<H2>vCloud Servers</H2>
+<form method="POST" action="/vcloud_servers">
+<table cellpadding=3>
+<tr>
+  <th>Application</th>
+  <th>IP Address</th>
+  <th>Account</th>
+  <th>Password</th>
+</tr>
+
+<% ['vCD','vCenter','ESX'].each do |appname| %>
+<% app = VCloudServers.first(:application => appname) %>
+<tr>
+ <td><%= appname %></td>
+  <% [ 'host','account','password' ].each do |c| %>
+  <td><input type="<%= c=='password'?  c : 'text' %>" 
+                      name="<%= "#{appname}_#{c}" %>"  
+                      value="<%= eval "app.#{c}"  %>"></td>
+  <% end %>          
+</tr>
+<% end %>
+<tr><td colspan="4" align="right">
+       <input type="submit" value="Change"/></td></tr>
+</table>
+</form>
+
+<H2>Job Schedule</H2>
+<form method="POST" action="/job_schedule">
+<table cellpadding=3>
+<tr><th>Job</th><th>Schedule</th></tr>
+<% VCloudJob::Schedule.all.each do |s| %>
+<tr><td><%= s.job %></td>
+       <td><input type="text" 
+                           name="<%= s.job %>" 
+                           value="<%= s.schedule %>"></td>
+</tr>
+<% end %>
+<tr><td colspan="2" align="right">
+       <input type="submit" value="Change Schedule"/></td></tr>
+</table>
+</form>
