@@ -23,8 +23,7 @@ require 'vsm.rb'
 
 $VCDKIT=ENV['VCDKIT']
 if $VCDKIT.nil?
-  puts "Please set VCDKIT environment variable to installataion directory." 
-  exit 1
+  $VCDKIT = File.dirname(__FILE__) + "/.."
 end
 Dir.chdir($VCDKIT)
 
