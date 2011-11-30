@@ -1,4 +1,4 @@
 - job: VCDEX
-  schedule: every 1m
+  schedule: every 10s
 - job: VCDDump
   schedule: every 15s

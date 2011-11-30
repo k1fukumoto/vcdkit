@@ -418,8 +418,8 @@ EOS
     def VCD.connectParams
       p = VCloudServers.first(:application => 'vCD')
       [p.host,
-       p.account.split('/')[0],
-       p.account.split('/')[1],
+       'System',
+       p.account,
        p.password]
     end
 

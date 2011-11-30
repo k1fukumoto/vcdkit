@@ -1,7 +1,7 @@
 # vCD
 - application: vCD
   host: 10.149.64.9
-  account: System/admin
+  account: admin
   password: vmware1!
 # vCenter
 - application: vCenter
