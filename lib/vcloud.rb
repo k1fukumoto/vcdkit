@@ -222,12 +222,13 @@ module VCloud
     TYPE = 'application/vnd.vmware.vcloud.org+xml'
     attr_reader :org
 
-    def initialize(name)
+    def initialize(vcd,name)
+      @vcd = vcd
       @name = name
     end
 
     def path
-      "/ORG/#{@name}"
+      "#{@vcd.path}/ORG/#{@name}"
     end
 
     def vdc(name) 
@@ -398,20 +399,20 @@ EOS
     end
       
     def path
-      "/ROLE/#{@name}"
+      "#{@vcd.path}/ROLE/#{@name}"
     end
   end
 
   class VCD < XMLElement
     attr_reader :log
 
-    def initialize(logger)
-      @log = logger
+    def initialize(log)
+      @log = log
       @vcd = self
     end
 
     def path
-      "/"
+      "/VCD/#{@name}"
     end
 
     def VCD.connectParams
@@ -423,6 +424,7 @@ EOS
     end
 
     def connect(host,org,user,pass=nil)
+      @name = host
       pass ||= VCloud::SecurePass.new().decrypt(File.new('.vcd','r').read)
 
       versions = REXML::Document.new(self.get("https://#{host}/api/versions")).
@@ -492,7 +494,7 @@ EOS
     ORGPATH='//OrganizationReferences/OrganizationReference'
 
     def org(name)
-      org = Org.new(name)
+      org = Org.new(self,name)
       if(@auth_token)
         org.connect(self,@doc.elements["#{ORGPATH}[@name='#{name}']"])
       else
@@ -502,7 +504,7 @@ EOS
 
     def each_org
       @doc.elements.each(ORGPATH) { |n| 
-        org = Org.new(n.attributes['name'])
+        org = Org.new(self,n.attributes['name'])
         if(@auth_token)
           org.connect(self,n)
         elsif(@dir)

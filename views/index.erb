@@ -1,13 +1,21 @@
 <H2>VCDKIT Dashboard</H2>
-<table cellpadding=3 width=200>
-<tr><th>Job</th><th>Runs</th></tr>
-<% VCloudJob::Schedule.all.each do |s| %>
+
+<table cellpadding=3>
 <tr>
-  <td width=200><%= s.job %></td>
-  <td width=200 align=center>
-    <a href=<%= url("/job/#{s.job}") %>><%=
-    VCloudJob::JobData.count(:job => s.job) %></a>
-  </td>
+  <th>Job</th>
+  <th>Runs</th>
+  <th>Last Run</th>
+</tr>
+<%
+  VCloudJob::Schedule.all.each do |s|
+    c = VCloudJob::JobData.count(:job => s.job)
+    last = VCloudJob::JobData.first(:job => s.job, :order => [:started_at.desc])
+%>
+<tr>
+  <td width=100><%= s.job %></td>
+  <td width=100 align=center>
+   <a href=<%= url("/job/#{s.job}") %>><%= c %></a></td>
+  <td width=200 align=center><%= (last.nil?)? '' : last.started_at %></td>
 </tr>
 <% end %>
 </table>

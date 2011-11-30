@@ -90,6 +90,10 @@ module VCloud
   end
 
   class DataMapperLogger
+    def DataMapperLogger.systemLog
+      DataMapperLogger.new(-1)
+    end
+
     def initialize(jobid)
       @jobid = jobid
     end
@@ -109,18 +113,23 @@ module VCloud
     def error(msg)
       mklog('ERROR',msg)
     end
+    def backtracek(msg)
+      mklog('BACKTRACE',msg)
+    end
   end
 
   class Dumper
     attr_reader :tree
-    def initialize(jobid)
+    def initialize(job)
       @tree = DumpTree.new(:created_at => Time.now,
-                           :jobid => jobid)
+                           :jobid => job.id)
       @tree.save
+      @log = job.log
     end
 
     def save(obj)
       begin
+        @log.info("SAVE: ##{@tree.id}: #{obj.type} | #{obj.path}")
         DumpData.create(:treeid => @tree.id,
                         :created_at => Time.now,
                         :type => obj.class.name,
@@ -128,7 +137,7 @@ module VCloud
                         :path => obj.path,
                         :xml => obj.xml)
       rescue DataMapper::SaveFailureError => e
-        $log.error("Failed to dump object: #{obj.path}: #{e}")
+        @log.error("SAVE FAILURE: ##{@tree.id}: #{obj.type} | #{obj.path}")
       end
     end
   end

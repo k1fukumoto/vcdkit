@@ -29,7 +29,7 @@ module VCloud
     TYPE = 'application/vnd.vmware.vcloud.vm+xml'
 
     def os
-      @doc.elements["//ovf:OperatingSystemSection/ovf:Description/text()"]
+      @doc.elements["//ovf:OperatingSystemSection/ovf:Description/text()"].to_s
     end
     def osType
       @doc.elements["//ovf:OperatingSystemSection/@vmw:osType"].value
@@ -44,7 +44,7 @@ module VCloud
     end
 
     def moref
-      @doc.elements["//VCloudExtension/vmext:VimObjectRef/vmext:MoRef/text()"]
+      @doc.elements["//vmext:VmVimObjectRef/vmext:MoRef/text()"].to_s
     end
     
     def powerOff

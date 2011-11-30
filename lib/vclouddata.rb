@@ -34,7 +34,7 @@ class DumpData
   property :created_at, DateTime
   property :type, String
   property :name, String
-  property :path, String
+  property :path, Text
   property :xml, Text
 end
 
@@ -68,6 +68,13 @@ class XMLElement
     init_attrs(node)
     @vcd = vcd
     @xml = vcd.get(@href)
+    @doc = REXML::Document.new(@xml)
+    init_attrs(@doc.root,[:xmlns,:'xmlns:vmext',:id])
+    self
+  end
+
+  def parse(xml)
+    @xml = xml
     @doc = REXML::Document.new(@xml)
     init_attrs(@doc.root,[:xmlns,:'xmlns:vmext',:id])
     self
