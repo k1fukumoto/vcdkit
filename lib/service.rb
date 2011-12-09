@@ -16,13 +16,6 @@
 require 'rubygems'
 require 'tempfile'
 require 'pony'
-require 'data_mapper'
-
-class DateTime
-  def to_s
-    self.strftime('%Y-%m-%d %H:%M:%S')
-  end
-end
 
 module VCloud
   class Logger
@@ -54,7 +47,8 @@ module VCloud
       end
 
       l.formatter = proc {|sev,time,prog,msg|
-        "#{time} | #{sev} | #{msg}\n"
+        ts = time.strftime('%Y-%m-%d %H:%M:%S')
+        "#{ts} | #{sev} | #{msg}\n"
       }
       @loggers.push(l)
     end
@@ -77,59 +71,6 @@ module VCloud
         gz.write @temp.read 
       end
       @ctemp.path
-    end
-  end
-
-  class Log
-    include DataMapper::Resource
-    property :id, Serial
-    property :jobid, Integer
-    property :created_at, DateTime
-    property :priority, String
-    property :message, Text
-  end
-
-  class DataMapperLogger
-    def initialize(jobid)
-      @jobid = jobid
-    end
-    def mklog(pri,msg)
-      Log.create(:jobid => @jobid,
-                 :created_at => Time.now,
-                 :priority => pri,
-                 :message => msg)
-    end
-
-    def warn(msg)
-      mklog('WARN',msg)
-    end
-    def info(msg)
-      mklog('INFO',msg)
-    end
-    def error(msg)
-      mklog('ERROR',msg)
-    end
-  end
-
-  class Dumper
-    attr_reader :tree
-    def initialize(jobid)
-      @tree = DumpTree.new(:created_at => Time.now,
-                           :jobid => jobid)
-      @tree.save
-    end
-
-    def save(obj)
-      begin
-        DumpData.create(:treeid => @tree.id,
-                        :created_at => Time.now,
-                        :type => obj.class.name,
-                        :name => obj.name,
-                        :path => obj.path,
-                        :xml => obj.xml)
-      rescue DataMapper::SaveFailureError => e
-        $log.error("Failed to dump object: #{obj.path}: #{e}")
-      end
     end
   end
 
