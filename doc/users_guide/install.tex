@@ -34,7 +34,10 @@ vcdkit¤ò¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë¤¿¤á¤Ë¤Ï³Æ¼ïLiunx·ÏOS¤â¤·¤¯¤ÏMac OSX¤È°Ê²¼¤Îruby¼Â¹Ô´Ä¶­
 \item vSphere (version 4.1)
 \end{itemize}
 
-\subsection{¥¤¥ó¥¹¥È¡¼¥ë¼ê½ç}
+%------------------------------------------------------------------------------------------------------------
+% NEW INSTALLATION
+%------------------------------------------------------------------------------------------------------------
+\subsection{¿·µ¬¥¤¥ó¥¹¥È¡¼¥ë¼ê½ç}
 vcdkit ¤Î¥¤¥ó¥¹¥È¡¼¥ë¤Ï vcdkit ¤òÍøÍÑ¤¹¤ë°ìÈÌ¥æ¡¼¥¶¥¢¥«¥¦¥ó¥È¤Ç¹Ô¤¤¤Þ¤¹¡£root ¸¢¸Â¤ÏÉ¬Í×¤¢¤ê¤Þ¤»¤ó¡£
 
 \subsubsection{ÇÛÉÛ¥Ñ¥Ã¥±¡¼¥¸¤Î¥¤¥ó¥¹¥È¡¼¥ë}
@@ -194,4 +197,127 @@ crontab.conf ¤òÅ¬ÀÚ¤ËÊÔ½¸¸å¡¢crontab ¥³¥Þ¥ó¥É¤Ç cron ¥¸¥ç¥Ö¤ò¥¹¥±¥¸¥å¡¼¥ë¤·¤Þ¤¹¡
 */10 * * * * /opt/vmware/vcdkit/cron/vcb-ex.sh
 \end{verbatim}
 }
+
+% ----------------------------------------------------------------------------------------------------------
+% UPGRADE
+% ----------------------------------------------------------------------------------------------------------
+\subsection{¥¢¥Ã¥×¥°¥ì¡¼¥É¥¤¥ó¥¹¥È¡¼¥ë¼ê½ç}
+{\tt 1.0} ¤«¤é {\tt 1.5.6}¤Ø¤Î¥¢¥Ã¥×¥°¥ì¡¼¥É¼ê½ç¤ò°Ê²¼¤Ëµ­¤·¤Þ¤¹¡£
+
+\subsubsection{¥¢¥Ã¥×¥°¥ì¡¼¥É¤Î½àÈ÷}
+{\tt 1.5.6}¤Î¥Ñ¥Ã¥±¡¼¥¸¤È¡¢ÄÉ²Ã¤ÇÉ¬Í×¤È¤Ê¤Ã¤¿°Ê²¼¤Î¥µ¡¼¥É¥Ñ¡¼¥Æ¥£¤Î¥Ñ¥Ã¥±¡¼¥¸¤ò
+¥¢¥Ã¥×¥°¥ì¡¼¥Éºî¶ÈÁ°¤Ë¡¢Í½¤á¥¤¥ó¥¹¥È¡¼¥ëÂÐ¾Ý¥µ¡¼¥Ð¡¼¤Ë¥À¥¦¥ó¥í¡¼¥É¤·¤Þ¤¹¡£
+
+\paragraph{Oracle Instant Client}
+Oracle Technology Network¤«¤é°Ê²¼¤Îrpm¥Ñ¥Ã¥±¡¼¥¸¤ò¥À¥¦¥ó¥í¡¼¥É¤·¤Þ¤¹¡£
+\begin{itemize}
+\item {\tt oracle-instanceclient11.2-basic-11.2.0.3.0-1.x86\_64.rpm}
+\item {\tt oracle-instanceclient11.2-devel-11.2.0.3.0-1.x86\_64.rpm}
+\end{itemize}
+
+\paragraph{RubyÍÑ Oracle ¥¤¥ó¥¿¡¼¥Õ¥§¡¼¥¹ (OCI8)}
+\url{http://ruby-oci8.rubyforge.org/ja/index.html}¤«¤é°Ê²¼¤Î¥Õ¥¡¥¤¥ë¤ò¥À¥¦¥ó¥í¡¼¥É¤·¤Þ¤¹¡£
+\begin{itemize}
+\item {\tt ruby-oci8-2.0.6.tar.gz}
+\end{itemize}
+
+\paragraph{VMware VIX API SDK 1.10.3}
+\url{https://www.vmware.com/support/developer/vix-api/vix110_reference/}¤«¤é°Ê²¼¤Î¥Õ¥¡¥¤¥ë¤ò¥À¥¦¥ó¥í¡¼¥É¤·¤Þ¤¹¡£
+
+\begin{itemize}
+\item  {\tt VMware-VIX-1.11.0-471780.x86\_64.bundle}
+\end{itemize}
+
+\subsubsection{´ûÂ¸¥¸¥ç¥Ö¤ÎÄä»ß}
+
+¥¢¥Ã¥×¥°¥ì¡¼¥É³«»Ï»þ¤Î´Æ»ëÄä»ß¤ÈÆ±¤¸¥¿¥¤¥ß¥ó¥°¤Ç¡¢´ûÂ¸¥¸¥ç¥Ö¤ÎÄä»ß¤ò¹Ô¤¤¤Þ¤¹¡£
+{\tt cron}¥¸¥ç¥Ö¤ò¥¤¥ó¥¹¥È¡¼¥ë¤·¤¿¥æ¡¼¥¶¤Ç¥í¥°¥¤¥ó¤·¡¢°Ê²¼¤Î¥³¥Þ¥ó¥É¤ò¼Â¹Ô¤·¤Þ¤¹¡£
+\begin{Verbatim}[frame=single] 
+$ crontab -r
+$ crontab -l # ¥¸¥ç¥Ö¤¬ºï½ü¤µ¤ì¤Æ¤¤¤ë»ö¤ò³ÎÇ§
+\end{Verbatim}
+
+\subsubsection{¿·¥Ð¡¼¥¸¥ç¥ó¤Î¥Ñ¥Ã¥±¡¼¥¸¤Î¥¤¥ó¥¹¥È¡¼¥ë}
+´ûÂ¸¥¤¥ó¥¹¥È¡¼¥ë¤òÂàÈò¤·¤¿¸å¤Ë¡¢¿·¥Ð¡¼¥¸¥ç¥ó¤Î¥Ñ¥Ã¥±¡¼¥¸¤òÅ¸³«¤·¤Þ¤¹¡£
+
+\begin{Verbatim}[frame=single] 
+$ cd /opt/vmware
+$ mv vcdkit vcdkit-1.0
+$ unzip /tmp/vcdkit-1.5.6.zip
+$ ln -s vcdkit-1.5.6 vcdkit 
+\end{Verbatim}
+
+\subsubsection{¥µ¡¼¥É¥Ñ¡¼¥Æ¥£¥Ñ¥Ã¥±¡¼¥¸¤Î¥¤¥ó¥¹¥È¡¼¥ë}
+Í½¤á¥À¥¦¥ó¥í¡¼¥É¤·¤Æ¤¢¤Ã¤¿¥µ¡¼¥É¥Ñ¡¼¥Æ¥£¥Ñ¥Ã¥±¡¼¥¸¤ò°Ê²¼¤Î¼ê½ç¤Ç¥¤¥ó¥¹¥È¡¼¥ë¤·¤Þ¤¹¡£
+
+\begin{Verbatim}[frame=single,fontsize=\small] 
+$ cd ~/Download # ¥Ñ¥Ã¥±¡¼¥¸¤ò¥À¥¦¥ó¥í¡¼¥É¤·¤¿¥Ç¥£¥ì¥¯¥È¥ê¤Ë°ÜÆ°
+$ sudo rpm -ivh \
+  oracle-instanceclient11.2-basic-11.2.0.3.0-1.x86_64.rpm
+$ sudo rpm -ivh \
+  oracle-instanceclient11.2-devel-11.2.0.3.0-1.x86_64.rpm
+$ tar zxvf ruby-oci8-1.0.7.tar.gz
+$ cd ruby-oci8-1.0.7
+$ export LD_LIBRARY_PATH=/usr/lib/oracle/11.2/client64/lib
+$ ruby setup.rb config
+$ make
+$ sudo make install
+$ sudo sh VMware-VIX-1.11.0-471780.x86_64.bundle
+$ cd /usr/lib/vmware-vix
+$ sudo tar zxvf vix-perl.tar.gz
+$ cd vix-perl
+$ perl -MCPAN -eshell
+cpan[1] > force install ExtUtils::MakeMaker
+$ sudo perl Makefile.PL
+$ sudo make
+$ sudo make install
+\end{Verbatim}
+
+\subsubsection{´ûÂ¸¥Ç¡¼¥¿¤Î°Ü¹Ô}
+°Ê²¼¤Î¼ê½ç¤Ç´ûÂ¸¥¤¥ó¥¹¥È¡¼¥ë¤«¤é¥Ç¡¼¥¿¤ò°Ü¹Ô¤·¤Þ¤¹¡£
+{\tt data}¤È{\tt logs}¥Ç¥£¥ì¥¯¥È¥ê¤Ï´ûÂ¸¥Õ¥©¥ë¥À¤Î¥Ç¡¼¥¿¤ò¤½¤Î¤Þ¤Þ»ÈÍÑ¡£
+
+\begin{Verbatim}[frame=single]
+$ cd /opt/vmware/vcdkit
+$ cp ../vcdkit-1.0/.vc*  .
+$ cp ../vcdkit-1.0/.esx  .
+$ rmdir data
+$ ln -s ../vcdkit-1.0/data .
+$ rmdir logs
+$ ln -s ../vcdkit-1.0/logs .
+\end{Verbatim}
+
+\subsubsection{¶¦Í­¥é¥¤¥Ö¥é¥ê¥Ñ¥¹¤ÎÀßÄê}
+OCI8¥é¥¤¥Ö¥é¥ê¤ÈVIX API¥é¥¤¥Ö¥é¥ê¤Î¥Ñ¥¹¤òLD\_LIBRARY\_PATH¤ËÄÉ²Ã¤·¤Þ¤¹¡£
+ÀßÄêÎã¤ò°Ê²¼¤Ë¼¨¤·¤Þ¤¹¡£
+
+\begin{Verbatim}[frame=single] 
+LD_LIBRARY_PATH=\
+/usr/lib/oracle/11.2/client64/lib:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=\
+/usr/lib/vmware-vix:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH
+\end{Verbatim}
+
+\subsubsection{¥á¡¼¥ëÅ¾Á÷¥Ñ¥é¥á¡¼¥¿¤ÎÀßÄê}
+¥¹¥Æ¡¼¥¸¥ó¥°´Ä¶­¤Ç¤ÎÀßÄêÎã¤ò»²¹Í¤Ë¡¢{\tt \$VCDKIT/confi/mail}ÇÛ²¼¤Î¥á¡¼¥ëÅ¾Á÷
+¥Ñ¥é¥á¡¼¥¿¤òÊÑ¹¹¤·¤Þ¤¹¡£
+
+\begin{Verbatim}[frame=single] 
+$ vi $VCDKIT/conf/mail/*.xml
+\end{Verbatim}
+
+\subsubsection{cron¥¸¥ç¥Ö¤ÎºÆ³«}
+´Æ»ë¥·¥¹¥Æ¥àºÆ³«¤ÈÆ±¤¸¥¿¥¤¥ß¥ó¥°¤Ç¡¢cron¥¸¥ç¥Ö¤òºÆ³«¤·¤Þ¤¹¡£
+
+\begin{Verbatim}[frame=single] 
+$ vi $VCDKIT/cron/crontab.conf
+$ crontab cron/crontab.conf
+$ crontab -l
+\end{Verbatim}
+
+
+
+
+
 
