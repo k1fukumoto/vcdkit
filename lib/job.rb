@@ -31,53 +31,37 @@ module VCloudJob
       hrs = (days - days.floor) * 24
       mins = (hrs - hrs.floor) * 60
       secs = (mins - mins.floor) * 60
-      sprintf("%02d hr %02d min %02d sec",
-              hrs.floor,mins.floor,secs.floor)
+      sprintf("%2d day %02d:%02d:%02d",
+              days.floor,hrs.floor,mins.floor,secs.floor)
     end
   end
 
   class JobBase
-    attr_reader :id, :log
+    attr_reader :id
     def initialize
       jd = JobData.new(:job => self.class.name.sub('VCloudJob::',''),
                        :started_at => Time.now)
       jd.save
-      @log = VCloud::DataMapperLogger.new(jd.id)
       @id = jd.id
     end
-
     def finish
       JobData.get(@id).update(:finished_at => Time.now)
-    end
-
-    def run
-      begin
-        self.execute
-      rescue Exception => e
-        log.error("#{self.class.name} failed: #{e}")
-        e.backtrace.each do |l|
-          log.backtrace(l)
-        end
-      ensure
-        self.finish
-      end
     end
   end
 
   class VCDDump < JobBase
-    def execute
-      dumper = VCloud::Dumper.new(self)
-      vcd = VCloud::VCD.new(self.log)
-      vcd.connect(*(VCloud::VCD.connectParams)).save(dumper)
-      vc = VSphere::VCenter.new(self.log)
-      vc.connect(*(VSphere::VCenter.connectParams)).save(dumper)
+    def run
+      vcd = VCloud::VCD.new(VCloud::DataMapperLogger.new(self.id))
+      vcd.connect(*(VCloud::VCD.connectParams)).save(VCloud::Dumper.new(self.id))
+      self.finish
     end
   end
 
   class VCDEX < JobBase
     def run
-      vcd = VCloud::VCD.new(self.log)
+      vcd = VCloud::VCD.new(VCloud::DataMapperLogger.new(self.id))
       vcd.connect(*(VCloud::VCD.connectParams))
+      self.finish
     end
   end
 
@@ -91,13 +75,18 @@ module VCloudJob
   class Scheduler
     def initialize
       @sched = Rufus::Scheduler.start_new
-      @log = VCloud::DataMapperLogger::systemLog
+      log = VCloud::DataMapperLogger.new(-1)
 
       Schedule.all.each do |s|
         _s = s.schedule.split(/\s+/)
         eval <<EOS
 @sched.#{_s[0]} '#{_s[1]}' do
-  #{s.job}.new.run
+  begin
+    #{s.job}.new.run
+  rescue Exception => e
+    log.error('#{s.job} failed ' + e.to_s)
+    log.error(e.backtrace)
+  end
 end
 EOS
       end

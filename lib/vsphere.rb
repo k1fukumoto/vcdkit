@@ -91,134 +91,8 @@ module VSphere
     end
   end
 
-  class VIMBase
-    attr_reader :vc, :name
-    def initialize(vc)
-      @vc = vc
-    end
-    def xml
-      ''
-    end
-    def save(dumper)
-      @vc.log.info("SAVE: #{self.path}")
-      dumper.save(self)
-    end
-  end
-
-  class DataCenter < VIMBase
-    def path
-      "#{@vc.path}/DataCenter/#{@dc.name}"
-    end
-    def initialize(vc,dc)
-      super(vc)
-      @dc = dc
-      @name = dc.name
-    end
-    def save(dumper)
-      super
-      @dc.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).each do |cr|
-        ComputeResource.new(vc,self,cr).save(dumper)
-      end
-    end
-  end
-
-  class ComputeResource < VIMBase
-    def path
-      "#{@dc.path}/ComputeResource/#{@cr.name}"
-    end
-    def initialize(vc,dc,cr)
-      super(vc)
-      @dc = dc
-      @cr = cr
-      @name = cr.name
-    end
-    def save(dumper)
-      super
-      @cr.host.each do |hs|
-        HostSystem.new(vc,self,hs).save(dumper)
-      end
-    end
-  end
-
-  class HostSystem < VIMBase
-    def path
-      "#{@cr.path}/HostSystem/#{@hs.name}"
-    end
-    def initialize(vc,cr,hs)
-      super(vc)
-      @cr = cr
-      @hs = hs
-      @name = hs.name
-    end
-    def save(dumper)
-      super
-      @hs.vm.each do |vm|
-        VirtualMachine.new(vc,self,vm).save(dumper)
-      end
-    end
-  end
-
-  class VirtualMachine < VIMBase
-    def path
-      "#{@hs.path}/VirtualMachine/#{@vm.name}"
-    end
-    def initialize(vc,hs,vm)
-      super(vc)
-      @hs = hs
-      @vm = vm
-      @name = vm.name
-    end
-    def save(dumper)
-      super
-    end
-    def xml
-      ds = @vm.datastore.collect do |ds|
-        "<Datastore name=\"#{ds.name}\"/>"
-      end.join
-      
-      _xml = <<EOS
-<?xml version="1.0" encoding="UTF-8"?>
-<VirtualMachine moref="#{@vm._ref}">
-  <Guest name="#{@vm.config.guestFullName}" family="#{@vm.config.guestId}"/>
-  <DataStores>#{ds}</DataStores>
-</VirtualMachine>
-EOS
-    end
-    class Property
-      attr_reader :moref, :os, :os_family, :datastores
-      def initialize(xml)
-        @doc = REXML::Document.new(xml)
-        @moref = @doc.root.attributes['moref']
-        g = @doc.elements['//Guest']
-        @os = g.attributes['name']
-        @os_family = g.attributes['family']
-        @datastores = @doc.elements.collect('//Datastore') do |ds|
-          ds.attributes['name']
-        end
-      end
-    end
-  end
-
   class VCenter
-    attr_reader :root,:scon,:name,:log
-
-    def initialize(log)
-      @log = log
-    end
-
-    def path
-      "/VC/#{@name}"
-    end
-    def xml
-      ''
-    end
-
-    def VCenter.connectParams
-      p = VCloudServers.first(:application => 'vCenter')
-      [p.host,
-       p.account,
-       p.password]
-    end
+    attr_reader :root,:scon
 
     def connect(host,user,pass=nil)
       if(pass.nil?)
@@ -238,7 +112,6 @@ EOS
                 })
       @scon = @vim.serviceInstance.content
       @root = @scon.rootFolder
-      self
     end
 
     def vm(moref)
@@ -281,17 +154,9 @@ EOS
     end
 
     def save(dir)
-      if(dir.class == VCloud::Dumper)
-        log.info("SAVE: #{self.path}")
-        dir.save(self)
-        @root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
-          DataCenter.new(self,dc).save(dir)
-        end
-      else
-        xml = ERB.new(File.new("template/vcd-dump/#{self.class.name.sub(/VSphere::/,'')}.erb").read,0,'>').result(binding)
-        FileUtils.mkdir_p(dir) unless File.exists? dir
-        open("#{dir}/#{self.class.name.sub(/VSphere::/,'')}.xml",'w') {|f| f.puts xml}
-      end
+      xml = ERB.new(File.new("template/vcd-dump/#{self.class.name.sub(/VSphere::/,'')}.erb").read,0,'>').result(binding)
+      FileUtils.mkdir_p(dir) unless File.exists? dir
+      open("#{dir}/#{self.class.name.sub(/VSphere::/,'')}.xml",'w') {|f| f.puts xml}
     end
   end
 end

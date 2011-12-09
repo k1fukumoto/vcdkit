@@ -1,11 +1,7 @@
 <H2>Logs </H2>
 <pre>
 <%  VCloud::Log.all(:jobid => params[:jobid]).collect do |l| %>
-<% if l.priority == 'BACKTRACE' %>
-<%= "  #{l.message}\n" %>
-<% else %>
 <%= "#{l.created_at} | #{l.priority} | #{l.message}\n" %>
-<% end %>
 <% end %>
 </pre>
 

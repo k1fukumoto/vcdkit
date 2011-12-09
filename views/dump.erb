@@ -1,73 +1,19 @@
-<%
-  tree = DumpTree.get(params[:id]) 
-  vmmap = {}
-%>
-<H2>Dump @<%= tree.created_at %></H2>
+<% tree = DumpTree.get(params[:id]) %>
+<H2>VCD Dump @<%= tree.created_at %></H2>
 
 <ul>
-  <% DumpData.all(:treeid => tree.id, :type => "VCloud::VCD").each do |vcd| %>
-  <li>VCD: <%= vcd.name %>
+<% DumpData.all(:treeid => tree.id, :type => "VCloud::Org").each do |org| %>
+<li><%= org.name %>
   <ul>
-    <% DumpData.all(:treeid => tree.id, :path.like =>
-    "#{vcd.path}%", :type => "VCloud::Org").each do |org| %>
-    <li><%= org.name %>
+  <% DumpData.all(:treeid => tree.id, :path.like => "#{org.path}%", :type => "VCloud::Vdc").each do |vdc| %>
+  <li><%= vdc.name %>
     <ul>
-      <% DumpData.all(:treeid => tree.id, :path.like =>
-      "#{org.path}%", :type => "VCloud::Vdc").each do |vdc| %>
-      <li><%= vdc.name %>
-      <ul>
-	<% DumpData.all(:treeid => tree.id, :path.like =>
-	"#{vdc.path}%", :type => "VCloud::VApp").each do |vapp| %>
-	<li><a href=<%= url("/xml/#{vapp.id}")%>><%= vapp.name %></a>
-	<ul>
-	  <%
-	  DumpData.all(:treeid => tree.id, :path.like =>
-	  "#{vapp.path}%", :type => "VCloud::Vm").each do |vm|
-	  _vm = VCloud::Vm.new(nil,vm.name).parse(vm.xml)
-	  vmmap[_vm.moref] = org.name
-	  %>
-	  <li><a href=<%= url("/xml/#{vm.id}") %>><%= vm.name %></a>
-	  [<%= _vm.moref %>]
-	  <% end %>
-	</ul>
-	<% end %>
-      </ul>
-      <% end %>
-    </ul>
+    <% DumpData.all(:treeid => tree.id, :path.like => "#{vdc.path}%", :type => "VCloud::VApp").each do |vapp| %>
+    <li><a href=<%= url("/vapp/#{vapp.id}")%>><%= vapp.name %></a>
+      (<%= DumpData.all(:treeid => tree.id, :path.like => "#{vapp.path}%", :type => "VCloud::Vm").collect {|vm| vm.name}.join(',') %>)
     <% end %>
-  </ul>
-  <% end %>
-</ul>
-
-<ul>
-<% DumpData.all(:treeid => tree.id, :type => "VSphere::VCenter").each do |vc| %>
-<li>vCenter: <%= vc.name %>
-  <ul>
-  <% DumpData.all(:treeid => tree.id, :path.like =>
-    "#{vc.path}%", :type => "VSphere::DataCenter").each do |dc| %>
-  <li><%= dc.name %>
-    <ul>
-    <% DumpData.all(:treeid => tree.id, :path.like =>
-      "#{dc.path}%", :type => "VSphere::ComputeResource").each do |cr| %>
-    <li><%= cr.name %>
-      <ul>
-      <% DumpData.all(:treeid => tree.id, :path.like =>
-	"#{cr.path}%", :type => "VSphere::HostSystem").each do |hs| %>
-	<li><%= hs.name %>
-	<ul>
-	  <%
-	  DumpData.all(:treeid => tree.id, :path.like =>
-	  "#{hs.path}%", :type => "VSphere::VirtualMachine").each do |vm|
-	  prop = VSphere::VirtualMachine::Property.new(vm.xml)
-	  %>
-	  <li><%= "#{vm.name} [#{prop.moref}] ORG:#{vmmap[prop.moref]}" %>
-	  <% end %>
-	</ul>
-	<% end %>
-      </ul>
-      <% end %>
     </ul>
-    <% end %>
-  </ul>
   <% end %>
+  </ul>
+<% end %>
 </ul>

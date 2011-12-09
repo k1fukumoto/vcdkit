@@ -37,7 +37,6 @@ configure do
                     })
 
   DataMapper.auto_migrate!
-  DataMapper::Model.raise_on_save_failure = true
 
   YAML::load(File.new(File.dirname(__FILE__) + 
                       "/conf/vcloud_servers.yml").read).each do |r|
@@ -68,7 +67,7 @@ post '/vcloud_servers' do
   params.keys.join("<BR>")
 end
 
-get '/xml/:id' do
+get '/vapp/:id' do
   content_type 'text/xml'
   DumpData.get(params[:id]).xml
 end
