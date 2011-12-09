@@ -16,36 +16,8 @@
 require 'rubygems'
 require 'rest_client'
 require 'rexml/document'
-require 'data_mapper'
 require 'erb'
 require 'pp'
-
-class DumpTree
-  include DataMapper::Resource
-  property :id, Serial
-  property :jobid, Integer
-  property :created_at, DateTime
-end
-
-class DumpData
-  include DataMapper::Resource
-  property :id, Serial
-  property :treeid, Integer
-  property :created_at, DateTime
-  property :type, String
-  property :name, String
-  property :path, String
-  property :xml, Text
-end
-
-class VCloudServers
-  include DataMapper::Resource
-  property :id, Serial
-  property :application, String
-  property :host, String
-  property :account, String
-  property :password, String
-end
 
 class XMLElement
   ATTRS = [:name, :href]
@@ -69,12 +41,12 @@ class XMLElement
     @vcd = vcd
     @xml = vcd.get(@href)
     @doc = REXML::Document.new(@xml)
-    init_attrs(@doc.root,[:xmlns,:'xmlns:vmext',:id])
+    init_attrs(@doc.root,[:xmlns,:'xmlns:vmext'])
     self
   end
 
   def load(dir)
-    @vcd.log.info("LOAD: #{self.path}/#{self.basename}")
+    $log.info("LOAD: #{self.path}/#{self.basename}")
 
     file = "#{dir}/#{self.path}/#{self.basename}"
     @dir = dir
@@ -82,38 +54,32 @@ class XMLElement
       @doc = REXML::Document.new(File.new(file))
       init_attrs(@doc.root,ATTRS + [:xmlns,:'xmlns:vmext'])
     rescue Exception => e
-      @vcd.log.error("Failed to load xml file: #{file}: #{e}")
+      $log.error("Failed to load xml file: #{file}: #{e}")
     end
     self
   end
 
-  def short_classname()
-    self.class.name.sub(/VCloud::/,'')
-  end
   def basename()
-    self.short_classname + ".xml"
+    self.class.name.sub(/VCloud::/,'') + ".xml"
   end
   def altname()
-    self.short_classname + "Alt.xml"
+    self.class.name.sub(/VCloud::/,'') + "Alt.xml"
   end
   def paramsname()
-    self.short_classname + "Params.xml"
+    self.class.name.sub(/VCloud::/,'') + "Params.xml"
   end
 
   def save(dir)
-    @vcd.log.info("SAVE: #{self.path}/#{self.basename}")
-    if (dir.class == VCloud::Dumper)
-      dir.save(self)
-    else
-      dir = "#{dir}/#{self.path}"
-      FileUtils.mkdir_p(dir) unless File.exists? dir
-      path = "#{dir}/#{self.basename}"
-      open(path,'w') {|f| f.puts @xml}
-    end
+    $log.info("SAVE: #{self.path}/#{self.basename}")
+
+    dir = "#{dir}/#{self.path}"
+    FileUtils.mkdir_p(dir) unless File.exists? dir
+    path = "#{dir}/#{self.basename}"
+    open(path,'w') {|f| f.puts @xml}
   end
 
   def savealt(dir)
-    @vcd.log.info("SAVEALT: #{self.path}/#{self.altname}")
+    $log.info("SAVEALT: #{self.path}/#{self.altname}")
 
     dir = "#{dir}/#{self.path}"
     FileUtils.mkdir_p(dir) unless File.exists? dir
@@ -123,7 +89,7 @@ class XMLElement
   end
 
   def saveparam(dir)
-    @vcd.log.info("SAVE: #{self.path}/#{self.paramsname}")
+    $log.info("SAVE: #{self.path}/#{self.paramsname}")
 
     dir = "#{dir}/#{self.path}"
     FileUtils.mkdir_p(dir) unless File.exists? dir
@@ -136,8 +102,8 @@ class XMLElement
         REXML::Formatters::Pretty.new.write(doc.root,f)
       end
     rescue Exception => e
-      @vcd.log.warn("Failed to save parameters: #{path}: #{e}")
-      @vcd.log.warn(e.backtrace)
+      $log.warn("Failed to save parameters: #{path}: #{e}")
+      $log.warn(e.backtrace)
     end
   end
 
