@@ -10,7 +10,7 @@
   <th>Password</th>
 </tr>
 
-<% ['vCD','vCenter'].each do |appname| %>
+<% ['vCD','vCenter','ESX'].each do |appname| %>
 <% app = VCloudServers.first(:application => appname) %>
 <tr>
  <td><%= appname %></td>
@@ -38,6 +38,6 @@
 </tr>
 <% end %>
 <tr><td colspan="2" align="right">
-       <input type="submit" value="Change"/></td></tr>
+       <input type="submit" value="Change Schedule"/></td></tr>
 </table>
 </form>

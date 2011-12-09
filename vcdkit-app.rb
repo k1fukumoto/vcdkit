@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+
 require 'rubygems'
 require 'sinatra'
 require 'json'
@@ -63,6 +64,10 @@ get '/dump/:id' do
   erb :dump
 end
 
+post '/vcloud_servers' do
+  params.keys.join("<BR>")
+end
+
 get '/xml/:id' do
   content_type 'text/xml'
   DumpData.get(params[:id]).xml
@@ -79,21 +84,3 @@ end
 get '/setting' do
   erb :setting
 end
-
-post '/vcloud_servers' do
-  params.each_pair do |k,v|
-    keys = k.split('_')
-    vcs = VCloudServers.first(:application => keys[0])
-    vcs.update(keys[1].to_sym => v)
-  end
-  redirect '/setting'
-end
-
-post '/job_schedule' do
-  params.each_pair do |k,v|
-    vcs = VCloudJob::Schedule.first(:job => k)
-    vcs.update(:schedule => v)
-  end
-  redirect '/setting'
-end
-

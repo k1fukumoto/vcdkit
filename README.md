@@ -1,4 +1,4 @@
-vCloud Datacenter Operation Utilities (a.k.a. VCDKIT)
+vCloud Datacenter Operation Utilities (a.k.a) VCDKIT
 =====================================================
 
 What is VCDKIT?
@@ -11,22 +11,15 @@ It is entirely written in Ruby for easier/flexible deployments.
 With VCDKIT, vCloud administrator can do:
 
 * Backup & restore vApp meta-data 
-* Associate hardware errors(ESX host failure, Datastore failure) with affected vCD organization(tenant)
-* Track peak Windows VM count for monthly license billing
+* Associate hardware errors(ESX host failure, Datastore failure) to affected organization
+* Track Windows VM count for license billing
+
 
 Installation
 ---------------
 
-### System Requirements
-
-* OS: Tested with CentOS, Ubuntu, MacOSX
-* Ruby: 1.8.7 (p174)
-
 Configuration
 ---------------
 
-### Connection Settings
 
-1.  Click `Change Settings` link in `HOME` page
-1.  Appropriately change connection settings for vCD and vCenter.
-    For vCD, ensure to specify System Organization account. 
+
