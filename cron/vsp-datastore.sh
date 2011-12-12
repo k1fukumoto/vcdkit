@@ -1,6 +1,16 @@
 #!/bin/sh
 
-export VCDKIT=/opt/vmware/vcdkit
+run() {
+  $VCDKIT/vsp-datastore.rb -v1 -c1 \
+  -l$VCDKIT/logs/vsp-datastore.log \
+  -C $VCDKIT/conf/vsp-datastore.xml -D \
+  -t -m $VCDKIT/conf/mail/vsp-datastore.xml
+}
 
-$VCDKIT/vsp-datastore.rb -v2 -c2 -l$VCDKIT/logs/vsp-datastore.log -C $VCDKIT/conf/vsp-datastore.xml -D -t -m $VCDKIT/conf/mail/vsp-datastore.xml > /dev/null
+if [ "$SILENT" == "yes" ]; then
+    run > /dev/null 2>&1
+else
+    run
+fi
+
 

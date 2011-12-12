@@ -1,6 +1,15 @@
 #!/bin/sh
 
-export VCDKIT=/opt/vmware/vcdkit
+run() {
+    $VCDKIT/vcd-dump.rb -v1 -c1 \
+    -l$VCDKIT/logs/vcd-dump.log \
+    -t -m $VCDKIT/conf/mail/vcd-dump.xml
+}
 
-$VCDKIT/vcd-dump.rb -v2 -c2 -l$VCDKIT/logs/vcd-dump.log -t -m $VCDKIT/conf/mail/vcd-dump.xml >/dev/null
+if [ "$SILENT" == "yes" ]; then
+    run > /dev/null 2>&1
+else
+    run
+fi
+
 

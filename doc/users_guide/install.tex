@@ -235,6 +235,7 @@ Oracle Technology Networkから以下のrpmパッケージをダウンロードします。
 \begin{Verbatim}[frame=single] 
 $ crontab -r
 $ crontab -l # ジョブが削除されている事を確認
+$ ps awx | grep ruby # 実行中のジョブがない事を確認
 \end{Verbatim}
 
 \subsubsection{新バージョンのパッケージのインストール}
@@ -256,21 +257,32 @@ $ sudo rpm -ivh \
   oracle-instanceclient11.2-basic-11.2.0.3.0-1.x86_64.rpm
 $ sudo rpm -ivh \
   oracle-instanceclient11.2-devel-11.2.0.3.0-1.x86_64.rpm
-$ tar zxvf ruby-oci8-1.0.7.tar.gz
-$ cd ruby-oci8-1.0.7
+  
+$ cd ~/Download
+$ tar zxvf ruby-oci8-2.0.6.tar.gz
+$ cd ruby-oci8-2.0.6
 $ export LD_LIBRARY_PATH=/usr/lib/oracle/11.2/client64/lib
 $ ruby setup.rb config
 $ make
 $ sudo make install
+
+$ cd ~/Download
 $ sudo sh VMware-VIX-1.11.0-471780.x86_64.bundle
 $ cd /usr/lib/vmware-vix
 $ sudo tar zxvf vix-perl.tar.gz
 $ cd vix-perl
-$ perl -MCPAN -eshell
+$ sudo perl -MCPAN -eshell
 cpan[1] > force install ExtUtils::MakeMaker
 $ sudo perl Makefile.PL
 $ sudo make
 $ sudo make install
+\end{Verbatim}
+
+\subsubsection{パスワードの保存}
+以下の手順でパスワードファイルの再作成を行います。
+
+\begin{Verbatim}[frame=single] 
+$ ./vcd-pass.rb -vcebs --chargeback_db
 \end{Verbatim}
 
 \subsubsection{既存データの移行}
@@ -279,11 +291,7 @@ $ sudo make install
 
 \begin{Verbatim}[frame=single]
 $ cd /opt/vmware/vcdkit
-$ cp ../vcdkit-1.0/.vc*  .
-$ cp ../vcdkit-1.0/.esx  .
-$ rmdir data
 $ ln -s ../vcdkit-1.0/data .
-$ rmdir logs
 $ ln -s ../vcdkit-1.0/logs .
 \end{Verbatim}
 

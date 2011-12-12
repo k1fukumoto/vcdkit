@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export VCDDATA=/opt/vmware/vcdkit/data
+export VCDDATA=$VCDKIT/data
 
 archive() {
     tooldir=$1

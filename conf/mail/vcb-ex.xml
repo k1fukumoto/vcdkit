@@ -9,7 +9,7 @@
   <body>VCBDB: {%= vcbdb %}
 SCRIPT RUN AT: {%= now %}</body>
   <smtp>
-    <host>10.121.0.113</host>
+    <host></host>
   </smtp>
 </mailerconf>
 
