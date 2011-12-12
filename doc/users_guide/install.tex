@@ -285,15 +285,13 @@ $ sudo make install
 $ ./vcd-pass.rb -vcebs --chargeback_db
 \end{Verbatim}
 
-\subsubsection{既存データの移行}
-以下の手順で既存インストールからデータを移行します。
-{\tt data}と{\tt logs}ディレクトリは既存フォルダのデータをそのまま使用。
+\subsubsection{メール転送パラメータの変更（テスト用アドレス）}
+ステージング環境での設定例を参考に、{\tt \$VCDKIT/conf/mail}配下のメール転送
+パラメータを変更し、メール宛先アドレスをテスト用アドレスに変更します。
 
-\begin{Verbatim}[frame=single]
-$ cd /opt/vmware/vcdkit
-$ ln -s ../vcdkit-1.0/data .
-$ ln -s ../vcdkit-1.0/logs .
-\end{Verbatim}
+\subsubsection{データストア監視パラメータの変更}
+ステージング環境での設定例を参考に、{\tt \$VCDKIT/conf/vsp-datastore.xml}を変更します。
+
 
 \subsubsection{共有ライブラリパスの設定}
 OCI8ライブラリとVIX APIライブラリのパスをLD\_LIBRARY\_PATHに追加します。
@@ -307,19 +305,45 @@ LD_LIBRARY_PATH=\
 export LD_LIBRARY_PATH
 \end{Verbatim}
 
-\subsubsection{メール転送パラメータの設定}
-ステージング環境での設定例を参考に、{\tt \$VCDKIT/confi/mail}配下のメール転送
-パラメータを変更します。
+\subsubsection{cronスクリプトのテスト}
+インストール予定のすべてのcronスクリプトを実行し、エラーログが出力されない
+事を確認します。またvcd-trend.shからレポートがテスト用メールアドレスに
+転送される事を確認します。
 
 \begin{Verbatim}[frame=single] 
-$ vi $VCDKIT/conf/mail/*.xml
+$ cd $VCDKIT
+$ cron/vcd-dump.sh
+$ cron/vcd-dump.sh # トレンドデータ作成のため複数回実行します
+$ cron/vcd-report.sh
+$ cron/archive.sh
+$ cron/vcd-trend.sh --offset 0
+$ cron/vsp-datastore.sh
+$ cron/vcd-ex.sh
+$ cron/vcd-vapp.sh
+$ cron/vcb-ex.sh
+$ cron/vcb-restart.sh
 \end{Verbatim}
 
+\subsubsection{既存データの移行}
+以下の手順で既存インストールからデータを移行します。
+{\tt data}と{\tt logs}ディレクトリは既存フォルダのデータをそのまま使用。
+
+\begin{Verbatim}[frame=single]
+$ cd /opt/vmware/vcdkit
+$ rm -frv data logs # テストデータの削除
+$ ln -s ../vcdkit-1.0/data .
+$ ln -s ../vcdkit-1.0/logs .
+\end{Verbatim}
+
+\subsubsection{メール転送パラメータの変更（本番用監視アドレス）}
+ステージング環境での設定例を参考に、{\tt \$VCDKIT/conf/mail}配下のメール転送
+パラメータを変更し、メール宛先アドレスを本番用監視アドレスに変更します。
+
 \subsubsection{cronジョブの再開}
+ステージング環境での設定例を参考に、{\tt \$VCDKIT/conf/crontab.conf}を変更します。
 監視システム再開と同じタイミングで、cronジョブを再開します。
 
 \begin{Verbatim}[frame=single] 
-$ vi $VCDKIT/cron/crontab.conf
 $ crontab cron/crontab.conf
 $ crontab -l
 \end{Verbatim}
