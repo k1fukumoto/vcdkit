@@ -57,7 +57,7 @@
     <Cell ss:StyleID="s100"><Data ss:Type="String">VM</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">OS Type</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">OS</Data></Cell>
-    <Cell ss:StyleID="s100"><Data ss:Type="String">Status</Data></Cell>
+    <Cell ss:StyleID="s100"><Data ss:Type="String">Power Status</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">VM Name</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">ESX</Data></Cell>
     <Cell ss:StyleID="s100"><Data ss:Type="String">Datastore</Data></Cell>
