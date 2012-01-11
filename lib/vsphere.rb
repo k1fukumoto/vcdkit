@@ -94,7 +94,7 @@ module VSphere
   class VCenter
     attr_reader :root,:scon
 
-    def connect(host,user,pass=nil)
+    def connect(host,user,pass=nil,retry_count=3,timeout=3)
       if(pass.nil?)
         pass = VCloud::SecurePass.new().decrypt(File.new('.vc','r').read)
       elsif (pass.class == File)
@@ -104,12 +104,22 @@ module VSphere
 
       @name = host
 
-      @vim = RbVmomi::VIM.
-        connect({ :host => host, 
-                  :user => user, 
-                  :password => pass, 
-                  :insecure => true,
-                })
+      begin
+        @vim = RbVmomi::VIM.
+          connect({ :host => host, 
+                    :user => user, 
+                    :password => pass, 
+                    :insecure => true,
+                  })
+      rescue Exception
+        retry_count -= 1
+        if retry_count > 0
+          sleep timeout
+          retry
+        end
+        raise
+      end
+
       @scon = @vim.serviceInstance.content
       @root = @scon.rootFolder
     end
