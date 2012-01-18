@@ -6,7 +6,7 @@ vCloud DirectorとvCenterからデータの抽出を行います。
 エラーが発生した場合にはログをメール転送する。}
 
 \begin{Verbatim}[frame=single] 
-$ vcd-dump-rb -v1 -c1 -l $VCDKIT/logs/vcd-dump.log \
+$ vcd-dump.rb -v1 -c1 -l $VCDKIT/logs/vcd-dump.log \
   -t -m $VCDKIT/conf/mail/vcd-dump.xml 
 \end{Verbatim}
 

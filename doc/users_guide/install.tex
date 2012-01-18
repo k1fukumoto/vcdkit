@@ -1,7 +1,31 @@
 \section{¥¤¥ó¥¹¥È¡¼¥ë}
 
+\subsection{vcdkit ¥æ¡¼¥¶¤ÎºîÀ®}
+root °Ê³°¤Î°ìÈÌ¥æ¡¼¥¶¤òºîÀ®¤·¤Þ¤¹¡£°Ê²¼¤ÎÎã¤Ç¤Ï vcdkit ¤È¤¤¤¦¥æ¡¼¥¶¤òºîÀ®¤·¤Þ¤¹¡£
+¤Ê¤ª¡¢¥³¥Þ¥ó¥ÉÁ°¤Î¥×¥í¥ó¥×¥È "\#" ¤Ï root ¥æ¡¼¥¶¡¢"\$" ¤Ï°ìÈÌ¥æ¡¼¥¶¡Ê°Ê¸å vcdkit¡Ë
+¤Ç¤Î¼Â¹Ô¤òÉ½¤·¤Þ¤¹¡£
+
+\begin{tmcommand}
+# useradd -s /bin/bash -m -d /home/vcdkit vcdkit
+# passwd vcdkit
+# su - vcdkit
+# vi /etc/sudoers
+vcdkit	ALL=(ALL) 	ALL   # add this line
+\end{tmcommand}
+
 \subsection{¥·¥¹¥Æ¥àÍ×·ï}
-vcdkit¤ò¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë¤¿¤á¤Ë¤Ï³Æ¼ïLiunx·ÏOS¤â¤·¤¯¤ÏMac OSX¤È°Ê²¼¤Îruby¼Â¹Ô´Ä¶­¤¬É¬Í×¤Ç¤¹¡£
+
+\subsubsection{OS/vCloud}
+vcdkit ¤ò¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë¤Ë¤Ï³Æ¼ïLiunx·ÏOS¤â¤·¤¯¤ÏMac OSX¤¬É¬Í×¤Ç¤¹¡£
+¤Þ¤¿ËÜ¥Ð¡¼¥¸¥ç¥ó¤Îvcdkit¤Ï°Ê²¼¤ÎvCloud¥½¥Õ¥È¥¦¥§¥¢¤Î¥Ð¡¼¥¸¥ç¥ó¤ò¥µ¥Ý¡¼¥È¤·¤Þ¤¹¡£
+\begin{itemize}
+\item vCloud Directory (version 1.0.1, 1.5)
+\item vShield Manager (version 5.0)
+\item vCenter Chargeback (version 1.6.2)
+\item vSphere (version 4.1)
+\end{itemize}
+
+\subsubsection{Ruby}
 \begin{itemize}
 \item ruby (version 1.8.7 °Ê¹ß)
 \item ruby gem (version 1.3.5 °Ê¹ß)
@@ -13,45 +37,89 @@ vcdkit¤ò¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë¤¿¤á¤Ë¤Ï³Æ¼ïLiunx·ÏOS¤â¤·¤¯¤ÏMac OSX¤È°Ê²¼¤Îruby¼Â¹Ô´Ä¶­
   \item rest-client
   \item pony
   \end{itemize}
+\end{itemize}
 
+\vspace{1em}¡ÊCentOS ¤Ç¤Î¥¤¥ó¥¹¥È¡¼¥ëÎã¡Ë
+\begin{tmcommand}
+$ sudo yum install -y ruby ruby-ri ruby-devel
+$ sudo yum install -y gcc make ruby-devel libxml2 \
+libxml2-devel libxslt libxslt-devel
+$ wget http://rubyforge.org/frs/download.php/75710/rubygems\
+-1.8.15.zip
+$ unzip rubygems-1.8.15.zip
+$ cd rubygems-1.8.15
+$ sudo ruby setup.rb
+
+$ sudo gem install crypt (ri doc may not be installed)
+$ sudo gem install highline
+$ sudo gem install nokogiri
+$ sudo gem install rbvmomi (ri doc may not be installed)
+$ sudo gem install rest-client
+$ sudo gem install pony
+\end{tmcommand}
+
+\subsubsection{³Æ¼ï¥Ñ¥Ã¥±¡¼¥¸}
+
+\begin{itemize}
 \item RubyÍÑ Oracle ¥¤¥ó¥¿¡¼¥Õ¥§¡¼¥¹ OCI8 \footnote{¥¤¥ó¥¹¥È¡¼¥ëÊýË¡¤Î¾ÜºÙ¤Ë¤Ä¤¤¤Æ¤Ï
 \url{http://ruby-oci8.rubyforge.org/ja/index.html}¤ò»²¾È¤·¤Æ¤¯¤À¤µ¤¤}
 \begin{itemize}
 \item Oracle Instant Client (Oracle Technology Network¤«¤érpm¥Ñ¥Ã¥±¡¼¥¸¤ò¥À¥¦¥ó¥í¡¼¥É¡Ë
 \item OCI8 gem ¥Ñ¥Ã¥±¡¼¥¸
 \end{itemize}
-
 \item VMware VIX API SDK 1.10.3 \footnote{¥¤¥ó¥¹¥È¡¼¥ëÊýË¡¤Î¾ÜºÙ¤Ë¤Ä¤¤¤Æ¤Ï
 \url{https://www.vmware.com/support/developer/vix-api/vix110_reference/}¤ò»²¾È¤·¤Æ¤¯¤À¤µ¤¤}
-
 \end{itemize}
 
-ËÜ¥Ð¡¼¥¸¥ç¥ó¤Îvcdkit¤Ï°Ê²¼¤ÎvCloud¥½¥Õ¥È¥¦¥§¥¢¤Î¥Ð¡¼¥¸¥ç¥ó¤ò¥µ¥Ý¡¼¥È¤·¤Þ¤¹¡£
-\begin{itemize}
-\item vCloud Directory (version 1.0.1, 1.5)
-\item vShield Manager (version 5.0)
-\item vCenter Chargeback (version 1.6.2)
-\item vSphere (version 4.1)
-\end{itemize}
+\vspace{1em}¡ÊCentOS ¤Ç¤Î¥¤¥ó¥¹¥È¡¼¥ëÎã¡Ë\\
+
+Oracle Install Client
+\begin{tmcommand}
+$ sudo rpm -ivh oracle-instantclient11.2-basic-11.2.0.3.0\
+-1.x86_64.rpm
+$ sudo rpm -ivh oracle-instantclient11.2-devel-11.2.0.3.0\
+-1.x86_64.rpm
+$ sudo env LD_LIBRARY_PATH=/usr/lib/oracle/11.2/client64/lib\
+ gem install ruby-oci8-2.1.0.gem
+\end{tmcommand}
+
+VMware VIX API SDK
+\begin{tmcommand}
+$ sudo sh VMware-VIX-1.10.3-368992.x86_64.bundle
+$ cd /usr/lib/vmware-vix
+$ sudo tar zxvf vix-perl.tar.gz
+$ cd vix-perl
+$ sudo yum install perl-CPAN
+$ sudo perl -MCPAN -eshell
+cpan[1]> force install ExtUtils::MakeMaker
+cpan[2]> exit
+$ sudo perl Makefile.PL
+$ sudo make
+$ sudo make install
+\end{tmcommand}
+
 
 %------------------------------------------------------------------------------------------------------------
 % NEW INSTALLATION
 %------------------------------------------------------------------------------------------------------------
 \subsection{¿·µ¬¥¤¥ó¥¹¥È¡¼¥ë¼ê½ç}
-vcdkit ¤Î¥¤¥ó¥¹¥È¡¼¥ë¤Ï vcdkit ¤òÍøÍÑ¤¹¤ë°ìÈÌ¥æ¡¼¥¶¥¢¥«¥¦¥ó¥È¤Ç¹Ô¤¤¤Þ¤¹¡£root ¸¢¸Â¤ÏÉ¬Í×¤¢¤ê¤Þ¤»¤ó¡£
+%vcdkit ¤Î¥¤¥ó¥¹¥È¡¼¥ë¤Ï vcdkit ¤òÍøÍÑ¤¹¤ë°ìÈÌ¥æ¡¼¥¶¥¢¥«¥¦¥ó¥È¤Ç¹Ô¤¤¤Þ¤¹¡£root ¸¢¸Â¤ÏÉ¬Í×¤¢¤ê¤Þ¤»¤ó¡£
 
 \subsubsection{ÇÛÉÛ¥Ñ¥Ã¥±¡¼¥¸¤Î¥¤¥ó¥¹¥È¡¼¥ë}
 /tmp ¥Ç¥£¥ì¥¯¥È¥ê¤Ë¥³¥Ô¡¼¤µ¤ì¤¿ÇÛÉÛ¥Ñ¥Ã¥±¡¼¥¸¤ò/opt/vmware/vcdkit¥Ç¥£¥ì¥¯¥È¥ê¤Ë¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ëÎã¤ò°Ê²¼¤Ë¼¨¤·¤Þ¤¹¡£°Ê²¼¥¤¥ó¥¹¥È¡¼¥ë¥Ç¥£¥ì¥¯¥È¥ê¤ò\$VCDKIT¤È¤·¤Æ»²¾È¤·¤Þ¤¹¡£
 
-{\small \begin{verbatim}
-$ cd /opt/vmware/vcdkit
-$ unzip /tmp/vcdkit-$VERSION.zip
+{\small
+\begin{verbatim}
+$ sudo mkdir -p /opt/vmware/vcdkit
+$ sudo chown vcdkit /opt/vmware/vcdkit
+$ unzip -d /opt/vmware/vcdkit /tmp/vcdkit-$VERSION.zip
 \end{verbatim}}
 
 \subsubsection{´Ä¶­ÊÑ¿ô¤ÎÀßÄê}
 vcdkit¤Î¥³¥Þ¥ó¥É¤ò¼Â¹Ô¤¹¤ë¤¿¤á¤Ë¤Ï´Ä¶­ÊÑ¿ô \$VCDKIT ¤òÀßÄê¤¹¤ëÉ¬Í×¤¬¤¢¤ê¤Þ¤¹¡£¤Þ¤¿¡¢¤¹¤Ù¤Æ¤Î¥³¥Þ¥ó¥É¤Ï \$VCDKIT ¥Ç¥£¥ì¥¯¥È¥êÄ¾²¼¤Ë¥¤¥ó¥¹¥È¡¼¥ë¤µ¤ì¤ë¤Î¤Ç¡¢PATHÊÑ¿ô¤Ë \$ VCDKIT¤òÄÉ²Ã¤¹¤ë»ö¤ò¤ª´«¤á¤·¤Þ¤¹¡£.bashrc¤ÎÊÔ½¸Îã¤ò°Ê²¼¤Ë¼¨¤·¤Þ¤¹¡£
 
- {\small \begin{verbatim}
+ {\small
+\begin{verbatim}
 export VCDKIT=/opt/vmware/vcdkit	
 export PATH=$VCDKIT:$PATH
 \end{verbatim}}
@@ -61,7 +129,7 @@ OCI8¥é¥¤¥Ö¥é¥ê¤ÈVIX API¥é¥¤¥Ö¥é¥ê¤Î¥Ñ¥¹¤òLD\_LIBRARY\_PATH¤ËÄÉ²Ã¤·¤Þ¤¹¡£
 
  {\small
  \begin{verbatim}
-LD_LIBRARY_PATH=/usr/lib/oracle/11.2/client64/lib:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/usr/lib/oracle/11.2/client64/lib:$LD\_LIBRARY\_PATH
 LD_LIBRARY_PATH=/usr/lib/vmware-vix:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH
 \end{verbatim}
@@ -202,7 +270,13 @@ crontab.conf ¤òÅ¬ÀÚ¤ËÊÔ½¸¸å¡¢crontab ¥³¥Þ¥ó¥É¤Ç cron ¥¸¥ç¥Ö¤ò¥¹¥±¥¸¥å¡¼¥ë¤·¤Þ¤¹¡
 % UPGRADE
 % ----------------------------------------------------------------------------------------------------------
 \subsection{¥¢¥Ã¥×¥°¥ì¡¼¥É¥¤¥ó¥¹¥È¡¼¥ë¼ê½ç}
-{\tt 1.0} ¤«¤é {\tt 1.5.6}¤Ø¤Î¥¢¥Ã¥×¥°¥ì¡¼¥É¼ê½ç¤ò°Ê²¼¤Ëµ­¤·¤Þ¤¹¡£
+{\tt 1.0} ¤«¤é {\tt 1.5.6}¤Ø¤Î¥¢¥Ã¥×¥°¥ì¡¼¥É¼ê½ç¤ò°Ê²¼¤Ëµ­¤·¤Þ¤¹¡£¥¢¥Ã¥×¥°¥ì¡¼¥ÉÁ°¤Ë¥·¥¹¥Æ¥à¤òÄä»ß
+¤µ¤»¤ë½çÈÖ¤Ï²¼µ­¤ÎÄÌ¤ê¤Ç¤¹¡£
+\begin{enumerate}
+\item SoftBank ´Æ»ë¥·¥¹¥Æ¥à
+\item vcdkit
+\item vCloud
+\end{enumerate}
 
 \subsubsection{¥¢¥Ã¥×¥°¥ì¡¼¥É¤Î½àÈ÷}
 {\tt 1.5.6}¤Î¥Ñ¥Ã¥±¡¼¥¸¤È¡¢ÄÉ²Ã¤ÇÉ¬Í×¤È¤Ê¤Ã¤¿°Ê²¼¤Î¥µ¡¼¥É¥Ñ¡¼¥Æ¥£¤Î¥Ñ¥Ã¥±¡¼¥¸¤ò
@@ -272,18 +346,20 @@ $ cd /usr/lib/vmware-vix
 $ sudo tar zxvf vix-perl.tar.gz
 $ cd vix-perl
 $ sudo perl -MCPAN -eshell
-cpan[1] > force install ExtUtils::MakeMaker
+cpan[1]> force install ExtUtils::MakeMaker
+cpan[2]> exit
 $ sudo perl Makefile.PL
 $ sudo make
 $ sudo make install
 \end{Verbatim}
 
 \subsubsection{¥Ñ¥¹¥ï¡¼¥É¤ÎÊÝÂ¸}
-°Ê²¼¤Î¼ê½ç¤Ç¥Ñ¥¹¥ï¡¼¥É¥Õ¥¡¥¤¥ë¤ÎºÆºîÀ®¤ò¹Ô¤¤¤Þ¤¹¡£
+°Ê²¼¤Î¼ê½ç¤Ç¥Ñ¥¹¥ï¡¼¥É¥Õ¥¡¥¤¥ë¤ÎºÆºîÀ®¤ò¹Ô¤¤¤Þ¤¹¡Ê-vcebs ¤ÎÂå¤ï¤ê¤Ë´ûÂ¸¤Î \$VCDKIT ÇÛ²¼¤Î¥Ñ¥¹¥ï¡¼¥É¤ò¤½¤Î¤Þ¤Þ¥³¥Ô¡¼¤¹¤ë¤³¤È¤â²ÄÇ½¤Ç¤¹¡Ë¡£
 
 \begin{Verbatim}[frame=single] 
-$ ./vcd-pass.rb -vcebs --chargeback_db
+$ vcd-pass.rb -vcebs --chargeback_db
 \end{Verbatim}
+
 
 \subsubsection{¥á¡¼¥ëÅ¾Á÷¥Ñ¥é¥á¡¼¥¿¤ÎÊÑ¹¹¡Ê¥Æ¥¹¥ÈÍÑ¥¢¥É¥ì¥¹¡Ë}
 ¥¹¥Æ¡¼¥¸¥ó¥°´Ä¶­¤Ç¤ÎÀßÄêÎã¤ò»²¹Í¤Ë¡¢{\tt \$VCDKIT/conf/mail}ÇÛ²¼¤Î¥á¡¼¥ëÅ¾Á÷

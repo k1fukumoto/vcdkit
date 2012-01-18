@@ -1,0 +1,42 @@
+%\documentclass[letterpaper,10pt,dvips]{article}
+%\documentclass[letterpaper,10pt,dvips,draft]{article}
+%\documentclass[a4j,10pt,dvips]{jarticle}
+%\documentclass[a4paper,10pt,dvips]{article}
+%\usepackage[dvips]{graphicx}
+%\usepackage{moreverb}
+%\usepackage{fancybox}
+%\usepackage{fancyvrb}
+%\usepackage{ascmac}
+%\usepackage{float}
+%\usepackage{tabularx}
+%\usepackage{html}
+%\usepackage{url}
+%\usepackage{color}
+%\usepackage[hmargin=0.5in,vmargin=1in,centering]{geometry}
+%\usepackage{eclclass}
+%\usepackage{eclbkbox}
+%\usepackage{boxedminipage}
+%\usepackage{layout}
+
+
+\newenvironment{tmcommand}%
+  {\VerbatimEnvironment\begin{Verbatim}[frame=single,fontsize=\small]}%
+  {\end{Verbatim}}
+
+\newenvironment{tmcommandf}%
+  {\VerbatimEnvironment\begin{Verbatim}[frame=single,fontsize=\footnotesize]}%
+  {\end{Verbatim}}
+
+% \newenvironment{tmcommand}%
+%   {\VerbatimEnvironment \begin{center}\begin{Sbox}%
+%     \begin{minipage}{0.98\linewidth} \begin{Verbatim}[fontsize=\small]}%
+%   {\end{Verbatim}\end{minipage}\end{Sbox}%
+%     \doublebox{\TheSbox}\end{center}}
+
+\newcommand{\tmfile}[2]%
+  {\VerbatimEnvironment\begin{itembox}[l]{ #1 }\verbatimtabinput{#2}\end{itembox}}
+
+\newenvironment{cabstract}%
+  {\begin{abstract}\begin{center}}%
+  {\end{center}\end{abstract}}
+
