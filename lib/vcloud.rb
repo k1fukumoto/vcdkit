@@ -1,6 +1,6 @@
 ######################################################################################
 #
-# Copyright 2011 Kaoru Fukumoto All Rights Reserved
+# Copyright 2012 Kaoru Fukumoto, Tsuyoshi Miyake All Rights Reserved
 #
 # You may freely use and redistribute this script as long as this 
 # copyright notice remains intact 
@@ -411,6 +411,7 @@ EOS
     def connect(host,org,user)
       pass = VCloud::SecurePass.new().decrypt(File.new('.vcd','r').read)
 
+      # create a hash including supporting versions (e.g. {"1.0" => true, "1.5" => true})
       versions = REXML::Document.new(self.get("https://#{host}/api/versions")).
         elements.inject('/SupportedVersions/VersionInfo/Version',{}) {|h,vi| h.update(vi.text=>true); h}
 

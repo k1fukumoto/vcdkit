@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ######################################################################################
 #
-# Copyright 2011 Kaoru Fukumoto All Rights Reserved
+# Copyright 2012 Kaoru Fukumoto, Tsuyoshi Miyake All Rights Reserved
 #
 # You may freely use and redistribute this script as long as this 
 # copyright notice remains intact 
@@ -114,6 +114,7 @@ module VSphere
       rescue Exception
         retry_count -= 1
         if retry_count > 0
+          $log.warn("retrying to connect to vc..")
           sleep timeout
           retry
         end

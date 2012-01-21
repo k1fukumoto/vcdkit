@@ -8,3 +8,4 @@ logs
 .vsm
 *~
 .DS_Store
+.project

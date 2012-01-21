@@ -1,7 +1,7 @@
 #!/usr/bin/ruby -I./lib
 #######################################################################################
 #
-# Copyright 2011 Kaoru Fukumoto All Rights Reserved
+# Copyright 2012 Kaoru Fukumoto, Tsuyoshi Miyake All Rights Reserved
 #
 # You may freely use and redistribute this script as long as this 
 # copyright notice remains intact 
@@ -13,9 +13,11 @@
 # QUALITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. 
 #
 #######################################################################################
+require 'logger'
 require 'rubygems'
 require 'tempfile'
 require 'pony'
+require 'rexml/document'
 
 module VCloud
   class Logger
@@ -31,7 +33,6 @@ module VCloud
       opt.on('-t','--tempfile','Output log to temporary file') do |o|
         $log.add_logger(Tempfile.new(self.name))
       end
-
     end
 
     def initialize
