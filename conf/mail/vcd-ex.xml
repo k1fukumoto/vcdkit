@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mailerconf>
+  <to>atsuhiro.machida@g.softbank.co.jp</to>
+  <to>masaki.gonda@g.softbank.co.jp</to>
+  <to>masanori.wada@g.softbank.co.jp</to>
+  <to>alert-cgs@dhs.jtidc.jp</to>
   <to>alert-vcloud@dhs.jtidc.jp</to>
   <to>ml_kanshi@dhs.jtidc.jp</to>
+  <to>mail-chk@dhs.jtidc.jp</to>
   <from>{%= hostname %}@dhs.jtidc.jp</from>
   <subject>vCDC vcd-ex error report [{%= vcdhost %}] {%= now %} </subject>
   <body>VCD: {%= vcdhost %}
 SCRIPT RUN AT: {%= now %}</body>
   <smtp>
-    <host></host>
+    <host>10.121.0.113</host>
   </smtp>
 </mailerconf>
 

@@ -1,15 +1,8 @@
 #!/bin/sh
 
-run() {
-  $VCDKIT/vcb-ex.rb --chargeback_db 1 \
-    -l$VCDKIT/logs/vcb-ex.log \
-    -t -m $VCDKIT/conf/mail/vcb-ex.xml
-}
+export LD_LIBRARY_PATH=/usr/lib/oracle/11.2/client64/lib
+export VCDKIT=/opt/vmware/vcdkit
 
-if [ "$SILENT" == "yes" ]; then
-    run > /dev/null 2>&1
-else
-    run
-fi
+$VCDKIT/vcb-ex.rb --chargeback_db 1 -l$VCDKIT/logs/vcb-ex.log -t -m $VCDKIT/conf/mail/vcb-ex.xml
 
 

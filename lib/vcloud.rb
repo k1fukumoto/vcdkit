@@ -581,6 +581,7 @@ $VSP = [
         ['10.127.11.51','vcdadmin'],
         ['172.16.180.30','vcdadmin'],
         ['10.128.1.60','vcdadmin'],
+        ['10.128.0.60','vcdadmin'],
         ]
 
 def vcdopts(options,opt) 
