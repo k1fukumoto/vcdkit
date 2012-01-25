@@ -16,6 +16,7 @@
 $: << File.dirname(__FILE__) + "/lib"
 require 'optparse'
 require 'vcdkit'
+require 'rbvmomi'
 
 options={
 }
@@ -68,7 +69,7 @@ def each_datastore(fm,ds,options)
   end
   begin
     # ensure no left-overs from the last run
-    if(options[:dir])
+    if(options[:dir]) # TODO: this line and L.78 should be merged
       fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
     end
   rescue Exception => e
