@@ -505,6 +505,9 @@ EOS
         case response.code
         when 200..299
           response
+        when 500
+          $log.warn("An internal error occurred, but just skip this and continue..")
+          $log.warn("#{response.code}>> #{response}")
         else
           $log.error("#{response.code}>> #{response}")
           response.return!(request,result,&block)
