@@ -153,15 +153,11 @@ module VCloud
     end
 
     def each_vm
-      @doc.elements.each("//Children/Vm"){|n| 
-        vm = VmTemplate.new(self,n.attributes['name'].to_s)
-        if(@vcd)
-          vm.connect(@vcd,n)
-        elsif(@dir)
-          vm.load(@dir)
-        end
-        yield vm
-      }
+      @doc.elements.each("//Children/Vm"){ |n| 
+        begin
+          yield vm(n.attributes['name'].to_s)
+        rescue Exception => ex; end
+      } 
     end
 
     def save(dir)
@@ -222,15 +218,11 @@ module VCloud
     end
 
     def each_vm
-      @doc.elements.each("//Children/Vm"){|n| 
-        vm = Vm.new(self,n.attributes['name'].to_s)
-        if(@vcd)
-          vm.connect(@vcd,n)
-        elsif(@dir)
-          vm.load(@dir)
-        end
-        yield vm
-      }
+      @doc.elements.each("//Children/Vm"){ |n| 
+        begin
+          yield vm(n.attributes['name'].to_s)
+        rescue Exception => ex; end
+      } 
     end
 
     def save(dir)

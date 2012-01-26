@@ -69,31 +69,24 @@ module VCloud
     end
 
     def each_vapp
-      @doc.elements.each("//ResourceEntity[@type='#{VApp::TYPE}']"){|n|
-        vapp = VApp.new(@org,self,n.attributes['name'].to_s)
-        if(@vcd)
-          vapp.connect(@vcd,n)
-        elsif(@dir)
-          vapp.load(@dir)
-        end
-        yield vapp
+      @doc.elements.each("//ResourceEntity[@type='#{VApp::TYPE}']"){ |n|
+        begin
+          yield vapp(n.attributes['name'].to_s)
+        rescue Exception => ex; end
       }
     end
 
     def vapptemplate(name)
       vat = VAppTemplate.new(@org,self,name)
       vat.connect(@vcd,@doc.elements["//ResourceEntity[@type='#{VAppTemplate::TYPE}' and @name='#{name}']"])
+      vat
     end
 
     def each_vapptemplate
-      @doc.elements.each("//ResourceEntity[@type='#{VAppTemplate::TYPE}']"){|n|
-        vat = VAppTemplate.new(@org,self,n.attributes['name'].to_s)
-        if(@vcd)
-          vat.connect(@vcd,n)
-        elsif(@dir)
-          vat.load(@dir)
-        end
-        yield vat
+      @doc.elements.each("//ResourceEntity[@type='#{VAppTemplate::TYPE}']"){ |n|
+        begin
+          yield vapptemplate(n.attributes['name'].to_s)
+        rescue Exception => ex; end
       }
     end
 
@@ -182,18 +175,15 @@ module VCloud
     def catalogitem(name)
       ci = CatalogItem.new(@org,self,name)
       ci.connect(@vcd,@doc.elements["//CatalogItem[@name='#{name}']"])
+      ci
     end
 
     def each_catalogitem
-      @doc.elements.each("//CatalogItem") do |n|
-        ci = CatalogItem.new(@org,self,n.attributes['name'].to_s)
-        if(@vcd)
-          ci.connect(@vcd,n)
-        elsif(@dir)
-          ci.load(@dir)
-        end
-        yield ci
-      end
+      @doc.elements.each("//CatalogItem") { |n| 
+        begin
+          yield catalogitem(n.attributes['name'].to_s)
+        rescue Exception => ex; end
+      }
     end
 
     def save(dir)
@@ -230,10 +220,12 @@ module VCloud
     def path
       "/ORG/#{@name}"
     end
+    
+    VDCPATH = '//Vdcs/Vdc'
 
     def vdc(name) 
       vdc = Vdc.new(self,name)
-      n = @doc.elements["//Vdcs/Vdc[ @name='#{name}']"]
+      n = @doc.elements["#{VDCPATH}[ @name='#{name}']"]
       if(n.nil?)
         $log.error("Cannot find vdc '#{name}': Available vdcs '#{self.vdcs.join(',')}'")
         raise InvalidNameException.new
@@ -244,24 +236,20 @@ module VCloud
       end
       vdc
     end
-
+    
     def vdcs 
-      @doc.elements.collect("//Vdcs/Vdc") {|n| n.attributes['name']}
+      @doc.elements.collect(VDCPATH) {|n| n.attributes['name']}
     end
 
     def each_vdc
-      @doc.elements.each("//Vdcs/Vdc") {|n| 
-        vdc = Vdc.new(self,n.attributes['name'].to_s)
-        if(@vcd)
-          vdc.connect(@vcd,n)
-        elsif(@dir)
-          vdc.load(@dir)
-        end
-        yield vdc
-      }
+      @doc.elements.each(VDCPATH) {|n| 
+        begin
+          yield vdc(n.attributes['name'].to_s)
+        rescue Exception => ex; end
+      } 
     end
 
-    USERPATH ='//Users/UserReference'
+    USERPATH = '//Users/UserReference'
 
     def user_by_href(href)
       unless(@user_index)
@@ -274,25 +262,22 @@ module VCloud
     end
 
     def user(name)
-      name.downcase!
+      name.downcase! # TODO: this is compatible with each_user?
       user = User.new(self,name)
       if(@vcd)
         user.connect(@vcd,@doc.elements["#{USERPATH}[@name='#{name}']"])
       elsif(@dir)
         user.load("#{@dir}/USER/#{name}")
       end
+      user
     end
 
     def each_user
       @doc.elements.each(USERPATH) { |n| 
-        user = User.new(self,n.attributes['name'].to_s)
-        if(@vcd)
-          user.connect(@vcd,n)
-        elsif(@dir)
-          user.load(@dir)
-        end
-        yield user
-      }
+        begin
+          yield user(n.attributes['name'].to_s)
+        rescue Exception => ex; end
+      } 
     end
 
     def add_user(name,role)
@@ -306,20 +291,17 @@ module VCloud
     NETWORKPATH ='//Networks/Network'
 
     def network(name)
-      ntwk = OrgNetwork.new
+      ntwk = OrgNetwork.new(self,name)
       ntwk.connect(@vcd,@doc.elements["#{NETWORKPATH}[@name='#{name}']"])
+      ntwk
     end
 
     def each_network
-      @doc.elements.each(NETWORKPATH) { |n| 
-        ntwk = OrgNetwork.new(self,n.attributes['name'].to_s)
-        if(@vcd)
-          ntwk.connect(@vcd,n)
-        elsif(@dir)
-          ntwk.load(@dir)
-        end
-        yield ntwk
-      }
+      @doc.elements.each(NETWORKPATH) { |n|
+        begin
+          yield network(n.attributes['name'].to_s)
+        rescue Exception => ex; end
+      } 
     end
 
     CATPATH = '//Catalogs/CatalogReference'
@@ -327,18 +309,15 @@ module VCloud
     def catalog(name)
       cat = Catalog.new(self,name)
       cat.connect(@vcd,@doc.elements["#{CATPATH}[@name='#{name}']"])
+      cat
     end
 
     def each_catalog
-      @doc.elements.each(CATPATH) {|n| 
-        cat = Catalog.new(self,n.attributes['name'].to_s)
-        if(@vcd)
-          cat.connect(@vcd,n)
-        elsif(@dir)
-          cat.load(@dir)
-        end
-        yield cat
-      }
+      @doc.elements.each(CATPATH) { |n| 
+        begin
+          yield catalog(n.attributes['name'].to_s)
+        rescue Exception => ex; end
+      } 
     end
 
     def save(dir)
@@ -445,8 +424,8 @@ EOS
 
     def save(dir)
       super
-      self.each_org {|org| org.save(dir)}
-      self.each_role {|role| role.save(dir)}
+      self.each_org { |org| org.save(dir) }
+      self.each_role { |role| role.save(dir) }
     end
 
     def saveparam(dir)
@@ -462,17 +441,14 @@ EOS
       elsif(@dir)
         role.load(@dir)
       end
+      role
     end
 
     def each_role
       @doc.elements.each(ROLEPATH) { |n| 
-        role = Role.new(n.attributes['name'].to_s)
-        if(@auth_token)
-          role.connect(self,n)
-        elsif(@dir)
-          role.load(@dir)
-        end
-        yield role
+        begin
+          yield role(n.attributes['name'].to_s)
+        rescue Exception => ex; end
       }
     end
 
@@ -485,18 +461,15 @@ EOS
       else
         org.load(@dir)
       end
+      org
     end
 
     def each_org
-      @doc.elements.each(ORGPATH) { |n| 
-        org = Org.new(n.attributes['name'])
-        if(@auth_token)
-          org.connect(self,n)
-        elsif(@dir)
-          org.load(@dir)
-        end
-        yield org
-      }
+      @doc.elements.each(ORGPATH) { |n|
+        begin
+          yield org(n.attributes['name'])
+        rescue Exception => ex; end
+      } 
     end
 
     def get(url)
@@ -505,9 +478,6 @@ EOS
         case response.code
         when 200..299
           response
-        when 500
-          $log.warn("An internal error occurred, but just skip this and continue..")
-          $log.warn("#{response.code}>> #{response}")
         else
           $log.error("#{response.code}>> #{response}")
           response.return!(request,result,&block)
