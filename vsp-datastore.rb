@@ -62,19 +62,20 @@ $ERROR = {}
 
 def each_datastore(fm,ds,options)
   dspath = "[#{ds.name}] __VCDKIT_TMPDIR__"
+  message = ""
   if(options[:conf])
-    $log.info("Test datastore access: Datastore '#{ds.name}'")
+    $log.info("     Datastore #{ds.name}")
   else
-    puts "  <datastore>#{ds.name}</datastore>"
+    puts "    <datastore>#{ds.name}</datastore>"
   end
-  begin
-    # ensure no left-overs from the last run
-    if(options[:dir]) # TODO: this line and L.78 should be merged
-      fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
-    end
-  rescue Exception => e
-  end
+  
   if(options[:dir])
+    # ensure no left-overs from the last run 
+    begin
+      fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
+    rescue Exception => e
+      # just ignore
+    end
     fm.MakeDirectory('name' => dspath)
     fm.DeleteDatastoreFile_Task('name' => dspath).wait_for_completion
   end
@@ -86,15 +87,16 @@ def each_esx(hostname,datastores,options)
 
   fm = esx.scon.fileManager
   if(options[:conf])
-    $log.info("Test datastore access: ESX '#{hostname}'")
+    $log.info("Test Datastores on ESX #{hostname}")
   else
-    puts "  <esx>#{hostname}</esx>"
+    puts "  <esx name=\"#{hostname}\">"
   end
   esx.root.childEntity.grep(RbVmomi::VIM::Datacenter).each do |dc|
     if (datastores.nil?)
       dc.datastore.each do |ds|
         each_datastore(fm,ds,options)
       end
+      puts "  </esx>"
     else
       datastores.each do |dsname|
         ds = dc.find_datastore(dsname)
@@ -108,15 +110,18 @@ def each_esx(hostname,datastores,options)
         $ERROR = {}
       end
     end
+    
   end
 end
 
 begin
   if(options[:conf])
     conf = REXML::Document.new(File.new(options[:conf],'r').read)
-    ds = conf.elements.collect('//dslist/datastore') {|n| n.text}
+    #ds = conf.elements.collect('//dslist/datastore') {|n| n.text}
     conf.elements.each('//dslist/esx') do |h|
-      each_esx(h.text,ds,options)
+      name = h.attributes["name"]
+      datastores = conf.elements.collect("//dslist/esx[@name='#{name}']/datastore") {|ds| ds.text}
+      each_esx(name, datastores, options)
     end
   else
     vc = VSphere::VCenter.new
