@@ -6,14 +6,15 @@ archive() {
     tooldir=$1
     days=$2
 
-    for t in `find $VCDDATA/$tooldir -maxdepth 1 -mindepth 1 -mtime +$days -type d`
+    [ ! -e "$VCDDATA/$tooldir/archive" ] && mkdir "$VCDDATA/$tooldir/archive"
+    for t in `find $VCDDATA/$tooldir -maxdepth 1 -mindepth 1 -mtime +$days -type d -a \! -name archive`
     do
 	file=`basename $t`
 	dir=`dirname $t`
 	echo "Creating tar archive: $t"
         tar zcf $dir/$file.tgz -C $dir $file && \
-            rm -fr $t && \
-            mv $dir/$file.tgz $VCDDATA/$tooldir/archive
+            mv $dir/$file.tgz $VCDDATA/$tooldir/archive && \
+            rm -fr $t
     done
 }
 
