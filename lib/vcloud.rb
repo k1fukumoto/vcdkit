@@ -78,7 +78,11 @@ module VCloud
 
     def vapptemplate(name)
       vat = VAppTemplate.new(@org,self,name)
-      vat.connect(@vcd,@doc.elements["//ResourceEntity[@type='#{VAppTemplate::TYPE}' and @name='#{name}']"])
+      if(@vcd)
+        vat.connect(@vcd,@doc.elements["//ResourceEntity[@type='#{VAppTemplate::TYPE}' and @name='#{name}']"])
+      elsif(@dir)
+        vat.load(@dir)
+      end
       vat
     end
 
@@ -267,7 +271,8 @@ module VCloud
       if(@vcd)
         user.connect(@vcd,@doc.elements["#{USERPATH}[@name='#{name}']"])
       elsif(@dir)
-        user.load("#{@dir}/USER/#{name}")
+        #user.load("#{@dir}/USER/#{name}")
+        user.load("#{@dir}")
       end
       user
     end

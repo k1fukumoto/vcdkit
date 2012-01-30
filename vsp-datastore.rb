@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 #######################################################################################
 #
-# Copyright 2011 Kaoru Fukumoto All Rights Reserved
+# Copyright 2012 Kaoru Fukumoto, Tsuyoshi Miyake All Rights Reserved
 #
 # You may freely use and redistribute this script as long as this 
 # copyright notice remains intact 
@@ -83,7 +83,12 @@ end
 
 def each_esx(hostname,datastores,options)
   esx = VSphere::VCenter.new
-  esx.connect(hostname,'root',$esxpass)
+  begin
+    esx.connect(hostname,'root',$esxpass)
+  rescue Exception => ex
+    $log.error("can't connect to an esx, giving up #{hostname}")
+    return
+  end
 
   fm = esx.scon.fileManager
   if(options[:conf])

@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 #######################################################################################
 #
-# Copyright 2011 Kaoru Fukumoto All Rights Reserved
+# Copyright 2012 Kaoru Fukumoto, Tsuyoshi Miyake All Rights Reserved
 #
 # You may freely use and redistribute this script as long as this 
 # copyright notice remains intact 
@@ -49,6 +49,7 @@ optparse = OptionParser.new do |opt|
     options[:target] = :all
   end
 
+  # TODO: '-t' is duplicated with '--tempfile'
   opt.on('-t','--tree TREENAME',Array,'Directory name to identify dump tree') do |o|
     options[:tree] = o
   end
@@ -108,7 +109,7 @@ else # Load dump tree from directory
       vcd = VCloud::VCD.new
       if(ot == :all)
         vcd.load(d).saveparam(outdir)
-
+        
         vc = VSphere::VCenter.new
         vc.load(d)
 
